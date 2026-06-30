@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Marble POS Pro</title>
+    <title>Marble POS Pro - Cloud Sync</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -38,85 +41,101 @@
             overflow: hidden;
             padding: 15px;
         }
-        /* Header */
         .header {
             background: linear-gradient(135deg, #1a365d, #2d3748);
             color: white;
-            padding: 15px 20px;
+            padding: 12px 18px;
             border-radius: 15px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
         }
         .header h1 {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 700;
         }
         .header-badge {
             background: rgba(255,255,255,0.2);
-            padding: 4px 12px;
+            padding: 3px 10px;
             border-radius: 20px;
+            font-size: 10px;
+        }
+        .cloud-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
             font-size: 11px;
         }
-        .lang-toggle, .mode-toggle {
+        .cloud-status .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .dot.online { background: #48bb78; }
+        .dot.offline { background: #fc8181; }
+        .dot.syncing { background: #ecc94b; animation: blink 1s infinite; }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .lang-toggle, .mode-toggle, .sync-btn {
             background: rgba(255,255,255,0.15);
             border: none;
             color: white;
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: 20px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 12px;
+            font-size: 11px;
             margin: 2px;
         }
-        .lang-toggle:active, .mode-toggle:active {
+        .lang-toggle:active, .mode-toggle:active, .sync-btn:active {
             transform: scale(0.95);
         }
-        /* Cards */
         .card {
             background: white;
             border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 15px;
+            padding: 12px;
+            margin-bottom: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.06);
             border: 1px solid #e2e8f0;
         }
         .card-title {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
             color: var(--primary);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 8px;
+            padding-bottom: 6px;
         }
         .card-title .cat-badge {
-            font-size: 10px;
-            padding: 2px 10px;
+            font-size: 9px;
+            padding: 2px 8px;
             border-radius: 20px;
             color: white;
         }
         .cat-stone { background: var(--stone); }
         .cat-material { background: var(--material); }
-        /* POS Grid */
         .pos-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            gap: 6px;
         }
         .pos-item {
             background: #f7fafc;
             border: 2px solid #e2e8f0;
             border-radius: 12px;
-            padding: 10px;
+            padding: 8px;
             text-align: center;
             cursor: pointer;
             transition: 0.3s;
-            font-size: 12px;
+            font-size: 11px;
         }
         .pos-item:active {
             transform: scale(0.95);
@@ -125,59 +144,58 @@
         .pos-item .name {
             font-weight: 600;
             color: var(--secondary);
-            font-size: 13px;
+            font-size: 12px;
         }
         .pos-item .price {
             color: var(--primary);
             font-weight: 700;
-            font-size: 14px;
+            font-size: 13px;
         }
         .pos-item .stock {
-            font-size: 10px;
+            font-size: 9px;
             color: #718096;
         }
         .pos-item .unit-badge {
-            font-size: 9px;
+            font-size: 8px;
             background: #e2e8f0;
-            padding: 1px 8px;
+            padding: 1px 6px;
             border-radius: 10px;
         }
         .pos-item.out-of-stock {
             opacity: 0.5;
             pointer-events: none;
         }
-        /* Cart */
         .cart-item {
             display: flex;
             justify-content: space-between;
-            padding: 6px 0;
+            padding: 5px 0;
             border-bottom: 1px solid #e2e8f0;
-            font-size: 13px;
+            font-size: 12px;
             align-items: center;
         }
         .cart-item .qty-control {
             display: flex;
-            gap: 4px;
+            gap: 3px;
             align-items: center;
         }
         .cart-item .qty-control button {
             background: #e2e8f0;
             border: none;
             border-radius: 50%;
-            width: 26px;
-            height: 26px;
+            width: 24px;
+            height: 24px;
             font-weight: 700;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
         }
         .cart-item .qty-control button:active {
             transform: scale(0.9);
         }
         .btn-sm {
-            padding: 4px 10px;
+            padding: 3px 8px;
             border: none;
             border-radius: 8px;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
             cursor: pointer;
         }
@@ -185,11 +203,10 @@
             background: #fed7d7;
             color: #9b2c2c;
         }
-        /* Tabs */
         .tabs {
             display: flex;
             gap: 3px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             flex-wrap: wrap;
             background: #f7fafc;
             padding: 4px;
@@ -197,20 +214,20 @@
         }
         .tab {
             flex: 1;
-            padding: 6px 3px;
+            padding: 5px 3px;
             text-align: center;
             background: transparent;
             border-radius: 10px;
             font-weight: 600;
-            font-size: 9px;
+            font-size: 8px;
             cursor: pointer;
             transition: 0.3s;
-            min-width: 40px;
+            min-width: 38px;
             color: #4a5568;
         }
         .tab i {
             display: block;
-            font-size: 14px;
+            font-size: 13px;
             margin-bottom: 1px;
         }
         .tab.active {
@@ -223,7 +240,6 @@
         .section.active {
             display: block;
         }
-        /* Bottom Nav */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -241,38 +257,37 @@
         }
         .bottom-nav .nav-item {
             text-align: center;
-            font-size: 8px;
+            font-size: 7px;
             color: #718096;
             cursor: pointer;
-            padding: 3px 5px;
+            padding: 3px 4px;
             border-radius: 10px;
             transition: 0.3s;
         }
         .bottom-nav .nav-item i {
-            font-size: 16px;
+            font-size: 15px;
             display: block;
         }
         .bottom-nav .nav-item.active {
             color: var(--primary);
             font-weight: 700;
         }
-        /* Form */
         .form-group {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
         .form-group label {
             display: block;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             color: var(--secondary);
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
         .form-group input, .form-group select {
             width: 100%;
-            padding: 8px 10px;
+            padding: 6px 8px;
             border: 2px solid #e2e8f0;
             border-radius: 10px;
-            font-size: 13px;
+            font-size: 12px;
             background: #f7fafc;
         }
         .form-group input:focus {
@@ -281,10 +296,10 @@
             background: white;
         }
         .btn {
-            padding: 8px 14px;
+            padding: 7px 12px;
             border: none;
             border-radius: 10px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             transition: 0.3s;
@@ -292,7 +307,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 5px;
+            gap: 4px;
         }
         .btn:active {
             transform: scale(0.96);
@@ -306,42 +321,41 @@
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            gap: 6px;
         }
         .grid-3 {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            gap: 6px;
+            gap: 5px;
         }
-        /* Table */
         .table-wrap {
             overflow-x: auto;
-            margin-top: 6px;
+            margin-top: 5px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 11px;
+            font-size: 10px;
         }
         th {
             background: var(--primary);
             color: white;
-            padding: 5px 3px;
+            padding: 4px 3px;
             text-align: center;
-            font-size: 10px;
+            font-size: 9px;
         }
         td {
-            padding: 5px 3px;
+            padding: 4px 3px;
             border-bottom: 1px solid #e2e8f0;
             text-align: center;
-            font-size: 11px;
+            font-size: 10px;
         }
         tr:nth-child(even) { background: #f7fafc; }
         .badge {
             display: inline-block;
-            padding: 2px 8px;
+            padding: 1px 6px;
             border-radius: 20px;
-            font-size: 9px;
+            font-size: 8px;
             font-weight: 600;
         }
         .badge-success { background: #c6f6d5; color: #22543d; }
@@ -350,34 +364,34 @@
         .badge-stone { background: #e8d5c4; color: #5d4037; }
         .badge-material { background: #bee3f8; color: #2a4365; }
         .highlight {
-            padding: 8px;
+            padding: 6px;
             border-radius: 10px;
             border-right: 4px solid var(--primary);
             background: #ebf8ff;
-            margin: 5px 0;
-            font-size: 12px;
+            margin: 4px 0;
+            font-size: 11px;
         }
         .total-bar {
             background: var(--primary);
             color: white;
-            padding: 10px;
+            padding: 8px;
             border-radius: 12px;
             display: flex;
             justify-content: space-between;
             font-weight: 700;
-            font-size: 15px;
-            margin-top: 8px;
+            font-size: 14px;
+            margin-top: 6px;
         }
         .cat-tabs {
             display: flex;
-            gap: 4px;
-            margin-bottom: 8px;
+            gap: 3px;
+            margin-bottom: 6px;
         }
         .cat-tab {
-            padding: 6px 12px;
+            padding: 4px 8px;
             border-radius: 10px;
             font-weight: 600;
-            font-size: 12px;
+            font-size: 10px;
             cursor: pointer;
             background: #e2e8f0;
             color: #4a5568;
@@ -389,7 +403,6 @@
         }
         .cat-tab.stone-active { background: var(--stone); color: white; }
         .cat-tab.material-active { background: var(--material); color: white; }
-        /* View mode */
         .view-only {
             opacity: 0.7;
             pointer-events: none;
@@ -398,11 +411,19 @@
             opacity: 0.5;
             pointer-events: none;
         }
+        .sync-progress {
+            background: #edf2f7;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            color: #4a5568;
+            text-align: center;
+        }
         @media (max-width: 480px) {
             .grid-2 { grid-template-columns: 1fr; }
             .grid-3 { grid-template-columns: 1fr 1fr; }
             .pos-grid { grid-template-columns: 1fr 1fr; }
-            .header h1 { font-size: 15px; }
+            .header h1 { font-size: 14px; }
         }
     </style>
 </head>
@@ -411,14 +432,22 @@
     <!-- Header -->
     <div class="header">
         <div>
-            <h1><i class="fas fa-store"></i> <span id="shopName">Marble POS Pro</span></h1>
+            <h1><i class="fas fa-cloud"></i> <span id="shopName">Marble POS</span></h1>
             <span class="header-badge" id="modeBadge">👑 Admin</span>
         </div>
-        <div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center;">
+            <span class="cloud-status">
+                <span class="dot online" id="cloudDot"></span>
+                <span id="cloudStatusText">Online</span>
+            </span>
+            <button class="sync-btn" onclick="syncNow()"><i class="fas fa-sync"></i></button>
             <button class="mode-toggle" onclick="toggleMode()"><i class="fas fa-user-shield"></i> <span id="modeLabel">View</span></button>
             <button class="lang-toggle" onclick="toggleLang()"><i class="fas fa-language"></i> <span id="langLabel">اردو</span></button>
         </div>
     </div>
+
+    <!-- Sync Progress -->
+    <div id="syncProgress" class="sync-progress" style="display:none;">🔄 Syncing...</div>
 
     <!-- Tabs -->
     <div class="tabs" id="tabHeaders">
@@ -435,8 +464,8 @@
             <div class="card-title">
                 <i class="fas fa-list"></i> Items
                 <span style="margin-right:auto;"></span>
-                <span class="cat-badge cat-stone" style="font-size:10px;">Stone</span>
-                <span class="cat-badge cat-material" style="font-size:10px;">Material</span>
+                <span class="cat-badge cat-stone" style="font-size:9px;">Stone</span>
+                <span class="cat-badge cat-material" style="font-size:9px;">Material</span>
             </div>
             <div class="cat-tabs">
                 <button class="cat-tab stone-active active" onclick="filterCategory('stone')" id="catStone">🪨 Stone</button>
@@ -453,17 +482,17 @@
                 <span>Total:</span>
                 <span id="cartTotal">0</span>
             </div>
-            <div class="grid-2" style="margin-top:8px;">
-                <select id="saleType" style="padding:8px;border-radius:10px;border:2px solid #e2e8f0;">
+            <div class="grid-2" style="margin-top:6px;">
+                <select id="saleType" style="padding:6px;border-radius:10px;border:2px solid #e2e8f0;">
                     <option value="cash">💵 Cash</option>
                     <option value="credit">📝 Credit</option>
                 </select>
-                <select id="saleCustomerSelect" style="padding:8px;border-radius:10px;border:2px solid #e2e8f0;">
+                <select id="saleCustomerSelect" style="padding:6px;border-radius:10px;border:2px solid #e2e8f0;">
                     <option value="">👤 Walk-in</option>
                 </select>
             </div>
-            <div class="form-group" style="margin-top:6px;">
-                <input type="number" id="salePaid" placeholder="Amount Paid" value="0" style="width:100%;padding:8px;border-radius:10px;border:2px solid #e2e8f0;">
+            <div class="form-group" style="margin-top:4px;">
+                <input type="number" id="salePaid" placeholder="Amount Paid" value="0" style="width:100%;padding:6px;border-radius:10px;border:2px solid #e2e8f0;">
             </div>
             <button class="btn btn-success" onclick="completeSale()"><i class="fas fa-check"></i> Complete Sale</button>
         </div>
@@ -541,10 +570,10 @@
             <div class="card-title"><i class="fas fa-arrow-right"></i> Stock In / Out</div>
             <div class="grid-2">
                 <div class="form-group">
-                    <select id="stockItemSelect" style="padding:8px;border-radius:10px;border:2px solid #e2e8f0;width:100%;"></select>
+                    <select id="stockItemSelect" style="padding:6px;border-radius:10px;border:2px solid #e2e8f0;width:100%;"></select>
                 </div>
                 <div class="form-group">
-                    <input type="number" id="stockQty" placeholder="Quantity" style="padding:8px;border-radius:10px;border:2px solid #e2e8f0;width:100%;">
+                    <input type="number" id="stockQty" placeholder="Quantity" style="padding:6px;border-radius:10px;border:2px solid #e2e8f0;width:100%;">
                 </div>
             </div>
             <div class="grid-2">
@@ -577,8 +606,8 @@
 
         <div class="card">
             <div class="card-title"><i class="fas fa-hand-holding-usd"></i> Receive Payment</div>
-            <select id="receiveCustomerSelect" style="width:100%;padding:8px;border-radius:10px;border:2px solid #e2e8f0;margin-bottom:8px;"></select>
-            <input type="number" id="receiveAmount" placeholder="Amount Received" style="width:100%;padding:8px;border-radius:10px;border:2px solid #e2e8f0;margin-bottom:8px;">
+            <select id="receiveCustomerSelect" style="width:100%;padding:6px;border-radius:10px;border:2px solid #e2e8f0;margin-bottom:6px;"></select>
+            <input type="number" id="receiveAmount" placeholder="Amount Received" style="width:100%;padding:6px;border-radius:10px;border:2px solid #e2e8f0;margin-bottom:6px;">
             <button class="btn btn-success" onclick="receivePayment()"><i class="fas fa-money-bill-wave"></i> Receive</button>
         </div>
     </div>
@@ -614,27 +643,27 @@
                 <button class="btn btn-warning" onclick="generateReport('weekly')"><i class="fas fa-calendar-week"></i> Weekly</button>
                 <button class="btn btn-gold" onclick="generateReport('monthly')"><i class="fas fa-calendar-alt"></i> Monthly</button>
             </div>
-            <div style="margin-top:6px;display:flex;gap:4px;">
-                <button class="btn btn-success" onclick="shareReportImage()" style="flex:1;"><i class="fas fa-image"></i> Share Image</button>
+            <div style="margin-top:4px;display:flex;gap:4px;">
+                <button class="btn btn-success" onclick="shareReportImage()" style="flex:1;"><i class="fas fa-image"></i> Share</button>
                 <button class="btn btn-outline" onclick="sendWhatsAppReport()" style="flex:1;"><i class="fab fa-whatsapp"></i> WhatsApp</button>
             </div>
-            <div id="reportDisplay" style="margin-top:10px;background:#f7fafc;padding:12px;border-radius:10px;font-size:12px;white-space:pre-wrap;font-family:monospace;"></div>
+            <div id="reportDisplay" style="margin-top:8px;background:#f7fafc;padding:10px;border-radius:10px;font-size:11px;white-space:pre-wrap;font-family:monospace;"></div>
         </div>
 
         <div class="card">
             <div class="card-title"><i class="fas fa-chart-line"></i> Profit / Loss</div>
             <div class="grid-2" id="profitLossDisplay">
-                <div class="stat-box" style="background:#f0fff4;padding:10px;border-radius:10px;text-align:center;">
-                    <div style="font-size:20px;font-weight:700;color:#38a169;" id="plStone">0</div>
-                    <div style="font-size:11px;color:#718096;">🪨 Stone</div>
+                <div class="stat-box" style="background:#f0fff4;padding:8px;border-radius:10px;text-align:center;">
+                    <div style="font-size:18px;font-weight:700;color:#38a169;" id="plStone">0</div>
+                    <div style="font-size:10px;color:#718096;">🪨 Stone</div>
                 </div>
-                <div class="stat-box" style="background:#ebf8ff;padding:10px;border-radius:10px;text-align:center;">
-                    <div style="font-size:20px;font-weight:700;color:#2b6cb0;" id="plMaterial">0</div>
-                    <div style="font-size:11px;color:#718096;">🧱 Material</div>
+                <div class="stat-box" style="background:#ebf8ff;padding:8px;border-radius:10px;text-align:center;">
+                    <div style="font-size:18px;font-weight:700;color:#2b6cb0;" id="plMaterial">0</div>
+                    <div style="font-size:10px;color:#718096;">🧱 Material</div>
                 </div>
-                <div class="stat-box" style="background:#fefcbf;padding:10px;border-radius:10px;text-align:center;grid-column:1/-1;">
-                    <div style="font-size:24px;font-weight:700;color:#744210;" id="plTotal">0</div>
-                    <div style="font-size:11px;color:#718096;">📊 Total Profit / Loss</div>
+                <div class="stat-box" style="background:#fefcbf;padding:8px;border-radius:10px;text-align:center;grid-column:1/-1;">
+                    <div style="font-size:22px;font-weight:700;color:#744210;" id="plTotal">0</div>
+                    <div style="font-size:10px;color:#718096;">📊 Total Profit / Loss</div>
                 </div>
             </div>
         </div>
@@ -659,6 +688,220 @@
 <canvas id="reportCanvas" style="display:none;"></canvas>
 
 <script>
+    // ============================================================
+    // FIREBASE CONFIGURATION
+    // ============================================================
+    // 🔑 IMPORTANT: Replace these with your own Firebase config
+    // Go to Firebase Console > Project Settings > Your apps > Config
+    const firebaseConfig = {
+        apiKey: "AIzaSyDummyKeyReplaceWithYourOwn",  // Replace with your API Key
+        authDomain: "your-project-id.firebaseapp.com",  // Replace
+        databaseURL: "https://your-project-id-default-rtdb.firebaseio.com",  // Replace
+        projectId: "your-project-id",  // Replace
+        storageBucket: "your-project-id.appspot.com",  // Replace
+        messagingSenderId: "123456789",  // Replace
+        appId: "1:123456789:web:abcdef"  // Replace
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    // ============================================================
+    // CLOUD SYNC SYSTEM
+    // ============================================================
+    let isOnline = false;
+    let syncInProgress = false;
+    let lastSyncTime = null;
+
+    function updateCloudStatus(status) {
+        const dot = document.getElementById('cloudDot');
+        const text = document.getElementById('cloudStatusText');
+        if (status === 'online') {
+            dot.className = 'dot online';
+            text.textContent = 'Online';
+        } else if (status === 'offline') {
+            dot.className = 'dot offline';
+            text.textContent = 'Offline';
+        } else if (status === 'syncing') {
+            dot.className = 'dot syncing';
+            text.textContent = 'Syncing...';
+        }
+        isOnline = status === 'online' || status === 'syncing';
+    }
+
+    function showSyncProgress(show) {
+        document.getElementById('syncProgress').style.display = show ? 'block' : 'none';
+    }
+
+    // ============================================================
+    // SYNC TO CLOUD
+    // ============================================================
+    function syncToCloud() {
+        if (!isOnline) {
+            alert('⚠️ No internet connection! Please connect and try again.');
+            return;
+        }
+
+        syncInProgress = true;
+        updateCloudStatus('syncing');
+        showSyncProgress(true);
+
+        const data = {
+            items: db.items,
+            customers: db.customers,
+            sales: db.sales,
+            expenses: db.expenses,
+            transactions: db.transactions,
+            lastUpdated: Date.now()
+        };
+
+        database.ref('marble_pos_data').set(data)
+            .then(() => {
+                console.log('✅ Data synced to cloud successfully!');
+                updateCloudStatus('online');
+                showSyncProgress(false);
+                syncInProgress = false;
+                lastSyncTime = Date.now();
+                showNotification('✅ Data synced to cloud!');
+            })
+            .catch((error) => {
+                console.error('❌ Sync failed:', error);
+                updateCloudStatus('offline');
+                showSyncProgress(false);
+                syncInProgress = false;
+                showNotification('❌ Sync failed! Check internet.');
+            });
+    }
+
+    // ============================================================
+    // SYNC FROM CLOUD
+    // ============================================================
+    function syncFromCloud() {
+        if (!isOnline) {
+            alert('⚠️ No internet connection! Please connect and try again.');
+            return;
+        }
+
+        syncInProgress = true;
+        updateCloudStatus('syncing');
+        showSyncProgress(true);
+
+        database.ref('marble_pos_data').once('value')
+            .then((snapshot) => {
+                const cloudData = snapshot.val();
+                if (cloudData) {
+                    // Merge cloud data with local
+                    // Compare timestamps - keep latest
+                    const localTime = localStorage.getItem('marble_last_update') || 0;
+                    const cloudTime = cloudData.lastUpdated || 0;
+
+                    if (cloudTime > localTime) {
+                        // Cloud is newer - update local
+                        db.items = cloudData.items || [];
+                        db.customers = cloudData.customers || [];
+                        db.sales = cloudData.sales || [];
+                        db.expenses = cloudData.expenses || [];
+                        db.transactions = cloudData.transactions || [];
+                        localStorage.setItem('marble_last_update', cloudTime);
+                        saveDB();
+                        renderAll();
+                        showNotification('✅ Data synced from cloud!');
+                    } else {
+                        // Local is newer - push to cloud
+                        syncToCloud();
+                    }
+                } else {
+                    // No data in cloud - push local
+                    syncToCloud();
+                }
+                updateCloudStatus('online');
+                showSyncProgress(false);
+                syncInProgress = false;
+            })
+            .catch((error) => {
+                console.error('❌ Sync from cloud failed:', error);
+                updateCloudStatus('offline');
+                showSyncProgress(false);
+                syncInProgress = false;
+                showNotification('❌ Sync failed! Check internet.');
+            });
+    }
+
+    // ============================================================
+    // SYNC NOW (Manual)
+    // ============================================================
+    function syncNow() {
+        if (syncInProgress) {
+            showNotification('⏳ Sync already in progress...');
+            return;
+        }
+        syncFromCloud();
+    }
+
+    // ============================================================
+    // AUTO SYNC (Every 30 seconds when online)
+    // ============================================================
+    function autoSync() {
+        if (isOnline && !syncInProgress) {
+            syncFromCloud();
+        }
+    }
+
+    // ============================================================
+    // CHECK INTERNET CONNECTION
+    // ============================================================
+    function checkInternet() {
+        if (navigator.onLine) {
+            updateCloudStatus('online');
+            if (!lastSyncTime || (Date.now() - lastSyncTime) > 30000) {
+                syncFromCloud();
+            }
+        } else {
+            updateCloudStatus('offline');
+        }
+    }
+
+    window.addEventListener('online', checkInternet);
+    window.addEventListener('offline', () => updateCloudStatus('offline'));
+
+    // ============================================================
+    // NOTIFICATION SYSTEM
+    // ============================================================
+    function showNotification(msg) {
+        const existing = document.querySelector('.notification-toast');
+        if (existing) existing.remove();
+
+        const toast = document.createElement('div');
+        toast.className = 'notification-toast';
+        toast.style.cssText = `
+            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+            background: #1a365d; color: white; padding: 10px 20px;
+            border-radius: 12px; font-size: 13px; font-weight: 600;
+            z-index: 9999; max-width: 90%; text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
+        `;
+        toast.textContent = msg;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.3s';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // Add animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+    `;
+    document.head.appendChild(style);
+
     // ============================================================
     // LANGUAGE SYSTEM
     // ============================================================
@@ -686,7 +929,7 @@
             completeSale: 'Complete Sale', stockIn: 'Stock In', stockOut: 'Stock Out'
         },
         ur: {
-            shopName: 'ماربل پی او ایس پرو',
+            shopName: 'ماربل پی او ایس',
             pos: 'فروخت', stock: 'اسٹاک', customers: 'گاہک', expenses: 'اخراجات', reports: 'رپورٹس',
             addItem: 'آئٹم شامل کریں', addCustomer: 'گاہک شامل کریں', addExpense: 'خرچ شامل کریں',
             receive: 'وصول کریں', daily: 'روزانہ', weekly: 'ہفتہ وار', monthly: 'ماہانہ',
@@ -715,10 +958,6 @@
     }
 
     function updateLanguage() {
-        document.querySelectorAll('[data-lang]').forEach(el => {
-            const key = el.dataset.lang;
-            el.textContent = t(key);
-        });
         document.getElementById('shopName').textContent = t('shopName');
         document.querySelectorAll('input[placeholder]').forEach(el => {
             const key = el.placeholder.toLowerCase().replace(/[^a-z]/g, '');
@@ -749,19 +988,6 @@
             if (el.value === '') el.textContent = '👤 ' + t('walkin');
             if (el.value === 'stone') el.textContent = '🪨 ' + t('stone') + ' (m²)';
             if (el.value === 'material') el.textContent = '🧱 ' + t('material') + ' (pcs)';
-            if (el.value === 'm²') el.textContent = 'm²';
-            if (el.value === 'sqft') el.textContent = 'sq.ft';
-            if (el.value === 'running_ft') el.textContent = 'Running ft';
-            if (el.value === 'pcs') el.textContent = 'Pieces';
-        });
-        // Tab labels
-        document.querySelectorAll('.tab').forEach(el => {
-            const key = el.textContent.trim().toLowerCase();
-            const map = { 'pos': 'pos', 'stock': 'stock', 'cust': 'customers', 'exp': 'expenses', 'report': 'reports' };
-            el.textContent = t(map[key] || key);
-            // Re-add icon
-            const icon = el.querySelector('i');
-            if (icon) el.innerHTML = icon.outerHTML + ' ' + t(map[key] || key);
         });
     }
 
@@ -772,22 +998,13 @@
         isAdmin = !isAdmin;
         document.getElementById('modeLabel').textContent = isAdmin ? 'View' : 'Admin';
         document.getElementById('modeBadge').textContent = isAdmin ? '👑 Admin' : '👁️ Viewer';
-        document.getElementById('modeBadge').style.background = isAdmin ? 'rgba(255,255,255,0.2)' : 'rgba(255,215,0,0.3)';
         if (!isAdmin) {
             document.querySelectorAll('.btn, .pos-item, .form-group input, .form-group select').forEach(el => {
                 el.style.opacity = '0.6';
                 el.style.pointerEvents = 'none';
             });
-            document.querySelectorAll('.btn-success, .btn-primary, .btn-danger, .btn-warning').forEach(el => {
-                el.style.opacity = '0.4';
-                el.style.pointerEvents = 'none';
-            });
         } else {
             document.querySelectorAll('.btn, .pos-item, .form-group input, .form-group select').forEach(el => {
-                el.style.opacity = '1';
-                el.style.pointerEvents = 'auto';
-            });
-            document.querySelectorAll('.btn-success, .btn-primary, .btn-danger, .btn-warning').forEach(el => {
                 el.style.opacity = '1';
                 el.style.pointerEvents = 'auto';
             });
@@ -814,6 +1031,7 @@
         localStorage.setItem('marble_expenses', JSON.stringify(db.expenses));
         localStorage.setItem('marble_transactions', JSON.stringify(db.transactions));
         localStorage.setItem('marble_stock_history', JSON.stringify(db.stockHistory));
+        localStorage.setItem('marble_last_update', Date.now());
     }
 
     // ============================================================
@@ -822,7 +1040,7 @@
     function calculateArea() {
         const length = parseFloat(document.getElementById('itemLength').value) || 0;
         const width = parseFloat(document.getElementById('itemWidth').value) || 0;
-        const area = (length * width) / 10.764; // sqft to m²
+        const area = (length * width) / 10.764;
         document.getElementById('itemArea').value = area.toFixed(2);
         return area;
     }
@@ -863,7 +1081,6 @@
             area: area || 0
         });
 
-        // Stock In transaction
         if (stock > 0) {
             db.transactions.push({
                 id: Date.now(),
@@ -884,7 +1101,9 @@
         document.getElementById('itemLength').value = '0';
         document.getElementById('itemWidth').value = '0';
         document.getElementById('itemArea').value = '';
-        alert('✅ Item added successfully!');
+        showNotification('✅ Item added successfully!');
+        // Sync to cloud
+        if (isOnline) syncToCloud();
     }
 
     function deleteItem(id) {
@@ -893,18 +1112,19 @@
         db.items = db.items.filter(i => i.id !== id);
         saveDB();
         renderAll();
+        if (isOnline) syncToCloud();
     }
 
     function editItem(id) {
         if (!isAdmin) return alert('Only Admin can edit!');
         const item = db.items.find(i => i.id === id);
         if (!item) return;
-        // Simple edit - prompt
         const newPrice = prompt('Enter new sell price for ' + item.name, item.sellPrice);
         if (newPrice !== null && !isNaN(newPrice) && newPrice > 0) {
             item.sellPrice = parseFloat(newPrice);
             saveDB();
             renderAll();
+            if (isOnline) syncToCloud();
         }
     }
 
@@ -926,7 +1146,8 @@
         saveDB();
         renderAll();
         document.getElementById('stockQty').value = '';
-        alert(`✅ ${qty} ${item.unit} added to ${item.name}`);
+        showNotification(`✅ ${qty} ${item.unit} added to ${item.name}`);
+        if (isOnline) syncToCloud();
     }
 
     function stockOut() {
@@ -948,7 +1169,8 @@
         saveDB();
         renderAll();
         document.getElementById('stockQty').value = '';
-        alert(`✅ ${qty} ${item.unit} removed from ${item.name}`);
+        showNotification(`✅ ${qty} ${item.unit} removed from ${item.name}`);
+        if (isOnline) syncToCloud();
     }
 
     function renderStockList() {
@@ -979,7 +1201,6 @@
         html += '</table></div>';
         container.innerHTML = html;
 
-        // Populate stock item select
         const sel = document.getElementById('stockItemSelect');
         sel.innerHTML = '';
         db.items.forEach(item => {
@@ -1013,7 +1234,7 @@
             items = items.filter(i => i.category === currentFilter);
         }
         if (items.length === 0) {
-            grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#718096;padding:20px;">No items found</div>';
+            grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#718096;padding:15px;">No items found</div>';
             return;
         }
         let html = '';
@@ -1024,7 +1245,7 @@
                 <div class="name">${catIcon} ${item.name}</div>
                 <div class="price">${item.sellPrice}</div>
                 <div class="stock">${item.stock} ${item.unit} <span class="unit-badge">${item.category}</span></div>
-                ${item.area > 0 ? `<div style="font-size:9px;color:#718096;">${item.area.toFixed(2)} m²</div>` : ''}
+                ${item.area > 0 ? `<div style="font-size:8px;color:#718096;">${item.area.toFixed(2)} m²</div>` : ''}
             </div>`;
         });
         grid.innerHTML = html;
@@ -1075,7 +1296,7 @@
     function renderCart() {
         const container = document.getElementById('cartItems');
         if (cart.length === 0) {
-            container.innerHTML = '<div style="text-align:center;color:#718096;padding:15px;">Cart is empty</div>';
+            container.innerHTML = '<div style="text-align:center;color:#718096;padding:12px;">Cart is empty</div>';
             document.getElementById('cartTotal').textContent = '0';
             document.getElementById('cartCount').textContent = '0';
             return;
@@ -1090,7 +1311,7 @@
                 <span><strong>${catIcon} ${c.name}</strong> (${c.price} x ${c.qty})</span>
                 <div class="qty-control">
                     <button onclick="updateCartQty(${c.itemId}, -1)">−</button>
-                    <span style="min-width:20px;text-align:center;">${c.qty}</span>
+                    <span style="min-width:18px;text-align:center;">${c.qty}</span>
                     <button onclick="updateCartQty(${c.itemId}, 1)">+</button>
                     <button class="btn-sm btn-danger-sm" onclick="removeFromCart(${c.itemId})"><i class="fas fa-trash"></i></button>
                 </div>
@@ -1158,7 +1379,6 @@
             if (cust) cust.balance += remaining;
         }
 
-        // Calculate profit/loss for this sale
         let totalCost = 0;
         saleItems.forEach(item => {
             totalCost += item.qty * (item.purchasePrice || 0);
@@ -1180,7 +1400,8 @@
         saveDB();
         renderAll();
         document.getElementById('salePaid').value = '0';
-        alert(`✅ Sale Complete! Total: ${total} | Paid: ${paid} | Profit: ${profit}`);
+        showNotification(`✅ Sale Complete! Total: ${total} | Profit: ${profit}`);
+        if (isOnline) syncToCloud();
     }
 
     // ============================================================
@@ -1193,15 +1414,10 @@
         const address = document.getElementById('custAddress').value.trim();
         if (!name) return alert('Enter customer name');
         
-        // Check if customer exists by phone
         if (phone) {
             const existing = db.customers.find(c => c.phone === phone);
             if (existing) {
-                if (confirm(`Customer "${existing.name}" already exists. Add as new?`)) {
-                    // Continue
-                } else {
-                    return;
-                }
+                if (!confirm(`Customer "${existing.name}" already exists. Add as new?`)) return;
             }
         }
 
@@ -1218,7 +1434,8 @@
         document.getElementById('custName').value = '';
         document.getElementById('custPhone').value = '';
         document.getElementById('custAddress').value = '';
-        alert('✅ Customer added!');
+        showNotification('✅ Customer added!');
+        if (isOnline) syncToCloud();
     }
 
     function renderCustomers() {
@@ -1240,7 +1457,6 @@
             container.innerHTML = html;
         }
 
-        // Populate selects
         ['saleCustomerSelect', 'receiveCustomerSelect'].forEach(id => {
             const sel = document.getElementById(id);
             if (!sel) return;
@@ -1295,7 +1511,8 @@
         saveDB();
         renderAll();
         document.getElementById('receiveAmount').value = '';
-        alert(`✅ Received ${amount}! New balance: ${cust.balance}`);
+        showNotification(`✅ Received ${amount}! New balance: ${cust.balance}`);
+        if (isOnline) syncToCloud();
     }
 
     // ============================================================
@@ -1321,7 +1538,8 @@
         document.getElementById('expenseHead').value = '';
         document.getElementById('expenseAmount').value = '';
         document.getElementById('expenseNote').value = '';
-        alert('✅ Expense added!');
+        showNotification('✅ Expense added!');
+        if (isOnline) syncToCloud();
     }
 
     function renderTodayExpenses() {
@@ -1379,7 +1597,6 @@
         const totalRemaining = sales.reduce((sum, s) => sum + s.remaining, 0);
         const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
 
-        // Calculate profit by category
         let stoneSales = 0, materialSales = 0;
         let stoneCost = 0, materialCost = 0;
         sales.forEach(s => {
@@ -1425,7 +1642,6 @@
 
         document.getElementById('reportDisplay').textContent = report;
 
-        // Profit/Loss display
         document.getElementById('plStone').textContent = stoneProfit >= 0 ? `+${stoneProfit}` : `${stoneProfit}`;
         document.getElementById('plStone').style.color = stoneProfit >= 0 ? '#38a169' : '#e53e3e';
         document.getElementById('plMaterial').textContent = materialProfit >= 0 ? `+${materialProfit}` : `${materialProfit}`;
@@ -1450,64 +1666,55 @@
         const canvas = document.getElementById('reportCanvas');
         const ctx = canvas.getContext('2d');
         canvas.width = 600;
-        canvas.height = 600;
+        canvas.height = 650;
 
-        // Background
         const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
         gradient.addColorStop(0, '#1a365d');
         gradient.addColorStop(1, '#2d3748');
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Border
         ctx.strokeStyle = '#d69e2e';
         ctx.lineWidth = 4;
         ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
 
-        // Title
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 28px Arial';
+        ctx.font = 'bold 26px Arial';
         ctx.textAlign = 'center';
-        ctx.fillText('🏪 Marble POS Pro', canvas.width/2, 60);
+        ctx.fillText('🏪 Marble POS Pro', canvas.width/2, 55);
 
-        // Line
         ctx.strokeStyle = '#d69e2e';
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(50, 80);
-        ctx.lineTo(canvas.width - 50, 80);
+        ctx.moveTo(50, 75);
+        ctx.lineTo(canvas.width - 50, 75);
         ctx.stroke();
 
-        // Report text
         ctx.fillStyle = '#ffffff';
-        ctx.font = '16px monospace';
+        ctx.font = '15px monospace';
         ctx.textAlign = 'left';
         const lines = reportText.split('\n');
-        let y = 120;
+        let y = 110;
         lines.forEach(line => {
             if (line.trim()) {
                 ctx.fillText(line, 30, y);
-                y += 28;
+                y += 26;
             } else {
-                y += 15;
+                y += 12;
             }
         });
 
-        // Footer
         ctx.fillStyle = '#d69e2e';
-        ctx.font = '12px Arial';
+        ctx.font = '11px Arial';
         ctx.textAlign = 'center';
-        ctx.fillText(`Generated: ${new Date().toLocaleString()}`, canvas.width/2, canvas.height - 30);
+        ctx.fillText(`Generated: ${new Date().toLocaleString()}`, canvas.width/2, canvas.height - 25);
 
-        // Download as image
         const link = document.createElement('a');
         link.download = `report-${getToday()}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
 
-        // Also share via WhatsApp
         if (confirm('Share this image on WhatsApp?')) {
-            // Create a blob and share
             canvas.toBlob(function(blob) {
                 const file = new File([blob], 'report.png', { type: 'image/png' });
                 if (navigator.share) {
@@ -1516,7 +1723,6 @@
                         files: [file]
                     }).catch(err => console.log('Share cancelled'));
                 } else {
-                    // Fallback - open WhatsApp with text
                     const phone = '923001234567';
                     const url = `https://wa.me/${phone}?text=${encodeURIComponent('📊 Report attached')}`;
                     window.open(url, '_blank');
@@ -1528,7 +1734,7 @@
     function sendWhatsAppReport() {
         const report = document.getElementById('reportDisplay').textContent;
         if (!report || report.trim() === '') return alert('Generate report first!');
-        const phone = '923001234567'; // Change to your number
+        const phone = '923001234567';
         const url = `https://wa.me/${phone}?text=${encodeURIComponent(report)}`;
         window.open(url, '_blank');
     }
@@ -1602,8 +1808,16 @@
         saveDB();
     }
 
+    // Check internet and sync
+    setTimeout(() => {
+        checkInternet();
+    }, 1000);
+
+    // Auto sync every 30 seconds
+    setInterval(autoSync, 30000);
+
     renderAll();
-    console.log('🚀 Marble POS Pro Ready!');
+    console.log('🚀 Marble POS Pro with Cloud Sync Ready!');
     console.log('📦 Items:', db.items.length);
     console.log('👥 Customers:', db.customers.length);
     console.log('💰 Sales:', db.sales.length);
