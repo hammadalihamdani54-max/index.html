@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Marble POS Pro</title>
+    <title>Warda Marble Tabuk</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
         body{background:#f0f4f8;padding:10px;padding-bottom:80px}
@@ -91,7 +93,7 @@
     <!-- Header -->
     <div class="header">
         <div>
-            <h1><i class="fas fa-store"></i> <span id="shopName">Marble POS</span></h1>
+            <h1><i class="fas fa-store"></i> <span id="shopName">Warda Marble Tabuk</span></h1>
             <span class="header-badge" id="modeBadge">👑 Admin</span>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center;">
@@ -256,15 +258,9 @@
 <canvas id="reportCanvas" style="display:none;"></canvas>
 
 <!-- ============================================================ -->
-<!-- 🔑 FIREBASE CONFIG (Already Added - DO NOT CHANGE) -->
+<!-- 🔑 FIREBASE CONFIG -->
 <!-- ============================================================ -->
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-
 <script>
-    // ============================================================
-    // FIREBASE CONFIG - Your Firebase Configuration
-    // ============================================================
     const firebaseConfig = {
         apiKey: "AIzaSyBacJhHOK-xZ9TgQfbN8swRNYIhmsIh0nk",
         authDomain: "warda-marble.firebaseapp.com",
@@ -295,9 +291,8 @@
     let currentLang = 'en';
     let isSyncing = false;
 
-    // Load from localStorage
     function loadLocal() {
-        const data = localStorage.getItem('marble_data');
+        const data = localStorage.getItem('warda_data');
         if (data) {
             const parsed = JSON.parse(data);
             db.items = parsed.items || [];
@@ -309,37 +304,21 @@
     }
     loadLocal();
 
-    // Save to localStorage
     function saveLocal() {
-        localStorage.setItem('marble_data', JSON.stringify(db));
+        localStorage.setItem('warda_data', JSON.stringify(db));
     }
 
-    // Get today's date
     function getToday() {
         return new Date().toISOString().split('T')[0];
     }
 
-    // ============================================================
-    // LANGUAGE
-    // ============================================================
+    // Language
     const lang = {
-        en: {
-            shopName: 'Marble POS',
-            cash: 'Cash',
-            credit: 'Credit',
-            walkin: 'Walk-in'
-        },
-        ur: {
-            shopName: 'ماربل پی او ایس',
-            cash: 'نقد',
-            credit: 'ادھار',
-            walkin: 'بغیر گاہک'
-        }
+        en: { shopName: 'Warda Marble Tabuk', cash: 'Cash', credit: 'Credit', walkin: 'Walk-in' },
+        ur: { shopName: 'وردہ ماربل تبوک', cash: 'نقد', credit: 'ادھار', walkin: 'بغیر گاہک' }
     };
 
-    function t(key) {
-        return lang[currentLang][key] || key;
-    }
+    function t(key) { return lang[currentLang][key] || key; }
 
     function toggleLang() {
         currentLang = currentLang === 'en' ? 'ur' : 'en';
@@ -366,9 +345,7 @@
         renderAll();
     }
 
-    // ============================================================
-    // SYNC FUNCTIONS
-    // ============================================================
+    // Sync Functions
     function updateStatus(status) {
         const dot = document.getElementById('statusDot');
         const text = document.getElementById('statusText');
@@ -389,7 +366,7 @@
             transactions: db.transactions,
             updated: Date.now()
         };
-        database.ref('marble_data').set(data).then(() => {
+        database.ref('warda_data').set(data).then(() => {
             updateStatus('online');
             isSyncing = false;
             showToast('✅ Synced to cloud!');
@@ -405,7 +382,7 @@
         if (isSyncing) return;
         isSyncing = true;
         updateStatus('syncing');
-        database.ref('marble_data').once('value').then(snapshot => {
+        database.ref('warda_data').once('value').then(snapshot => {
             const data = snapshot.val();
             if (data) {
                 db.items = data.items || [];
@@ -435,9 +412,7 @@
         setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 3000);
     }
 
-    // ============================================================
-    // CALCULATE AREA
-    // ============================================================
+    // Calculate Area
     function calcArea() {
         const l = parseFloat(document.getElementById('itemLength').value) || 0;
         const w = parseFloat(document.getElementById('itemWidth').value) || 0;
@@ -446,9 +421,7 @@
     document.getElementById('itemLength').addEventListener('input', calcArea);
     document.getElementById('itemWidth').addEventListener('input', calcArea);
 
-    // ============================================================
-    // ITEMS
-    // ============================================================
+    // Items
     function addItem() {
         if (!isAdmin) return alert('Only Admin can add!');
         const name = document.getElementById('itemName').value.trim();
@@ -548,9 +521,7 @@
         db.items.forEach(i => { const o = document.createElement('option'); o.value = i.id; o.textContent = `${i.name} (${i.stock})`; sel.appendChild(o); });
     }
 
-    // ============================================================
     // POS
-    // ============================================================
     function filterCategory(cat) {
         currentFilter = cat;
         document.querySelectorAll('.cat-tab').forEach(el => el.classList.remove('active', 'stone-active', 'material-active'));
@@ -577,6 +548,7 @@
         grid.innerHTML = html;
     }
 
+    // Cart
     function addToCart(id) {
         const item = db.items.find(i => i.id === id);
         if (!item || item.stock <= 0) return alert('Out of stock!');
@@ -631,6 +603,7 @@
         document.getElementById('cartCount').textContent = cart.reduce((s, c) => s + c.qty, 0);
     }
 
+    // Complete Sale
     function completeSale() {
         if (!isAdmin) return alert('Only Admin can complete sales!');
         if (cart.length === 0) return alert('Cart empty!');
@@ -666,9 +639,7 @@
         showToast(`✅ Sale: ${total} | Profit: ${total - cost}`);
     }
 
-    // ============================================================
-    // CUSTOMERS
-    // ============================================================
+    // Customers
     function addCustomer() {
         if (!isAdmin) return alert('Only Admin!');
         const name = document.getElementById('custName').value.trim();
@@ -720,9 +691,7 @@
         });
     }
 
-    // ============================================================
-    // EXPENSES
-    // ============================================================
+    // Expenses
     function addExpense() {
         if (!isAdmin) return alert('Only Admin!');
         const head = document.getElementById('expenseHead').value.trim();
@@ -748,9 +717,7 @@
         container.innerHTML = html;
     }
 
-    // ============================================================
-    // REPORTS
-    // ============================================================
+    // Reports
     function generateReport(type) {
         const today = getToday();
         let sales = [], expenses = [];
@@ -809,7 +776,7 @@
         g.addColorStop(0, '#1a365d'); g.addColorStop(1, '#2d3748');
         ctx.fillStyle = g; ctx.fillRect(0,0,canvas.width,canvas.height);
         ctx.fillStyle = '#fff'; ctx.font = 'bold 24px Arial'; ctx.textAlign = 'center';
-        ctx.fillText('🏪 Marble POS', canvas.width/2, 50);
+        ctx.fillText('🏪 Warda Marble', canvas.width/2, 50);
         ctx.fillStyle = '#d69e2e'; ctx.font = '16px monospace'; ctx.textAlign = 'left';
         const lines = report.split('\n'); let y = 90;
         lines.forEach(line => { if(line.trim()) { ctx.fillText(line, 30, y); y += 26; } else y += 12; });
@@ -829,9 +796,7 @@
         window.open(`https://wa.me/${phone}?text=${encodeURIComponent(report)}`, '_blank');
     }
 
-    // ============================================================
-    // RENDER ALL
-    // ============================================================
+    // Render All
     function renderAll() {
         renderPOS();
         renderCart();
@@ -842,9 +807,7 @@
         if (document.getElementById('section-reports').classList.contains('active')) generateReport('daily');
     }
 
-    // ============================================================
-    // NAVIGATION
-    // ============================================================
+    // Navigation
     document.querySelectorAll('.tab').forEach(tab => {
         tab.addEventListener('click', function() {
             const id = this.dataset.tab;
@@ -879,17 +842,115 @@
         });
     });
 
-    // ============================================================
-    // INIT
-    // ============================================================
-    // Sample items if empty
+    // Init - Sample items from your system
     if (db.items.length === 0) {
         db.items = [
-            { id: 1, name: 'Atlantic Marble', category: 'stone', unit: 'm²', purchasePrice: 800, sellPrice: 1200, stock: 100, minStock: 10, length: 0, width: 0, area: 0 },
-            { id: 2, name: 'White Marble', category: 'stone', unit: 'm²', purchasePrice: 1000, sellPrice: 1500, stock: 80, minStock: 8, length: 0, width: 0, area: 0 },
-            { id: 3, name: 'Tiles', category: 'material', unit: 'pcs', purchasePrice: 150, sellPrice: 250, stock: 500, minStock: 50, length: 0, width: 0, area: 0 }
+            // Materials
+            { id: 1, name: 'زاویہ اپ ڈاون 4*4*3mm', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 9200, minStock: 100, length: 0, width: 0, area: 0 },
+            { id: 2, name: 'زاویہ اپ ڈاون 4*4*2mm', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 6600, minStock: 100, length: 0, width: 0, area: 0 },
+            { id: 3, name: 'زاویہ اپ ڈاون 4*3*3mm', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 4300, minStock: 100, length: 0, width: 0, area: 0 },
+            { id: 4, name: 'زاویہ اپ ڈاون 4*3*2mm', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 2500, minStock: 100, length: 0, width: 0, area: 0 },
+            { id: 5, name: 'زاویہ اپ ڈاون 4*5*3mm', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 1200, minStock: 50, length: 0, width: 0, area: 0 },
+            { id: 6, name: 'زاویہ اپ ڈاون 4*6*3mm', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 850, minStock: 50, length: 0, width: 0, area: 0 },
+            { id: 7, name: 'زاویہ اپ ڈاون 4*8*3mm', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 420, minStock: 50, length: 0, width: 0, area: 0 },
+            { id: 8, name: 'زاویہ اپ ڈاون 4*10*3mm', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 400, minStock: 50, length: 0, width: 0, area: 0 },
+            { id: 9, name: 'مسمار مغلوب 10*40', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 4800, minStock: 100, length: 0, width: 0, area: 0 },
+            { id: 10, name: 'مسمار مغلوب 10*50', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 4800, minStock: 100, length: 0, width: 0, area: 0 },
+            { id: 11, name: 'مسمار مغلوب 10*60', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 3500, minStock: 100, length: 0, width: 0, area: 0 },
+            { id: 12, name: 'مسمار مغلوب 10*80', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 1500, minStock: 50, length: 0, width: 0, area: 0 },
+            { id: 13, name: 'مسمار مغلوب 10*100', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 1440, minStock: 50, length: 0, width: 0, area: 0 },
+            { id: 14, name: 'براغی سقف 10*72', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 2200, minStock: 100, length: 0, width: 0, area: 0 },
+            { id: 15, name: 'براغی سقف 10*92', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 2100, minStock: 100, length: 0, width: 0, area: 0 },
+            { id: 16, name: 'براغی سقف 10*112', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 1920, minStock: 50, length: 0, width: 0, area: 0 },
+            { id: 17, name: 'براغی سقف 10*115', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 2200, minStock: 50, length: 0, width: 0, area: 0 },
+            { id: 18, name: 'براغی سقف 10*202', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 1040, minStock: 50, length: 0, width: 0, area: 0 },
+            { id: 19, name: 'جولی ابو جمل Standard', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 5, minStock: 2, length: 0, width: 0, area: 0 },
+            { id: 20, name: 'جولی گلیڈتیر Standard', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 0, minStock: 2, length: 0, width: 0, area: 0 },
+            { id: 21, name: 'دسک حجر احمر 7 بوسہ', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 0, minStock: 2, length: 0, width: 0, area: 0 },
+            { id: 22, name: 'دسک حجر احمر 4.50 بوسہ', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 7, minStock: 2, length: 0, width: 0, area: 0 },
+            { id: 23, name: 'دسک جرانیت 7 بوسہ', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 3, minStock: 2, length: 0, width: 0, area: 0 },
+            { id: 24, name: 'دسک بوش 9 بوسہ', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 20, minStock: 5, length: 0, width: 0, area: 0 },
+            { id: 25, name: 'ریشہ ہلتی 20cm', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 0, minStock: 5, length: 0, width: 0, area: 0 },
+            { id: 26, name: 'ریشہ ہلتی 15cm', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 24, minStock: 5, length: 0, width: 0, area: 0 },
+            { id: 27, name: 'ریشہ ہلتی 10cm', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 1, minStock: 5, length: 0, width: 0, area: 0 },
+            { id: 28, name: 'ریشہ دریل 4mm', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 12, minStock: 5, length: 0, width: 0, area: 0 },
+            { id: 29, name: 'ریشہ دریل 6mm', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 10, minStock: 5, length: 0, width: 0, area: 0 },
+            { id: 30, name: 'ریشہ دریل 10mm', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 16, minStock: 5, length: 0, width: 0, area: 0 },
+            { id: 31, name: 'گمتا چوڑی Standard', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 7, minStock: 2, length: 0, width: 0, area: 0 },
+            { id: 32, name: 'گمتا سادہ Standard', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 7, minStock: 2, length: 0, width: 0, area: 0 },
+            { id: 33, name: 'بکرا Standard', category: 'material', unit: 'pcs', purchasePrice: 0, sellPrice: 0, stock: 1, minStock: 2, length: 0, width: 0, area: 0 },
+            // Polished Marble
+            { id: 34, name: 'ابیض مجلی مبروم 3*7', category: 'stone', unit: 'm²', purchasePrice: 50, sellPrice: 65, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 35, name: 'ابیض مجلی مبروم 3*10', category: 'stone', unit: 'm²', purchasePrice: 50, sellPrice: 65, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 36, name: 'ابیض مجلی مبروم 3*15', category: 'stone', unit: 'm²', purchasePrice: 50, sellPrice: 65, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 37, name: 'ابیض مجلی مبروم 3*18', category: 'stone', unit: 'm²', purchasePrice: 50, sellPrice: 65, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 38, name: 'ابیض مجلی مبروم 3*20', category: 'stone', unit: 'm²', purchasePrice: 50, sellPrice: 65, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 39, name: 'ابیض مجلی مبروم 3*25', category: 'stone', unit: 'm²', purchasePrice: 50, sellPrice: 65, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 40, name: 'ابیض مجلی مبروم 3*27', category: 'stone', unit: 'm²', purchasePrice: 50, sellPrice: 65, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 41, name: 'ابیض مجلی مبروم 3*30', category: 'stone', unit: 'm²', purchasePrice: 50, sellPrice: 65, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 42, name: 'ابیض مجلی مبروم 3*32', category: 'stone', unit: 'm²', purchasePrice: 50, sellPrice: 65, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 43, name: 'ابیض مجلی مبروم 3*35', category: 'stone', unit: 'm²', purchasePrice: 50, sellPrice: 65, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 44, name: 'ابیض مجلی مبروم 3*37', category: 'stone', unit: 'm²', purchasePrice: 50, sellPrice: 65, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 45, name: 'ابیض مجلی مبروم 3*40', category: 'stone', unit: 'm²', purchasePrice: 50, sellPrice: 65, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 46, name: 'ابیض مجلی مبروم 3*50', category: 'stone', unit: 'm²', purchasePrice: 50, sellPrice: 65, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 47, name: 'ابیض مجلی مبروم 3*60', category: 'stone', unit: 'm²', purchasePrice: 50, sellPrice: 65, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 48, name: 'ابیض مجلی سادہ 3*7', category: 'stone', unit: 'm²', purchasePrice: 45, sellPrice: 60, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 49, name: 'ابیض مجلی سادہ 3*10', category: 'stone', unit: 'm²', purchasePrice: 45, sellPrice: 60, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 50, name: 'ابیض مجلی سادہ 3*15', category: 'stone', unit: 'm²', purchasePrice: 45, sellPrice: 60, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 51, name: 'ابیض مجلی سادہ 3*18', category: 'stone', unit: 'm²', purchasePrice: 45, sellPrice: 60, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 52, name: 'ابیض مجلی سادہ 3*20', category: 'stone', unit: 'm²', purchasePrice: 45, sellPrice: 60, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 53, name: 'ابیض مجلی سادہ 3*25', category: 'stone', unit: 'm²', purchasePrice: 45, sellPrice: 60, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 54, name: 'ابیض مجلی سادہ 3*27', category: 'stone', unit: 'm²', purchasePrice: 45, sellPrice: 60, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 55, name: 'ابیض مجلی سادہ 3*30', category: 'stone', unit: 'm²', purchasePrice: 45, sellPrice: 60, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 56, name: 'ابیض مجلی سادہ 3*32', category: 'stone', unit: 'm²', purchasePrice: 45, sellPrice: 60, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 57, name: 'ابیض مجلی سادہ 3*35', category: 'stone', unit: 'm²', purchasePrice: 45, sellPrice: 60, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 58, name: 'ابیض مجلی سادہ 3*37', category: 'stone', unit: 'm²', purchasePrice: 45, sellPrice: 60, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 59, name: 'ابیض مجلی سادہ 3*40', category: 'stone', unit: 'm²', purchasePrice: 45, sellPrice: 60, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 60, name: 'ابیض مجلی سادہ 3*50', category: 'stone', unit: 'm²', purchasePrice: 45, sellPrice: 60, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 61, name: 'ابیض مجلی سادہ 3*60', category: 'stone', unit: 'm²', purchasePrice: 45, sellPrice: 60, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 62, name: '(A) ابیض مجلی فرزا 3*40*80', category: 'stone', unit: 'm²', purchasePrice: 63, sellPrice: 75, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 63, name: '(C) ابیض مجلی فرزا 3*40*60', category: 'stone', unit: 'm²', purchasePrice: 63, sellPrice: 75, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 64, name: 'ابیض مجلی مشطوف 3*30', category: 'stone', unit: 'm²', purchasePrice: 58, sellPrice: 70, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 65, name: 'ابیض بشارتہ فرزا 3*40*80', category: 'stone', unit: 'm²', purchasePrice: 73, sellPrice: 85, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 66, name: 'MNHOOD ABIAZ 3*20*1.20', category: 'stone', unit: 'm²', purchasePrice: 53, sellPrice: 65, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            // Honed Marble
+            { id: 67, name: 'ابیض مصنفر مبروم 3*7', category: 'stone', unit: 'm²', purchasePrice: 42, sellPrice: 55, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 68, name: 'ابیض مصنفر مبروم 3*10', category: 'stone', unit: 'm²', purchasePrice: 42, sellPrice: 55, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 69, name: 'ابیض مصنفر مبروم 3*15', category: 'stone', unit: 'm²', purchasePrice: 42, sellPrice: 55, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 70, name: 'ابیض مصنفر مبروم 3*18', category: 'stone', unit: 'm²', purchasePrice: 42, sellPrice: 55, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 71, name: 'ابیض مصنفر مبروم 3*20', category: 'stone', unit: 'm²', purchasePrice: 42, sellPrice: 55, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 72, name: 'ابیض مصنفر مبروم 3*25', category: 'stone', unit: 'm²', purchasePrice: 42, sellPrice: 55, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 73, name: 'ابیض مصنفر مبروم 3*27', category: 'stone', unit: 'm²', purchasePrice: 42, sellPrice: 55, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 74, name: 'ابیض مصنفر مبروم 3*30', category: 'stone', unit: 'm²', purchasePrice: 42, sellPrice: 55, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 75, name: 'ابیض مصنفر مبروم 3*32', category: 'stone', unit: 'm²', purchasePrice: 42, sellPrice: 55, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 76, name: 'ابیض مصنفر مبروم 3*35', category: 'stone', unit: 'm²', purchasePrice: 42, sellPrice: 55, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 77, name: 'ابیض مصنفر مبروم 3*37', category: 'stone', unit: 'm²', purchasePrice: 42, sellPrice: 55, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 78, name: 'ابیض مصنفر مبروم 3*40', category: 'stone', unit: 'm²', purchasePrice: 42, sellPrice: 55, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 79, name: 'ابیض مصنفر مبروم 3*50', category: 'stone', unit: 'm²', purchasePrice: 42, sellPrice: 55, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 80, name: 'ابیض مصنفر مبروم 3*60', category: 'stone', unit: 'm²', purchasePrice: 42, sellPrice: 55, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 81, name: 'ابیض مصنفر مبروم 4*7', category: 'stone', unit: 'm²', purchasePrice: 42, sellPrice: 55, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 82, name: 'ابیض مصنفر مبروم 5*7', category: 'stone', unit: 'm²', purchasePrice: 42, sellPrice: 55, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 83, name: 'ابیض مصنفر سادہ 3*7', category: 'stone', unit: 'm²', purchasePrice: 38, sellPrice: 50, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 84, name: 'ابیض مصنفر سادہ 3*10', category: 'stone', unit: 'm²', purchasePrice: 38, sellPrice: 50, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 85, name: 'ابیض مصنفر سادہ 3*15', category: 'stone', unit: 'm²', purchasePrice: 38, sellPrice: 50, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 86, name: 'ابیض مصنفر سادہ 3*18', category: 'stone', unit: 'm²', purchasePrice: 38, sellPrice: 50, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 87, name: 'ابیض مصنفر سادہ 3*20', category: 'stone', unit: 'm²', purchasePrice: 38, sellPrice: 50, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 88, name: 'ابیض مصنفر سادہ 3*25', category: 'stone', unit: 'm²', purchasePrice: 38, sellPrice: 50, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 89, name: 'ابیض مصنفر سادہ 3*27', category: 'stone', unit: 'm²', purchasePrice: 38, sellPrice: 50, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 90, name: 'ابیض مصنفر سادہ 3*30', category: 'stone', unit: 'm²', purchasePrice: 38, sellPrice: 50, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 91, name: 'ابیض مصنفر سادہ 3*32', category: 'stone', unit: 'm²', purchasePrice: 38, sellPrice: 50, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 92, name: 'ابیض مصنفر سادہ 3*35', category: 'stone', unit: 'm²', purchasePrice: 38, sellPrice: 50, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 93, name: 'ابیض مصنفر سادہ 3*37', category: 'stone', unit: 'm²', purchasePrice: 38, sellPrice: 50, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 94, name: 'ابیض مصنفر سادہ 3*40', category: 'stone', unit: 'm²', purchasePrice: 38, sellPrice: 50, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 95, name: 'ابیض مصنفر سادہ 3*50', category: 'stone', unit: 'm²', purchasePrice: 38, sellPrice: 50, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 96, name: 'ابیض مصنفر سادہ 3*60', category: 'stone', unit: 'm²', purchasePrice: 38, sellPrice: 50, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 97, name: 'ابیض مصنفر سادہ 4*7', category: 'stone', unit: 'm²', purchasePrice: 38, sellPrice: 50, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 98, name: 'ابیض مصنفر سادہ 5*7', category: 'stone', unit: 'm²', purchasePrice: 38, sellPrice: 50, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 99, name: 'ابیض مصنفر فرزا 3*40*80', category: 'stone', unit: 'm²', purchasePrice: 55, sellPrice: 65, stock: 50, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 100, name: 'پیانو ابیض مصنفر 3*20*50', category: 'stone', unit: 'm²', purchasePrice: 45, sellPrice: 55, stock: 50, minStock: 10, length: 0, width: 0, area: 0 }
         ];
         saveLocal();
+        syncToCloud();
     }
 
     renderAll();
@@ -900,7 +961,7 @@
         else updateStatus('offline');
     }, 30000);
 
-    console.log('🚀 Marble POS Ready!');
+    console.log('🚀 Warda Marble Tabuk Ready!');
     console.log('📦 Items:', db.items.length);
 </script>
 </body>
