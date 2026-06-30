@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Marble POS System</title>
+    <title>Marble POS Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -18,6 +18,9 @@
             --success: #38a169;
             --danger: #e53e3e;
             --warning: #d69e2e;
+            --gold: #d69e2e;
+            --stone: #8B7355;
+            --material: #2b6cb0;
             --bg: #f0f4f8;
             --card: #ffffff;
         }
@@ -25,10 +28,9 @@
             background: var(--bg);
             padding: 10px;
             padding-bottom: 80px;
-            direction: rtl;
         }
         .app-container {
-            max-width: 500px;
+            max-width: 520px;
             margin: 0 auto;
             background: var(--card);
             border-radius: 20px;
@@ -49,20 +51,27 @@
             flex-wrap: wrap;
         }
         .header h1 {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
         }
-        .lang-toggle {
+        .header-badge {
             background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+        .lang-toggle, .mode-toggle {
+            background: rgba(255,255,255,0.15);
             border: none;
             color: white;
-            padding: 6px 15px;
+            padding: 5px 12px;
             border-radius: 20px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12px;
+            margin: 2px;
         }
-        .lang-toggle:active {
+        .lang-toggle:active, .mode-toggle:active {
             transform: scale(0.95);
         }
         /* Cards */
@@ -75,16 +84,24 @@
             border: 1px solid #e2e8f0;
         }
         .card-title {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
             color: var(--primary);
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             gap: 8px;
             border-bottom: 2px solid #e2e8f0;
             padding-bottom: 8px;
         }
+        .card-title .cat-badge {
+            font-size: 10px;
+            padding: 2px 10px;
+            border-radius: 20px;
+            color: white;
+        }
+        .cat-stone { background: var(--stone); }
+        .cat-material { background: var(--material); }
         /* POS Grid */
         .pos-grid {
             display: grid;
@@ -95,11 +112,11 @@
             background: #f7fafc;
             border: 2px solid #e2e8f0;
             border-radius: 12px;
-            padding: 12px;
+            padding: 10px;
             text-align: center;
             cursor: pointer;
             transition: 0.3s;
-            font-size: 13px;
+            font-size: 12px;
         }
         .pos-item:active {
             transform: scale(0.95);
@@ -108,6 +125,7 @@
         .pos-item .name {
             font-weight: 600;
             color: var(--secondary);
+            font-size: 13px;
         }
         .pos-item .price {
             color: var(--primary);
@@ -115,8 +133,14 @@
             font-size: 14px;
         }
         .pos-item .stock {
-            font-size: 11px;
+            font-size: 10px;
             color: #718096;
+        }
+        .pos-item .unit-badge {
+            font-size: 9px;
+            background: #e2e8f0;
+            padding: 1px 8px;
+            border-radius: 10px;
         }
         .pos-item.out-of-stock {
             opacity: 0.5;
@@ -126,34 +150,34 @@
         .cart-item {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
+            padding: 6px 0;
             border-bottom: 1px solid #e2e8f0;
-            font-size: 14px;
+            font-size: 13px;
             align-items: center;
         }
         .cart-item .qty-control {
             display: flex;
-            gap: 6px;
+            gap: 4px;
             align-items: center;
         }
         .cart-item .qty-control button {
             background: #e2e8f0;
             border: none;
             border-radius: 50%;
-            width: 28px;
-            height: 28px;
+            width: 26px;
+            height: 26px;
             font-weight: 700;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
         }
         .cart-item .qty-control button:active {
             transform: scale(0.9);
         }
         .btn-sm {
-            padding: 6px 12px;
+            padding: 4px 10px;
             border: none;
             border-radius: 8px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             cursor: pointer;
         }
@@ -164,30 +188,30 @@
         /* Tabs */
         .tabs {
             display: flex;
-            gap: 4px;
-            margin-bottom: 15px;
+            gap: 3px;
+            margin-bottom: 12px;
             flex-wrap: wrap;
             background: #f7fafc;
-            padding: 5px;
+            padding: 4px;
             border-radius: 12px;
         }
         .tab {
             flex: 1;
-            padding: 8px 4px;
+            padding: 6px 3px;
             text-align: center;
             background: transparent;
             border-radius: 10px;
             font-weight: 600;
-            font-size: 10px;
+            font-size: 9px;
             cursor: pointer;
             transition: 0.3s;
-            min-width: 45px;
+            min-width: 40px;
             color: #4a5568;
         }
         .tab i {
             display: block;
-            font-size: 16px;
-            margin-bottom: 2px;
+            font-size: 14px;
+            margin-bottom: 1px;
         }
         .tab.active {
             background: var(--primary);
@@ -208,24 +232,24 @@
             background: white;
             display: flex;
             justify-content: space-around;
-            padding: 5px 0;
+            padding: 4px 0;
             box-shadow: 0 -2px 15px rgba(0,0,0,0.1);
             border-top: 1px solid #e2e8f0;
             z-index: 1000;
-            max-width: 500px;
+            max-width: 520px;
             margin: 0 auto;
         }
         .bottom-nav .nav-item {
             text-align: center;
-            font-size: 9px;
+            font-size: 8px;
             color: #718096;
             cursor: pointer;
-            padding: 4px 6px;
+            padding: 3px 5px;
             border-radius: 10px;
             transition: 0.3s;
         }
         .bottom-nav .nav-item i {
-            font-size: 18px;
+            font-size: 16px;
             display: block;
         }
         .bottom-nav .nav-item.active {
@@ -234,21 +258,21 @@
         }
         /* Form */
         .form-group {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         .form-group label {
             display: block;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             color: var(--secondary);
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
         .form-group input, .form-group select {
             width: 100%;
-            padding: 10px 12px;
+            padding: 8px 10px;
             border: 2px solid #e2e8f0;
             border-radius: 10px;
-            font-size: 14px;
+            font-size: 13px;
             background: #f7fafc;
         }
         .form-group input:focus {
@@ -257,10 +281,10 @@
             background: white;
         }
         .btn {
-            padding: 10px 18px;
+            padding: 8px 14px;
             border: none;
             border-radius: 10px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             transition: 0.3s;
@@ -268,7 +292,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 5px;
         }
         .btn:active {
             transform: scale(0.96);
@@ -277,68 +301,108 @@
         .btn-success { background: var(--success); color: white; }
         .btn-danger { background: var(--danger); color: white; }
         .btn-warning { background: var(--warning); color: white; }
+        .btn-gold { background: var(--gold); color: white; }
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 8px;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
         }
         /* Table */
         .table-wrap {
             overflow-x: auto;
-            margin-top: 8px;
+            margin-top: 6px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 12px;
+            font-size: 11px;
         }
         th {
             background: var(--primary);
             color: white;
-            padding: 6px 4px;
+            padding: 5px 3px;
             text-align: center;
-            font-size: 11px;
+            font-size: 10px;
         }
         td {
-            padding: 6px 4px;
+            padding: 5px 3px;
             border-bottom: 1px solid #e2e8f0;
             text-align: center;
+            font-size: 11px;
         }
         tr:nth-child(even) { background: #f7fafc; }
         .badge {
             display: inline-block;
-            padding: 2px 10px;
+            padding: 2px 8px;
             border-radius: 20px;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 600;
         }
         .badge-success { background: #c6f6d5; color: #22543d; }
         .badge-danger { background: #fed7d7; color: #9b2c2c; }
         .badge-warning { background: #fefcbf; color: #744210; }
+        .badge-stone { background: #e8d5c4; color: #5d4037; }
+        .badge-material { background: #bee3f8; color: #2a4365; }
         .highlight {
-            padding: 10px;
+            padding: 8px;
             border-radius: 10px;
             border-right: 4px solid var(--primary);
             background: #ebf8ff;
-            margin: 6px 0;
-            font-size: 13px;
+            margin: 5px 0;
+            font-size: 12px;
         }
         .total-bar {
             background: var(--primary);
             color: white;
-            padding: 12px;
+            padding: 10px;
             border-radius: 12px;
             display: flex;
             justify-content: space-between;
             font-weight: 700;
-            font-size: 16px;
-            margin-top: 10px;
+            font-size: 15px;
+            margin-top: 8px;
+        }
+        .cat-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+        .cat-tab {
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            background: #e2e8f0;
+            color: #4a5568;
+            border: none;
+            flex: 1;
+        }
+        .cat-tab.active {
+            color: white;
+        }
+        .cat-tab.stone-active { background: var(--stone); color: white; }
+        .cat-tab.material-active { background: var(--material); color: white; }
+        /* View mode */
+        .view-only {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        .view-only .btn, .view-only .pos-item {
+            opacity: 0.5;
+            pointer-events: none;
         }
         @media (max-width: 480px) {
             .grid-2 { grid-template-columns: 1fr; }
+            .grid-3 { grid-template-columns: 1fr 1fr; }
             .pos-grid { grid-template-columns: 1fr 1fr; }
-            .header h1 { font-size: 16px; }
+            .header h1 { font-size: 15px; }
         }
     </style>
 </head>
@@ -346,121 +410,183 @@
 <div class="app-container" id="app">
     <!-- Header -->
     <div class="header">
-        <h1><i class="fas fa-store"></i> <span id="shopName">Marble POS</span></h1>
-        <button class="lang-toggle" onclick="toggleLang()">
-            <i class="fas fa-language"></i> <span id="langLabel">اردو</span>
-        </button>
+        <div>
+            <h1><i class="fas fa-store"></i> <span id="shopName">Marble POS Pro</span></h1>
+            <span class="header-badge" id="modeBadge">👑 Admin</span>
+        </div>
+        <div>
+            <button class="mode-toggle" onclick="toggleMode()"><i class="fas fa-user-shield"></i> <span id="modeLabel">View</span></button>
+            <button class="lang-toggle" onclick="toggleLang()"><i class="fas fa-language"></i> <span id="langLabel">اردو</span></button>
+        </div>
     </div>
 
     <!-- Tabs -->
     <div class="tabs" id="tabHeaders">
-        <div class="tab active" data-tab="pos"><i class="fas fa-shopping-cart"></i> <span class="tabLabel">POS</span></div>
-        <div class="tab" data-tab="stock"><i class="fas fa-boxes"></i> <span class="tabLabel">Stock</span></div>
-        <div class="tab" data-tab="customers"><i class="fas fa-users"></i> <span class="tabLabel">Customers</span></div>
-        <div class="tab" data-tab="expenses"><i class="fas fa-wallet"></i> <span class="tabLabel">Expenses</span></div>
-        <div class="tab" data-tab="reports"><i class="fas fa-chart-pie"></i> <span class="tabLabel">Reports</span></div>
+        <div class="tab active" data-tab="pos"><i class="fas fa-shopping-cart"></i> POS</div>
+        <div class="tab" data-tab="stock"><i class="fas fa-boxes"></i> Stock</div>
+        <div class="tab" data-tab="customers"><i class="fas fa-users"></i> Cust</div>
+        <div class="tab" data-tab="expenses"><i class="fas fa-wallet"></i> Exp</div>
+        <div class="tab" data-tab="reports"><i class="fas fa-chart-pie"></i> Report</div>
     </div>
 
     <!-- ==================== POS SECTION ==================== -->
     <div id="section-pos" class="section active">
         <div class="card">
-            <div class="card-title"><i class="fas fa-list"></i> <span class="label">Select Item</span></div>
+            <div class="card-title">
+                <i class="fas fa-list"></i> Items
+                <span style="margin-right:auto;"></span>
+                <span class="cat-badge cat-stone" style="font-size:10px;">Stone</span>
+                <span class="cat-badge cat-material" style="font-size:10px;">Material</span>
+            </div>
+            <div class="cat-tabs">
+                <button class="cat-tab stone-active active" onclick="filterCategory('stone')" id="catStone">🪨 Stone</button>
+                <button class="cat-tab material-active" onclick="filterCategory('material')" id="catMaterial">🧱 Material</button>
+                <button class="cat-tab" onclick="filterCategory('all')" id="catAll">📦 All</button>
+            </div>
             <div class="pos-grid" id="posGrid"></div>
         </div>
 
         <div class="card">
-            <div class="card-title"><i class="fas fa-shopping-cart"></i> <span class="label">Cart</span> (<span id="cartCount">0</span>)</div>
+            <div class="card-title"><i class="fas fa-shopping-cart"></i> Cart (<span id="cartCount">0</span>)</div>
             <div id="cartItems"></div>
             <div class="total-bar">
-                <span><span class="label">Total</span>:</span>
+                <span>Total:</span>
                 <span id="cartTotal">0</span>
             </div>
-            <div class="grid-2" style="margin-top:10px;">
-                <select id="saleType" style="padding:10px;border-radius:10px;border:2px solid #e2e8f0;">
+            <div class="grid-2" style="margin-top:8px;">
+                <select id="saleType" style="padding:8px;border-radius:10px;border:2px solid #e2e8f0;">
                     <option value="cash">💵 Cash</option>
                     <option value="credit">📝 Credit</option>
                 </select>
-                <select id="saleCustomerSelect" style="padding:10px;border-radius:10px;border:2px solid #e2e8f0;">
+                <select id="saleCustomerSelect" style="padding:8px;border-radius:10px;border:2px solid #e2e8f0;">
                     <option value="">👤 Walk-in</option>
                 </select>
             </div>
-            <div class="form-group" style="margin-top:8px;">
-                <input type="number" id="salePaid" placeholder="Amount Paid" value="0" style="width:100%;padding:10px;border-radius:10px;border:2px solid #e2e8f0;">
+            <div class="form-group" style="margin-top:6px;">
+                <input type="number" id="salePaid" placeholder="Amount Paid" value="0" style="width:100%;padding:8px;border-radius:10px;border:2px solid #e2e8f0;">
             </div>
-            <button class="btn btn-success" onclick="completeSale()"><i class="fas fa-check"></i> <span class="label">Complete Sale</span></button>
+            <button class="btn btn-success" onclick="completeSale()"><i class="fas fa-check"></i> Complete Sale</button>
         </div>
     </div>
 
     <!-- ==================== STOCK SECTION ==================== -->
     <div id="section-stock" class="section">
         <div class="card">
-            <div class="card-title"><i class="fas fa-plus-circle"></i> <span class="label">Add New Item</span></div>
+            <div class="card-title"><i class="fas fa-plus-circle"></i> Add Item</div>
             <div class="form-group">
-                <label class="label">Item Name</label>
+                <label>Item Name</label>
                 <input type="text" id="itemName" placeholder="e.g. Atlantic Marble">
             </div>
             <div class="grid-2">
                 <div class="form-group">
-                    <label class="label">Unit</label>
-                    <select id="itemUnit">
-                        <option value="m²">m²</option>
-                        <option value="pcs">Pieces</option>
+                    <label>Category</label>
+                    <select id="itemCategory">
+                        <option value="stone">🪨 Stone (m²)</option>
+                        <option value="material">🧱 Material (pcs)</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="label">Price</label>
-                    <input type="number" id="itemPrice" placeholder="Sell Price">
+                    <label>Unit</label>
+                    <select id="itemUnit">
+                        <option value="m²">m²</option>
+                        <option value="sqft">sq.ft</option>
+                        <option value="running_ft">Running ft</option>
+                        <option value="pcs">Pieces</option>
+                    </select>
+                </div>
+            </div>
+            <div class="grid-3" id="dimensionFields">
+                <div class="form-group">
+                    <label>Length (ft)</label>
+                    <input type="number" id="itemLength" placeholder="L" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Width (ft)</label>
+                    <input type="number" id="itemWidth" placeholder="W" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Area (m²)</label>
+                    <input type="number" id="itemArea" placeholder="Auto" step="0.01" readonly style="background:#edf2f7;">
                 </div>
             </div>
             <div class="grid-2">
                 <div class="form-group">
-                    <label class="label">Stock</label>
+                    <label>Purchase Price</label>
+                    <input type="number" id="itemPurchasePrice" placeholder="Cost Price">
+                </div>
+                <div class="form-group">
+                    <label>Sell Price</label>
+                    <input type="number" id="itemSellPrice" placeholder="Sell Price">
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Stock</label>
                     <input type="number" id="itemStock" placeholder="Quantity">
                 </div>
                 <div class="form-group">
-                    <label class="label">Min Stock</label>
+                    <label>Min Stock</label>
                     <input type="number" id="itemMinStock" placeholder="Warning Level">
                 </div>
             </div>
-            <button class="btn btn-primary" onclick="addItem()"><i class="fas fa-save"></i> <span class="label">Add Item</span></button>
+            <button class="btn btn-primary" onclick="addItem()"><i class="fas fa-save"></i> Add Item</button>
         </div>
 
         <div class="card">
-            <div class="card-title"><i class="fas fa-list"></i> <span class="label">Stock List</span></div>
+            <div class="card-title"><i class="fas fa-list"></i> Stock List</div>
             <div id="stockListContainer"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><i class="fas fa-arrow-right"></i> Stock In / Out</div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <select id="stockItemSelect" style="padding:8px;border-radius:10px;border:2px solid #e2e8f0;width:100%;"></select>
+                </div>
+                <div class="form-group">
+                    <input type="number" id="stockQty" placeholder="Quantity" style="padding:8px;border-radius:10px;border:2px solid #e2e8f0;width:100%;">
+                </div>
+            </div>
+            <div class="grid-2">
+                <button class="btn btn-success" onclick="stockIn()"><i class="fas fa-plus"></i> Stock In</button>
+                <button class="btn btn-danger" onclick="stockOut()"><i class="fas fa-minus"></i> Stock Out</button>
+            </div>
         </div>
     </div>
 
     <!-- ==================== CUSTOMERS ==================== -->
     <div id="section-customers" class="section">
         <div class="card">
-            <div class="card-title"><i class="fas fa-user-plus"></i> <span class="label">Add Customer</span></div>
+            <div class="card-title"><i class="fas fa-user-plus"></i> Add Customer</div>
             <div class="form-group">
                 <input type="text" id="custName" placeholder="Customer Name">
             </div>
             <div class="form-group">
-                <input type="text" id="custPhone" placeholder="Phone">
+                <input type="text" id="custPhone" placeholder="Phone Number (for search)">
             </div>
-            <button class="btn btn-primary" onclick="addCustomer()"><i class="fas fa-user-plus"></i> <span class="label">Add Customer</span></button>
+            <div class="form-group">
+                <input type="text" id="custAddress" placeholder="Address">
+            </div>
+            <button class="btn btn-primary" onclick="addCustomer()"><i class="fas fa-user-plus"></i> Add Customer</button>
         </div>
 
         <div class="card">
-            <div class="card-title"><i class="fas fa-users"></i> <span class="label">All Customers</span></div>
+            <div class="card-title"><i class="fas fa-users"></i> All Customers</div>
             <div id="customerListContainer"></div>
         </div>
 
         <div class="card">
-            <div class="card-title"><i class="fas fa-hand-holding-usd"></i> <span class="label">Receive Payment</span></div>
-            <select id="receiveCustomerSelect" style="width:100%;padding:10px;border-radius:10px;border:2px solid #e2e8f0;margin-bottom:10px;"></select>
-            <input type="number" id="receiveAmount" placeholder="Amount Received" style="width:100%;padding:10px;border-radius:10px;border:2px solid #e2e8f0;margin-bottom:10px;">
-            <button class="btn btn-success" onclick="receivePayment()"><i class="fas fa-money-bill-wave"></i> <span class="label">Receive</span></button>
+            <div class="card-title"><i class="fas fa-hand-holding-usd"></i> Receive Payment</div>
+            <select id="receiveCustomerSelect" style="width:100%;padding:8px;border-radius:10px;border:2px solid #e2e8f0;margin-bottom:8px;"></select>
+            <input type="number" id="receiveAmount" placeholder="Amount Received" style="width:100%;padding:8px;border-radius:10px;border:2px solid #e2e8f0;margin-bottom:8px;">
+            <button class="btn btn-success" onclick="receivePayment()"><i class="fas fa-money-bill-wave"></i> Receive</button>
         </div>
     </div>
 
     <!-- ==================== EXPENSES ==================== -->
     <div id="section-expenses" class="section">
         <div class="card">
-            <div class="card-title"><i class="fas fa-plus-circle"></i> <span class="label">Add Expense</span></div>
+            <div class="card-title"><i class="fas fa-plus-circle"></i> Add Expense</div>
             <div class="form-group">
                 <input type="text" id="expenseHead" placeholder="Expense Head (e.g. Electricity)">
             </div>
@@ -470,11 +596,11 @@
             <div class="form-group">
                 <input type="text" id="expenseNote" placeholder="Note (optional)">
             </div>
-            <button class="btn btn-danger" onclick="addExpense()"><i class="fas fa-minus-circle"></i> <span class="label">Add Expense</span></button>
+            <button class="btn btn-danger" onclick="addExpense()"><i class="fas fa-minus-circle"></i> Add Expense</button>
         </div>
 
         <div class="card">
-            <div class="card-title"><i class="fas fa-list"></i> <span class="label">Today's Expenses</span></div>
+            <div class="card-title"><i class="fas fa-list"></i> Today's Expenses</div>
             <div id="todayExpensesList"></div>
         </div>
     </div>
@@ -482,23 +608,39 @@
     <!-- ==================== REPORTS ==================== -->
     <div id="section-reports" class="section">
         <div class="card">
-            <div class="card-title"><i class="fas fa-calendar-day"></i> <span class="label">Daily Report</span></div>
-            <div class="grid-2">
-                <button class="btn btn-primary" onclick="generateReport('daily')"><i class="fas fa-eye"></i> <span class="label">Daily</span></button>
-                <button class="btn btn-warning" onclick="generateReport('weekly')"><i class="fas fa-calendar-week"></i> <span class="label">Weekly</span></button>
-                <button class="btn btn-info" onclick="generateReport('monthly')"><i class="fas fa-calendar-alt"></i> <span class="label">Monthly</span></button>
-                <button class="btn btn-success" onclick="sendWhatsAppReport()"><i class="fab fa-whatsapp"></i> <span class="label">WhatsApp</span></button>
+            <div class="card-title"><i class="fas fa-calendar-day"></i> Reports</div>
+            <div class="grid-3">
+                <button class="btn btn-primary" onclick="generateReport('daily')"><i class="fas fa-eye"></i> Daily</button>
+                <button class="btn btn-warning" onclick="generateReport('weekly')"><i class="fas fa-calendar-week"></i> Weekly</button>
+                <button class="btn btn-gold" onclick="generateReport('monthly')"><i class="fas fa-calendar-alt"></i> Monthly</button>
             </div>
-            <div id="reportDisplay" style="margin-top:12px;background:#f7fafc;padding:15px;border-radius:10px;font-size:13px;white-space:pre-wrap;font-family:monospace;"></div>
+            <div style="margin-top:6px;display:flex;gap:4px;">
+                <button class="btn btn-success" onclick="shareReportImage()" style="flex:1;"><i class="fas fa-image"></i> Share Image</button>
+                <button class="btn btn-outline" onclick="sendWhatsAppReport()" style="flex:1;"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+            </div>
+            <div id="reportDisplay" style="margin-top:10px;background:#f7fafc;padding:12px;border-radius:10px;font-size:12px;white-space:pre-wrap;font-family:monospace;"></div>
         </div>
 
         <div class="card">
-            <div class="card-title"><i class="fas fa-chart-line"></i> <span class="label">Profit / Loss</span></div>
-            <div id="profitLossDisplay"></div>
+            <div class="card-title"><i class="fas fa-chart-line"></i> Profit / Loss</div>
+            <div class="grid-2" id="profitLossDisplay">
+                <div class="stat-box" style="background:#f0fff4;padding:10px;border-radius:10px;text-align:center;">
+                    <div style="font-size:20px;font-weight:700;color:#38a169;" id="plStone">0</div>
+                    <div style="font-size:11px;color:#718096;">🪨 Stone</div>
+                </div>
+                <div class="stat-box" style="background:#ebf8ff;padding:10px;border-radius:10px;text-align:center;">
+                    <div style="font-size:20px;font-weight:700;color:#2b6cb0;" id="plMaterial">0</div>
+                    <div style="font-size:11px;color:#718096;">🧱 Material</div>
+                </div>
+                <div class="stat-box" style="background:#fefcbf;padding:10px;border-radius:10px;text-align:center;grid-column:1/-1;">
+                    <div style="font-size:24px;font-weight:700;color:#744210;" id="plTotal">0</div>
+                    <div style="font-size:11px;color:#718096;">📊 Total Profit / Loss</div>
+                </div>
+            </div>
         </div>
 
         <div class="card">
-            <div class="card-title"><i class="fas fa-history"></i> <span class="label">All Transactions</span></div>
+            <div class="card-title"><i class="fas fa-history"></i> All Transactions</div>
             <div id="allTransactionsList"></div>
         </div>
     </div>
@@ -506,100 +648,58 @@
 
 <!-- Bottom Navigation -->
 <div class="bottom-nav">
-    <div class="nav-item active" data-tab="pos"><i class="fas fa-shopping-cart"></i> <span class="tabLabel">POS</span></div>
-    <div class="nav-item" data-tab="stock"><i class="fas fa-boxes"></i> <span class="tabLabel">Stock</span></div>
-    <div class="nav-item" data-tab="customers"><i class="fas fa-users"></i> <span class="tabLabel">Customers</span></div>
-    <div class="nav-item" data-tab="expenses"><i class="fas fa-wallet"></i> <span class="tabLabel">Expenses</span></div>
-    <div class="nav-item" data-tab="reports"><i class="fas fa-chart-pie"></i> <span class="tabLabel">Reports</span></div>
+    <div class="nav-item active" data-tab="pos"><i class="fas fa-shopping-cart"></i> POS</div>
+    <div class="nav-item" data-tab="stock"><i class="fas fa-boxes"></i> Stock</div>
+    <div class="nav-item" data-tab="customers"><i class="fas fa-users"></i> Cust</div>
+    <div class="nav-item" data-tab="expenses"><i class="fas fa-wallet"></i> Exp</div>
+    <div class="nav-item" data-tab="reports"><i class="fas fa-chart-pie"></i> Report</div>
 </div>
+
+<!-- Canvas for image sharing -->
+<canvas id="reportCanvas" style="display:none;"></canvas>
 
 <script>
     // ============================================================
     // LANGUAGE SYSTEM
     // ============================================================
     let currentLang = 'en';
+    let currentCategory = 'all';
+    let isAdmin = true;
+    let cart = [];
+    let currentFilter = 'all';
+
     const translations = {
         en: {
-            shopName: 'Marble POS',
-            pos: 'POS',
-            stock: 'Stock',
-            customers: 'Customers',
-            expenses: 'Expenses',
-            reports: 'Reports',
-            selectItem: 'Select Item',
-            cart: 'Cart',
-            total: 'Total',
-            completeSale: 'Complete Sale',
-            addItem: 'Add Item',
-            addCustomer: 'Add Customer',
-            addExpense: 'Add Expense',
-            receive: 'Receive',
-            daily: 'Daily',
-            weekly: 'Weekly',
-            monthly: 'Monthly',
-            whatsapp: 'WhatsApp',
-            profitLoss: 'Profit / Loss',
-            allTransactions: 'All Transactions',
-            cash: 'Cash',
-            credit: 'Credit',
-            walkin: 'Walk-in',
-            amountPaid: 'Amount Paid',
-            itemName: 'Item Name',
-            unit: 'Unit',
-            price: 'Price',
-            stock: 'Stock',
-            minStock: 'Min Stock',
-            customerName: 'Customer Name',
-            phone: 'Phone',
-            expenseHead: 'Expense Head',
-            amount: 'Amount',
-            note: 'Note',
-            receivePayment: 'Receive Payment',
-            addNewItem: 'Add New Item',
-            allCustomers: 'All Customers',
-            todayExpenses: "Today's Expenses",
-            dailyReport: 'Daily Report'
+            shopName: 'Marble POS Pro',
+            pos: 'POS', stock: 'Stock', customers: 'Cust', expenses: 'Exp', reports: 'Report',
+            addItem: 'Add Item', addCustomer: 'Add Customer', addExpense: 'Add Expense',
+            receive: 'Receive', daily: 'Daily', weekly: 'Weekly', monthly: 'Monthly',
+            whatsapp: 'WhatsApp', shareImage: 'Share Image', total: 'Total',
+            cash: 'Cash', credit: 'Credit', walkin: 'Walk-in', amountPaid: 'Amount Paid',
+            itemName: 'Item Name', category: 'Category', unit: 'Unit',
+            purchasePrice: 'Purchase Price', sellPrice: 'Sell Price',
+            stock: 'Stock', minStock: 'Min Stock', customerName: 'Customer Name',
+            phone: 'Phone', address: 'Address', expenseHead: 'Expense Head',
+            amount: 'Amount', note: 'Note', receivePayment: 'Receive Payment',
+            length: 'Length (ft)', width: 'Width (ft)', area: 'Area (m²)',
+            stone: 'Stone', material: 'Material', all: 'All',
+            completeSale: 'Complete Sale', stockIn: 'Stock In', stockOut: 'Stock Out'
         },
         ur: {
-            shopName: 'ماربل پی او ایس',
-            pos: 'فروخت',
-            stock: 'اسٹاک',
-            customers: 'گاہک',
-            expenses: 'اخراجات',
-            reports: 'رپورٹس',
-            selectItem: 'آئٹم منتخب کریں',
-            cart: 'کارٹ',
-            total: 'کل',
-            completeSale: 'فروخت مکمل کریں',
-            addItem: 'آئٹم شامل کریں',
-            addCustomer: 'گاہک شامل کریں',
-            addExpense: 'خرچ شامل کریں',
-            receive: 'وصول کریں',
-            daily: 'روزانہ',
-            weekly: 'ہفتہ وار',
-            monthly: 'ماہانہ',
-            whatsapp: 'واٹس ایپ',
-            profitLoss: 'منافع / نقصان',
-            allTransactions: 'تمام لین دین',
-            cash: 'نقد',
-            credit: 'ادھار',
-            walkin: 'بغیر گاہک',
-            amountPaid: 'ادا کردہ رقم',
-            itemName: 'آئٹم کا نام',
-            unit: 'یونٹ',
-            price: 'قیمت',
-            stock: 'اسٹاک',
-            minStock: 'کم از کم اسٹاک',
-            customerName: 'گاہک کا نام',
-            phone: 'فون نمبر',
-            expenseHead: 'خرچ کا عنوان',
-            amount: 'رقم',
-            note: 'تفصیل',
-            receivePayment: 'ادھار وصولی',
-            addNewItem: 'نیا آئٹم شامل کریں',
-            allCustomers: 'تمام گاہک',
-            todayExpenses: 'آج کے اخراجات',
-            dailyReport: 'روزانہ رپورٹ'
+            shopName: 'ماربل پی او ایس پرو',
+            pos: 'فروخت', stock: 'اسٹاک', customers: 'گاہک', expenses: 'اخراجات', reports: 'رپورٹس',
+            addItem: 'آئٹم شامل کریں', addCustomer: 'گاہک شامل کریں', addExpense: 'خرچ شامل کریں',
+            receive: 'وصول کریں', daily: 'روزانہ', weekly: 'ہفتہ وار', monthly: 'ماہانہ',
+            whatsapp: 'واٹس ایپ', shareImage: 'تصویر شیئر کریں', total: 'کل',
+            cash: 'نقد', credit: 'ادھار', walkin: 'بغیر گاہک', amountPaid: 'ادا کردہ رقم',
+            itemName: 'آئٹم کا نام', category: 'قسم', unit: 'یونٹ',
+            purchasePrice: 'خرید قیمت', sellPrice: 'فروخت قیمت',
+            stock: 'اسٹاک', minStock: 'کم از کم اسٹاک', customerName: 'گاہک کا نام',
+            phone: 'فون نمبر', address: 'پتہ', expenseHead: 'خرچ کا عنوان',
+            amount: 'رقم', note: 'تفصیل', receivePayment: 'ادھار وصولی',
+            length: 'لمبائی (فٹ)', width: 'چوڑائی (فٹ)', area: 'رقبہ (m²)',
+            stone: 'حجر', material: 'مواد', all: 'تمام',
+            completeSale: 'فروخت مکمل کریں', stockIn: 'اسٹاک شامل کریں', stockOut: 'اسٹاک نکالیں'
         }
     };
 
@@ -615,63 +715,30 @@
     }
 
     function updateLanguage() {
-        document.querySelectorAll('.label').forEach(el => {
-            const key = el.textContent.trim().toLowerCase().replace(/\s+/g, '');
-            // Map keys
-            const map = {
-                'selectitem': 'selectItem',
-                'cart': 'cart',
-                'total': 'total',
-                'completesale': 'completeSale',
-                'additem': 'addItem',
-                'addcustomer': 'addCustomer',
-                'addexpense': 'addExpense',
-                'receive': 'receive',
-                'daily': 'daily',
-                'weekly': 'weekly',
-                'monthly': 'monthly',
-                'whatsapp': 'whatsapp',
-                'profit/loss': 'profitLoss',
-                'alltransactions': 'allTransactions',
-                'itemname': 'itemName',
-                'unit': 'unit',
-                'price': 'price',
-                'stock': 'stock',
-                'minstock': 'minStock',
-                'customername': 'customerName',
-                'phone': 'phone',
-                'expensehead': 'expenseHead',
-                'amount': 'amount',
-                'note': 'note',
-                'receivepayment': 'receivePayment',
-                'addnewitem': 'addNewItem',
-                'allcustomers': 'allCustomers',
-                'today\'sexpenses': 'todayExpenses',
-                'dailyreport': 'dailyReport'
-            };
-            const translated = t(map[key] || key);
-            if (translated) el.textContent = translated;
-        });
-        document.querySelectorAll('.tabLabel').forEach(el => {
-            const key = el.textContent.trim().toLowerCase();
-            const map = { 'pos': 'pos', 'stock': 'stock', 'customers': 'customers', 'expenses': 'expenses', 'reports': 'reports' };
-            el.textContent = t(map[key] || key);
+        document.querySelectorAll('[data-lang]').forEach(el => {
+            const key = el.dataset.lang;
+            el.textContent = t(key);
         });
         document.getElementById('shopName').textContent = t('shopName');
         document.querySelectorAll('input[placeholder]').forEach(el => {
-            const key = el.placeholder.toLowerCase().replace(/\s+/g, '');
+            const key = el.placeholder.toLowerCase().replace(/[^a-z]/g, '');
             const map = {
-                'e.g.atlanticmarble': 'itemName',
-                'sellprice': 'price',
+                'egatlanticmarble': 'itemName',
+                'sellprice': 'sellPrice',
+                'costprice': 'purchasePrice',
                 'quantity': 'stock',
                 'warninglevel': 'minStock',
                 'customername': 'customerName',
-                'phone': 'phone',
-                'expensehead(e.g.electricity)': 'expenseHead',
+                'phonenumberforsearch': 'phone',
+                'address': 'address',
+                'expenseheadegelectricity': 'expenseHead',
                 'amount': 'amount',
-                'note(optional)': 'note',
+                'noteoptional': 'note',
                 'amountpaid': 'amountPaid',
-                'amountreceived': 'amountPaid'
+                'amountreceived': 'amountPaid',
+                'lengthft': 'length',
+                'widthft': 'width',
+                'areaauto': 'area'
             };
             const translated = t(map[key] || key);
             if (translated) el.placeholder = translated;
@@ -680,7 +747,52 @@
             if (el.value === 'cash') el.textContent = '💵 ' + t('cash');
             if (el.value === 'credit') el.textContent = '📝 ' + t('credit');
             if (el.value === '') el.textContent = '👤 ' + t('walkin');
+            if (el.value === 'stone') el.textContent = '🪨 ' + t('stone') + ' (m²)';
+            if (el.value === 'material') el.textContent = '🧱 ' + t('material') + ' (pcs)';
+            if (el.value === 'm²') el.textContent = 'm²';
+            if (el.value === 'sqft') el.textContent = 'sq.ft';
+            if (el.value === 'running_ft') el.textContent = 'Running ft';
+            if (el.value === 'pcs') el.textContent = 'Pieces';
         });
+        // Tab labels
+        document.querySelectorAll('.tab').forEach(el => {
+            const key = el.textContent.trim().toLowerCase();
+            const map = { 'pos': 'pos', 'stock': 'stock', 'cust': 'customers', 'exp': 'expenses', 'report': 'reports' };
+            el.textContent = t(map[key] || key);
+            // Re-add icon
+            const icon = el.querySelector('i');
+            if (icon) el.innerHTML = icon.outerHTML + ' ' + t(map[key] || key);
+        });
+    }
+
+    // ============================================================
+    // MODE (Admin / View)
+    // ============================================================
+    function toggleMode() {
+        isAdmin = !isAdmin;
+        document.getElementById('modeLabel').textContent = isAdmin ? 'View' : 'Admin';
+        document.getElementById('modeBadge').textContent = isAdmin ? '👑 Admin' : '👁️ Viewer';
+        document.getElementById('modeBadge').style.background = isAdmin ? 'rgba(255,255,255,0.2)' : 'rgba(255,215,0,0.3)';
+        if (!isAdmin) {
+            document.querySelectorAll('.btn, .pos-item, .form-group input, .form-group select').forEach(el => {
+                el.style.opacity = '0.6';
+                el.style.pointerEvents = 'none';
+            });
+            document.querySelectorAll('.btn-success, .btn-primary, .btn-danger, .btn-warning').forEach(el => {
+                el.style.opacity = '0.4';
+                el.style.pointerEvents = 'none';
+            });
+        } else {
+            document.querySelectorAll('.btn, .pos-item, .form-group input, .form-group select').forEach(el => {
+                el.style.opacity = '1';
+                el.style.pointerEvents = 'auto';
+            });
+            document.querySelectorAll('.btn-success, .btn-primary, .btn-danger, .btn-warning').forEach(el => {
+                el.style.opacity = '1';
+                el.style.pointerEvents = 'auto';
+            });
+        }
+        renderAll();
     }
 
     // ============================================================
@@ -691,7 +803,8 @@
         customers: JSON.parse(localStorage.getItem('marble_customers')) || [],
         sales: JSON.parse(localStorage.getItem('marble_sales')) || [],
         expenses: JSON.parse(localStorage.getItem('marble_expenses')) || [],
-        transactions: JSON.parse(localStorage.getItem('marble_transactions')) || []
+        transactions: JSON.parse(localStorage.getItem('marble_transactions')) || [],
+        stockHistory: JSON.parse(localStorage.getItem('marble_stock_history')) || []
     };
 
     function saveDB() {
@@ -700,13 +813,226 @@
         localStorage.setItem('marble_sales', JSON.stringify(db.sales));
         localStorage.setItem('marble_expenses', JSON.stringify(db.expenses));
         localStorage.setItem('marble_transactions', JSON.stringify(db.transactions));
+        localStorage.setItem('marble_stock_history', JSON.stringify(db.stockHistory));
+    }
+
+    // ============================================================
+    // AUTO AREA CALCULATION
+    // ============================================================
+    function calculateArea() {
+        const length = parseFloat(document.getElementById('itemLength').value) || 0;
+        const width = parseFloat(document.getElementById('itemWidth').value) || 0;
+        const area = (length * width) / 10.764; // sqft to m²
+        document.getElementById('itemArea').value = area.toFixed(2);
+        return area;
+    }
+
+    document.getElementById('itemLength').addEventListener('input', calculateArea);
+    document.getElementById('itemWidth').addEventListener('input', calculateArea);
+
+    // ============================================================
+    // ITEMS (Stock Management)
+    // ============================================================
+    function addItem() {
+        if (!isAdmin) return alert('Only Admin can add items!');
+        const name = document.getElementById('itemName').value.trim();
+        const category = document.getElementById('itemCategory').value;
+        const unit = document.getElementById('itemUnit').value;
+        const purchasePrice = parseFloat(document.getElementById('itemPurchasePrice').value);
+        const sellPrice = parseFloat(document.getElementById('itemSellPrice').value);
+        const stock = parseFloat(document.getElementById('itemStock').value) || 0;
+        const minStock = parseFloat(document.getElementById('itemMinStock').value) || 0;
+        const length = parseFloat(document.getElementById('itemLength').value) || 0;
+        const width = parseFloat(document.getElementById('itemWidth').value) || 0;
+        const area = parseFloat(document.getElementById('itemArea').value) || 0;
+
+        if (!name || !sellPrice || sellPrice <= 0) return alert('Please enter name and sell price');
+        if (db.items.find(i => i.name.toLowerCase() === name.toLowerCase())) return alert('Item already exists!');
+
+        db.items.push({
+            id: Date.now(),
+            name,
+            category,
+            unit,
+            purchasePrice: purchasePrice || 0,
+            sellPrice,
+            stock,
+            minStock,
+            length,
+            width,
+            area: area || 0
+        });
+
+        // Stock In transaction
+        if (stock > 0) {
+            db.transactions.push({
+                id: Date.now(),
+                type: 'stock_in',
+                desc: `Stock In: ${name} x ${stock} ${unit}`,
+                amount: stock * purchasePrice,
+                date: getToday()
+            });
+        }
+
+        saveDB();
+        renderAll();
+        document.getElementById('itemName').value = '';
+        document.getElementById('itemPurchasePrice').value = '';
+        document.getElementById('itemSellPrice').value = '';
+        document.getElementById('itemStock').value = '';
+        document.getElementById('itemMinStock').value = '';
+        document.getElementById('itemLength').value = '0';
+        document.getElementById('itemWidth').value = '0';
+        document.getElementById('itemArea').value = '';
+        alert('✅ Item added successfully!');
+    }
+
+    function deleteItem(id) {
+        if (!isAdmin) return alert('Only Admin can delete!');
+        if (!confirm('Delete this item?')) return;
+        db.items = db.items.filter(i => i.id !== id);
+        saveDB();
+        renderAll();
+    }
+
+    function editItem(id) {
+        if (!isAdmin) return alert('Only Admin can edit!');
+        const item = db.items.find(i => i.id === id);
+        if (!item) return;
+        // Simple edit - prompt
+        const newPrice = prompt('Enter new sell price for ' + item.name, item.sellPrice);
+        if (newPrice !== null && !isNaN(newPrice) && newPrice > 0) {
+            item.sellPrice = parseFloat(newPrice);
+            saveDB();
+            renderAll();
+        }
+    }
+
+    function stockIn() {
+        if (!isAdmin) return alert('Only Admin can manage stock!');
+        const itemId = parseInt(document.getElementById('stockItemSelect').value);
+        const qty = parseFloat(document.getElementById('stockQty').value);
+        if (!itemId || !qty || qty <= 0) return alert('Select item and quantity');
+        const item = db.items.find(i => i.id === itemId);
+        if (!item) return alert('Item not found');
+        item.stock += qty;
+        db.transactions.push({
+            id: Date.now(),
+            type: 'stock_in',
+            desc: `Stock In: ${item.name} +${qty} ${item.unit}`,
+            amount: qty * item.purchasePrice,
+            date: getToday()
+        });
+        saveDB();
+        renderAll();
+        document.getElementById('stockQty').value = '';
+        alert(`✅ ${qty} ${item.unit} added to ${item.name}`);
+    }
+
+    function stockOut() {
+        if (!isAdmin) return alert('Only Admin can manage stock!');
+        const itemId = parseInt(document.getElementById('stockItemSelect').value);
+        const qty = parseFloat(document.getElementById('stockQty').value);
+        if (!itemId || !qty || qty <= 0) return alert('Select item and quantity');
+        const item = db.items.find(i => i.id === itemId);
+        if (!item) return alert('Item not found');
+        if (item.stock < qty) return alert(`Not enough stock! Available: ${item.stock}`);
+        item.stock -= qty;
+        db.transactions.push({
+            id: Date.now(),
+            type: 'stock_out',
+            desc: `Stock Out: ${item.name} -${qty} ${item.unit}`,
+            amount: qty * item.sellPrice,
+            date: getToday()
+        });
+        saveDB();
+        renderAll();
+        document.getElementById('stockQty').value = '';
+        alert(`✅ ${qty} ${item.unit} removed from ${item.name}`);
+    }
+
+    function renderStockList() {
+        const container = document.getElementById('stockListContainer');
+        if (db.items.length === 0) {
+            container.innerHTML = '<div class="list-item">No items</div>';
+            return;
+        }
+        let html = `<div class="table-wrap"><table>
+            <tr><th>Name</th><th>Cat</th><th>Unit</th><th>Stock</th><th>Price</th><th>Action</th></tr>`;
+        db.items.forEach(item => {
+            const warn = item.stock < item.minStock ? '⚠️' : '';
+            const catBadge = item.category === 'stone' ? 
+                '<span class="badge badge-stone">Stone</span>' : 
+                '<span class="badge badge-material">Material</span>';
+            html += `<tr>
+                <td>${item.name}</td>
+                <td>${catBadge}</td>
+                <td>${item.unit}</td>
+                <td>${item.stock} ${warn}</td>
+                <td>${item.sellPrice}</td>
+                <td>
+                    <button class="btn-sm btn-danger-sm" onclick="deleteItem(${item.id})"><i class="fas fa-trash"></i></button>
+                    <button class="btn-sm" style="background:#e2e8f0;" onclick="editItem(${item.id})"><i class="fas fa-edit"></i></button>
+                </td>
+            </tr>`;
+        });
+        html += '</table></div>';
+        container.innerHTML = html;
+
+        // Populate stock item select
+        const sel = document.getElementById('stockItemSelect');
+        sel.innerHTML = '';
+        db.items.forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = item.id;
+            opt.textContent = `${item.name} (${item.stock} ${item.unit})`;
+            sel.appendChild(opt);
+        });
+    }
+
+    // ============================================================
+    // POS GRID with Category Filter
+    // ============================================================
+    function filterCategory(cat) {
+        currentFilter = cat;
+        document.querySelectorAll('.cat-tab').forEach(el => el.classList.remove('active', 'stone-active', 'material-active'));
+        if (cat === 'stone') {
+            document.getElementById('catStone').classList.add('active', 'stone-active');
+        } else if (cat === 'material') {
+            document.getElementById('catMaterial').classList.add('active', 'material-active');
+        } else {
+            document.getElementById('catAll').classList.add('active');
+        }
+        renderPOS();
+    }
+
+    function renderPOS() {
+        const grid = document.getElementById('posGrid');
+        let items = db.items;
+        if (currentFilter !== 'all') {
+            items = items.filter(i => i.category === currentFilter);
+        }
+        if (items.length === 0) {
+            grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#718096;padding:20px;">No items found</div>';
+            return;
+        }
+        let html = '';
+        items.forEach(item => {
+            const outOfStock = item.stock <= 0;
+            const catIcon = item.category === 'stone' ? '🪨' : '🧱';
+            html += `<div class="pos-item ${outOfStock ? 'out-of-stock' : ''}" onclick="${outOfStock ? '' : `addToCart(${item.id})`}">
+                <div class="name">${catIcon} ${item.name}</div>
+                <div class="price">${item.sellPrice}</div>
+                <div class="stock">${item.stock} ${item.unit} <span class="unit-badge">${item.category}</span></div>
+                ${item.area > 0 ? `<div style="font-size:9px;color:#718096;">${item.area.toFixed(2)} m²</div>` : ''}
+            </div>`;
+        });
+        grid.innerHTML = html;
     }
 
     // ============================================================
     // CART SYSTEM
     // ============================================================
-    let cart = [];
-
     function addToCart(itemId) {
         const item = db.items.find(i => i.id === itemId);
         if (!item) return;
@@ -716,7 +1042,15 @@
             if (existing.qty >= item.stock) return alert('Not enough stock!');
             existing.qty++;
         } else {
-            cart.push({ itemId, qty: 1, name: item.name, price: item.price, unit: item.unit });
+            cart.push({ 
+                itemId, 
+                qty: 1, 
+                name: item.name, 
+                price: item.sellPrice, 
+                unit: item.unit,
+                category: item.category,
+                purchasePrice: item.purchasePrice || 0
+            });
         }
         renderCart();
     }
@@ -741,7 +1075,7 @@
     function renderCart() {
         const container = document.getElementById('cartItems');
         if (cart.length === 0) {
-            container.innerHTML = '<div style="text-align:center;color:#718096;padding:20px;">Cart is empty</div>';
+            container.innerHTML = '<div style="text-align:center;color:#718096;padding:15px;">Cart is empty</div>';
             document.getElementById('cartTotal').textContent = '0';
             document.getElementById('cartCount').textContent = '0';
             return;
@@ -751,11 +1085,12 @@
         cart.forEach(c => {
             const subtotal = c.qty * c.price;
             total += subtotal;
+            const catIcon = c.category === 'stone' ? '🪨' : '🧱';
             html += `<div class="cart-item">
-                <span><strong>${c.name}</strong> (${c.price} x ${c.qty})</span>
+                <span><strong>${catIcon} ${c.name}</strong> (${c.price} x ${c.qty})</span>
                 <div class="qty-control">
                     <button onclick="updateCartQty(${c.itemId}, -1)">−</button>
-                    <span style="min-width:25px;text-align:center;">${c.qty}</span>
+                    <span style="min-width:20px;text-align:center;">${c.qty}</span>
                     <button onclick="updateCartQty(${c.itemId}, 1)">+</button>
                     <button class="btn-sm btn-danger-sm" onclick="removeFromCart(${c.itemId})"><i class="fas fa-trash"></i></button>
                 </div>
@@ -767,30 +1102,10 @@
     }
 
     // ============================================================
-    // POS GRID
-    // ============================================================
-    function renderPOS() {
-        const grid = document.getElementById('posGrid');
-        if (db.items.length === 0) {
-            grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#718096;padding:20px;">No items. Add some in Stock section!</div>';
-            return;
-        }
-        let html = '';
-        db.items.forEach(item => {
-            const outOfStock = item.stock <= 0;
-            html += `<div class="pos-item ${outOfStock ? 'out-of-stock' : ''}" onclick="${outOfStock ? '' : `addToCart(${item.id})`}">
-                <div class="name">${item.name}</div>
-                <div class="price">${item.price}</div>
-                <div class="stock">${item.stock} ${item.unit}</div>
-            </div>`;
-        });
-        grid.innerHTML = html;
-    }
-
-    // ============================================================
     // COMPLETE SALE
     // ============================================================
     function completeSale() {
+        if (!isAdmin) return alert('Only Admin can complete sales!');
         if (cart.length === 0) return alert('Cart is empty!');
         const type = document.getElementById('saleType').value;
         const customerId = document.getElementById('saleCustomerSelect').value;
@@ -798,13 +1113,26 @@
 
         let total = 0;
         let saleItems = [];
+        let stoneTotal = 0;
+        let materialTotal = 0;
+
         cart.forEach(c => {
             const item = db.items.find(i => i.id === c.itemId);
             if (!item) return;
             if (item.stock < c.qty) return alert(`${item.name} has only ${item.stock} in stock!`);
             const subtotal = c.qty * c.price;
             total += subtotal;
-            saleItems.push({ itemId: c.itemId, name: item.name, qty: c.qty, price: c.price, unit: item.unit });
+            if (item.category === 'stone') stoneTotal += subtotal;
+            else materialTotal += subtotal;
+            saleItems.push({ 
+                itemId: c.itemId, 
+                name: item.name, 
+                qty: c.qty, 
+                price: c.price, 
+                unit: item.unit,
+                category: item.category,
+                purchasePrice: item.purchasePrice || 0
+            });
             item.stock -= c.qty;
         });
 
@@ -818,7 +1146,9 @@
             type,
             customerId: customerId || null,
             date: getToday(),
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            stoneTotal,
+            materialTotal
         };
 
         db.sales.push(sale);
@@ -828,11 +1158,21 @@
             if (cust) cust.balance += remaining;
         }
 
+        // Calculate profit/loss for this sale
+        let totalCost = 0;
+        saleItems.forEach(item => {
+            totalCost += item.qty * (item.purchasePrice || 0);
+        });
+        const profit = total - totalCost;
+
         db.transactions.push({
             id: Date.now(),
             type: 'sale',
             desc: `${saleItems.length} items (${type})`,
             amount: total,
+            profit: profit,
+            stoneTotal: stoneTotal,
+            materialTotal: materialTotal,
             date: getToday()
         });
 
@@ -840,80 +1180,44 @@
         saveDB();
         renderAll();
         document.getElementById('salePaid').value = '0';
-        alert(`✅ Sale Complete! Total: ${total} | Paid: ${paid} | Remaining: ${remaining}`);
-    }
-
-    // ============================================================
-    // ITEMS (Stock Management)
-    // ============================================================
-    function addItem() {
-        const name = document.getElementById('itemName').value.trim();
-        const unit = document.getElementById('itemUnit').value;
-        const price = parseFloat(document.getElementById('itemPrice').value);
-        const stock = parseFloat(document.getElementById('itemStock').value) || 0;
-        const minStock = parseFloat(document.getElementById('itemMinStock').value) || 0;
-
-        if (!name || !price || price <= 0) return alert('Please enter name and price');
-        if (db.items.find(i => i.name.toLowerCase() === name.toLowerCase())) return alert('Item already exists!');
-
-        db.items.push({
-            id: Date.now(),
-            name,
-            unit,
-            price,
-            stock,
-            minStock
-        });
-
-        saveDB();
-        renderAll();
-        document.getElementById('itemName').value = '';
-        document.getElementById('itemPrice').value = '';
-        document.getElementById('itemStock').value = '';
-        document.getElementById('itemMinStock').value = '';
-        alert('✅ Item added successfully!');
-    }
-
-    function deleteItem(id) {
-        if (!confirm('Delete this item?')) return;
-        db.items = db.items.filter(i => i.id !== id);
-        saveDB();
-        renderAll();
-    }
-
-    function renderStockList() {
-        const container = document.getElementById('stockListContainer');
-        if (db.items.length === 0) {
-            container.innerHTML = '<div class="list-item">No items</div>';
-            return;
-        }
-        let html = `<div class="table-wrap"><table>
-            <tr><th>Name</th><th>Stock</th><th>Price</th><th>Action</th></tr>`;
-        db.items.forEach(item => {
-            const warn = item.stock < item.minStock ? '⚠️' : '';
-            html += `<tr>
-                <td>${item.name}</td>
-                <td>${item.stock} ${item.unit} ${warn}</td>
-                <td>${item.price}</td>
-                <td><button class="btn-sm btn-danger-sm" onclick="deleteItem(${item.id})"><i class="fas fa-trash"></i></button></td>
-            </tr>`;
-        });
-        html += '</table></div>';
-        container.innerHTML = html;
+        alert(`✅ Sale Complete! Total: ${total} | Paid: ${paid} | Profit: ${profit}`);
     }
 
     // ============================================================
     // CUSTOMERS
     // ============================================================
     function addCustomer() {
+        if (!isAdmin) return alert('Only Admin can add customers!');
         const name = document.getElementById('custName').value.trim();
         const phone = document.getElementById('custPhone').value.trim();
+        const address = document.getElementById('custAddress').value.trim();
         if (!name) return alert('Enter customer name');
-        db.customers.push({ id: Date.now(), name, phone, balance: 0 });
+        
+        // Check if customer exists by phone
+        if (phone) {
+            const existing = db.customers.find(c => c.phone === phone);
+            if (existing) {
+                if (confirm(`Customer "${existing.name}" already exists. Add as new?`)) {
+                    // Continue
+                } else {
+                    return;
+                }
+            }
+        }
+
+        db.customers.push({ 
+            id: Date.now(), 
+            name, 
+            phone, 
+            address, 
+            balance: 0,
+            history: []
+        });
         saveDB();
         renderAll();
         document.getElementById('custName').value = '';
         document.getElementById('custPhone').value = '';
+        document.getElementById('custAddress').value = '';
         alert('✅ Customer added!');
     }
 
@@ -922,9 +1226,15 @@
         if (db.customers.length === 0) {
             container.innerHTML = '<div class="list-item">No customers</div>';
         } else {
-            let html = '<div class="table-wrap"><table><tr><th>Name</th><th>Phone</th><th>Balance</th></tr>';
+            let html = '<div class="table-wrap"><table><tr><th>Name</th><th>Phone</th><th>Balance</th><th>History</th></tr>';
             db.customers.forEach(c => {
-                html += `<tr><td>${c.name}</td><td>${c.phone || '-'}</td><td>${c.balance}</td></tr>`;
+                const saleCount = db.sales.filter(s => s.customerId == c.id).length;
+                html += `<tr>
+                    <td>${c.name}</td>
+                    <td>${c.phone || '-'}</td>
+                    <td>${c.balance}</td>
+                    <td><button class="btn-sm" style="background:#e2e8f0;" onclick="viewCustomerHistory(${c.id})"><i class="fas fa-eye"></i></button></td>
+                </tr>`;
             });
             html += '</table></div>';
             container.innerHTML = html;
@@ -939,14 +1249,33 @@
             db.customers.forEach(c => {
                 const opt = document.createElement('option');
                 opt.value = c.id;
-                opt.textContent = `${c.name} (${c.balance})`;
+                opt.textContent = `${c.name} (${c.phone || 'no phone'}) - ${c.balance}`;
                 sel.appendChild(opt);
             });
             if (currentVal) sel.value = currentVal;
         });
     }
 
+    function viewCustomerHistory(customerId) {
+        const cust = db.customers.find(c => c.id === customerId);
+        if (!cust) return;
+        const sales = db.sales.filter(s => s.customerId == customerId);
+        let history = `📋 History for ${cust.name}\n`;
+        history += `Phone: ${cust.phone || 'N/A'}\n`;
+        history += `Total Balance: ${cust.balance}\n`;
+        history += `━━━━━━━━━━━━━━━━━━━\n`;
+        if (sales.length === 0) {
+            history += 'No sales yet';
+        } else {
+            sales.forEach(s => {
+                history += `${s.date} | ${s.items.length} items | Total: ${s.total} | Paid: ${s.paid}\n`;
+            });
+        }
+        alert(history);
+    }
+
     function receivePayment() {
+        if (!isAdmin) return alert('Only Admin can receive payments!');
         const customerId = document.getElementById('receiveCustomerSelect').value;
         const amount = parseFloat(document.getElementById('receiveAmount').value);
         if (!customerId) return alert('Select customer');
@@ -973,6 +1302,7 @@
     // EXPENSES
     // ============================================================
     function addExpense() {
+        if (!isAdmin) return alert('Only Admin can add expenses!');
         const head = document.getElementById('expenseHead').value.trim();
         const amount = parseFloat(document.getElementById('expenseAmount').value);
         const note = document.getElementById('expenseNote').value.trim();
@@ -1048,7 +1378,27 @@
         const totalPaid = sales.reduce((sum, s) => sum + s.paid, 0);
         const totalRemaining = sales.reduce((sum, s) => sum + s.remaining, 0);
         const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
-        const profit = totalSales - totalExpenses;
+
+        // Calculate profit by category
+        let stoneSales = 0, materialSales = 0;
+        let stoneCost = 0, materialCost = 0;
+        sales.forEach(s => {
+            s.items.forEach(item => {
+                const subtotal = item.qty * item.price;
+                const cost = item.qty * (item.purchasePrice || 0);
+                if (item.category === 'stone') {
+                    stoneSales += subtotal;
+                    stoneCost += cost;
+                } else {
+                    materialSales += subtotal;
+                    materialCost += cost;
+                }
+            });
+        });
+
+        const stoneProfit = stoneSales - stoneCost;
+        const materialProfit = materialSales - materialCost;
+        const totalProfit = (stoneSales + materialSales) - (stoneCost + materialCost) - totalExpenses;
 
         const report = `
 📊 ${type.toUpperCase()} REPORT - ${today}
@@ -1059,29 +1409,120 @@
    Remaining: ${totalRemaining}
    Total Bills: ${sales.length}
 
+🪨 STONE SALES: ${stoneSales}
+🧱 MATERIAL SALES: ${materialSales}
+
 💸 EXPENSES
    Total: ${totalExpenses}
 
 📈 PROFIT / LOSS
-   ${profit >= 0 ? '✅ Profit: ' + profit : '❌ Loss: ' + Math.abs(profit)}
+   🪨 Stone Profit: ${stoneProfit}
+   🧱 Material Profit: ${materialProfit}
+   📊 Total: ${totalProfit >= 0 ? '✅ Profit: ' + totalProfit : '❌ Loss: ' + Math.abs(totalProfit)}
 ━━━━━━━━━━━━━━━━━━━━━━━━━
-🏪 Marble POS System
+🏪 Marble POS Pro
         `;
 
         document.getElementById('reportDisplay').textContent = report;
 
         // Profit/Loss display
-        const plContainer = document.getElementById('profitLossDisplay');
-        const plColor = profit >= 0 ? '#38a169' : '#e53e3e';
-        plContainer.innerHTML = `
-            <div style="text-align:center;padding:20px;background:${profit>=0?'#f0fff4':'#fff5f5'};border-radius:12px;">
-                <div style="font-size:32px;font-weight:700;color:${plColor};">${profit >= 0 ? '✅ ' + profit : '❌ ' + Math.abs(profit)}</div>
-                <div style="font-size:14px;color:#718096;">Sales ${totalSales} - Expenses ${totalExpenses}</div>
-            </div>
-        `;
+        document.getElementById('plStone').textContent = stoneProfit >= 0 ? `+${stoneProfit}` : `${stoneProfit}`;
+        document.getElementById('plStone').style.color = stoneProfit >= 0 ? '#38a169' : '#e53e3e';
+        document.getElementById('plMaterial').textContent = materialProfit >= 0 ? `+${materialProfit}` : `${materialProfit}`;
+        document.getElementById('plMaterial').style.color = materialProfit >= 0 ? '#38a169' : '#e53e3e';
+        document.getElementById('plTotal').textContent = totalProfit >= 0 ? `+${totalProfit}` : `${totalProfit}`;
+        document.getElementById('plTotal').style.color = totalProfit >= 0 ? '#38a169' : '#e53e3e';
 
         renderAllTransactions();
         return report;
+    }
+
+    // ============================================================
+    // SHARE REPORT AS IMAGE
+    // ============================================================
+    function shareReportImage() {
+        const reportText = document.getElementById('reportDisplay').textContent;
+        if (!reportText || reportText.trim() === '') {
+            alert('Generate report first!');
+            return;
+        }
+
+        const canvas = document.getElementById('reportCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 600;
+        canvas.height = 600;
+
+        // Background
+        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        gradient.addColorStop(0, '#1a365d');
+        gradient.addColorStop(1, '#2d3748');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Border
+        ctx.strokeStyle = '#d69e2e';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
+
+        // Title
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 28px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('🏪 Marble POS Pro', canvas.width/2, 60);
+
+        // Line
+        ctx.strokeStyle = '#d69e2e';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(50, 80);
+        ctx.lineTo(canvas.width - 50, 80);
+        ctx.stroke();
+
+        // Report text
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '16px monospace';
+        ctx.textAlign = 'left';
+        const lines = reportText.split('\n');
+        let y = 120;
+        lines.forEach(line => {
+            if (line.trim()) {
+                ctx.fillText(line, 30, y);
+                y += 28;
+            } else {
+                y += 15;
+            }
+        });
+
+        // Footer
+        ctx.fillStyle = '#d69e2e';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(`Generated: ${new Date().toLocaleString()}`, canvas.width/2, canvas.height - 30);
+
+        // Download as image
+        const link = document.createElement('a');
+        link.download = `report-${getToday()}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+
+        // Also share via WhatsApp
+        if (confirm('Share this image on WhatsApp?')) {
+            // Create a blob and share
+            canvas.toBlob(function(blob) {
+                const file = new File([blob], 'report.png', { type: 'image/png' });
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Marble POS Report',
+                        files: [file]
+                    }).catch(err => console.log('Share cancelled'));
+                } else {
+                    // Fallback - open WhatsApp with text
+                    const phone = '923001234567';
+                    const url = `https://wa.me/${phone}?text=${encodeURIComponent('📊 Report attached')}`;
+                    window.open(url, '_blank');
+                }
+            });
+        }
     }
 
     function sendWhatsAppReport() {
@@ -1101,7 +1542,7 @@
         let html = '<div class="table-wrap"><table><tr><th>Date</th><th>Description</th><th>Amount</th></tr>';
         const sorted = [...db.transactions].reverse().slice(0, 30);
         sorted.forEach(t => {
-            const color = t.type === 'expense' ? '#e53e3e' : '#38a169';
+            const color = t.type === 'expense' ? '#e53e3e' : t.type === 'receive' ? '#38a169' : '#2b6cb0';
             html += `<tr><td>${t.date}</td><td>${t.desc}</td><td style="color:${color};font-weight:600;">${t.amount}</td></tr>`;
         });
         html += '</table></div>';
@@ -1120,9 +1561,9 @@
         document.querySelector(`.bottom-nav .nav-item[data-tab="${tabId}"]`).classList.add('active');
 
         if (tabId === 'pos') { renderPOS(); renderCart(); }
-        if (tabId === 'stock') renderStockList();
-        if (tabId === 'customers') renderCustomers();
-        if (tabId === 'expenses') renderTodayExpenses();
+        if (tabId === 'stock') { renderStockList(); }
+        if (tabId === 'customers') { renderCustomers(); }
+        if (tabId === 'expenses') { renderTodayExpenses(); }
         if (tabId === 'reports') { generateReport('daily'); renderAllTransactions(); }
     }
 
@@ -1152,16 +1593,17 @@
     // Sample items if empty
     if (db.items.length === 0) {
         db.items = [
-            { id: 1, name: 'Atlantic Marble', unit: 'm²', price: 1200, stock: 100, minStock: 10 },
-            { id: 2, name: 'White Marble', unit: 'm²', price: 1500, stock: 80, minStock: 8 },
-            { id: 3, name: 'Black Granite', unit: 'm²', price: 2000, stock: 50, minStock: 5 },
-            { id: 4, name: 'Tiles', unit: 'pcs', price: 250, stock: 500, minStock: 50 }
+            { id: 1, name: 'Atlantic Marble', category: 'stone', unit: 'm²', purchasePrice: 800, sellPrice: 1200, stock: 100, minStock: 10, length: 0, width: 0, area: 0 },
+            { id: 2, name: 'White Marble', category: 'stone', unit: 'm²', purchasePrice: 1000, sellPrice: 1500, stock: 80, minStock: 8, length: 0, width: 0, area: 0 },
+            { id: 3, name: 'Black Granite', category: 'stone', unit: 'm²', purchasePrice: 1400, sellPrice: 2000, stock: 50, minStock: 5, length: 0, width: 0, area: 0 },
+            { id: 4, name: 'Tiles', category: 'material', unit: 'pcs', purchasePrice: 150, sellPrice: 250, stock: 500, minStock: 50, length: 0, width: 0, area: 0 },
+            { id: 5, name: 'Adhesive', category: 'material', unit: 'pcs', purchasePrice: 80, sellPrice: 120, stock: 200, minStock: 20, length: 0, width: 0, area: 0 }
         ];
         saveDB();
     }
 
     renderAll();
-    console.log('🚀 Marble POS System Ready!');
+    console.log('🚀 Marble POS Pro Ready!');
     console.log('📦 Items:', db.items.length);
     console.log('👥 Customers:', db.customers.length);
     console.log('💰 Sales:', db.sales.length);
