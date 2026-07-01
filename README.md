@@ -10,12 +10,12 @@
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
         html,body{height:100%;overflow:hidden;background:#eef2f7}
-        body{padding:3px;padding-bottom:55px}
+        body{padding:4px;padding-bottom:56px}
         .app-container{max-width:100%;height:100%;margin:0 auto;background:white;border-radius:12px;overflow:hidden;padding:4px;display:flex;flex-direction:column;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
         .header{background:linear-gradient(135deg,#0f1a2e,#1a2a4a);color:white;padding:5px 10px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;min-height:32px}
         .header h1{font-size:12px;font-weight:700}
         .header-controls{display:flex;gap:3px;align-items:center}
-        .header-controls button{background:rgba(255,255,255,0.1);border:none;color:white;padding:2px 7px;border-radius:12px;cursor:pointer;font-size:7px;font-weight:600;transition:0.2s;display:flex;align-items:center;gap:2px}
+        .header-controls button{background:rgba(255,255,255,0.1);border:none;color:white;padding:2px 7px;border-radius:12px;cursor:pointer;font-size:7px;font-weight:600;transition:0.2s}
         .header-controls button:hover{background:rgba(255,255,255,0.2)}
         .settings-btn{background:rgba(255,255,255,0.08);padding:2px 8px;border-radius:50%;font-size:12px}
         .settings-btn:hover{transform:rotate(90deg)}
@@ -41,7 +41,7 @@
         .cart-items{flex:1;overflow-y:auto;padding:2px 0;max-height:60px}
         .cart-item{display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid #eef2f6;font-size:7px;align-items:center}
         .cart-item .qty-control{display:flex;gap:2px;align-items:center}
-        .cart-item .qty-control button{background:#e8ecf0;border:none;border-radius:50%;width:16px;height:16px;font-weight:700;cursor:pointer;font-size:8px;transition:0.15s}
+        .cart-item .qty-control button{background:#e8ecf0;border:none;border-radius:50%;width:16px;height:16px;font-weight:700;cursor:pointer;font-size:8px}
         .cart-item .qty-control button:active{transform:scale(0.85)}
         .total-bar{background:linear-gradient(135deg,#0f1a2e,#1a2a4a);color:white;padding:3px 6px;border-radius:4px;display:flex;justify-content:space-between;font-weight:700;font-size:10px;flex-shrink:0}
         .bottom-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;flex-shrink:0;padding-top:2px}
@@ -89,7 +89,9 @@
         .cat-tab.stone-active{background:#8B7355;color:white}
         .cat-tab.material-active{background:#2b6cb0;color:white}
         .edit-btn{background:#e8ecf0;border:none;padding:0 3px;border-radius:2px;cursor:pointer;font-size:5px}
-        .invoice-box{background:white;border:1px solid #d4a017;border-radius:5px;padding:6px;font-size:7px;font-family:monospace;white-space:pre-wrap;max-height:140px;overflow-y:auto}
+        .invoice-box{background:white;border:1px solid #d4a017;border-radius:5px;padding:8px;font-size:8px;font-family:monospace;white-space:pre-wrap;max-height:160px;overflow-y:auto;box-shadow:0 1px 4px rgba(212,160,23,0.15)}
+        .invoice-box .inv-header{text-align:center;font-weight:700;font-size:11px;border-bottom:2px solid #0f1a2e;padding-bottom:4px;margin-bottom:4px;letter-spacing:1px}
+        .invoice-box .inv-footer{text-align:center;font-size:7px;color:#6b7a8a;border-top:1px dashed #ccc;padding-top:4px;margin-top:4px}
         .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(3px)}
         .modal-box{background:white;padding:12px;border-radius:10px;max-width:320px;width:92%;max-height:80vh;overflow-y:auto;box-shadow:0 16px 48px rgba(0,0,0,0.2)}
         .modal-box h2{font-size:13px;color:#0f1a2e;margin-bottom:6px;display:flex;align-items:center;gap:5px;border-bottom:2px solid #eef2f6;padding-bottom:5px}
@@ -114,10 +116,14 @@
         .pos-inputs input{width:100%;padding:2px 3px;border:1px solid #e2e6ea;border-radius:3px;font-size:7px;background:#f7f9fb;text-align:center}
         .pos-inputs input:focus{border-color:#0f1a2e;outline:none;background:white}
         .pos-inputs .label{font-size:5px;color:#6b7a8a;text-align:center}
+        .bill-item{cursor:pointer;padding:3px;border:1px solid #e2e6ea;border-radius:4px;margin:2px 0;background:#f8fafc;font-size:7px;transition:0.15s}
+        .bill-item:hover{background:#edf1f5;border-color:#d4a017}
+        .bill-item .bill-header{display:flex;justify-content:space-between;font-weight:600}
+        .bill-item .bill-footer{font-size:5px;color:#6b7a8a;display:flex;justify-content:space-between}
         @media(max-width:480px){.pos-grid{grid-template-columns:1fr 1fr 1fr}.header h1{font-size:10px}.bottom-actions{grid-template-columns:1fr 1fr}.summary-grid{grid-template-columns:1fr 1fr}}
         @media(min-width:768px){.pos-grid{grid-template-columns:1fr 1fr 1fr 1fr 1fr}}
-        .bill-item{cursor:pointer;padding:2px;border:1px solid #e2e6ea;border-radius:3px;margin:1px 0;background:#f8fafc;font-size:7px}
-        .bill-item:hover{background:#edf1f5}
+        .undo-btn{background:#d4a017;color:white;border:none;padding:1px 6px;border-radius:3px;cursor:pointer;font-size:6px}
+        .undo-btn:hover{background:#b8890f}
     </style>
 </head>
 <body>
@@ -293,7 +299,7 @@
                     <div class="summary-box positive"><div class="num" id="sumTotalJamma">0.00</div><div class="lbl">Total Jamma</div></div>
                     <div class="summary-box" id="paymentMinusBox"><div class="num" id="sumPaymentMinus">0.00</div><div class="lbl">Payment Minus</div></div>
                 </div>
-                <div style="font-size:6px;color:#6b7a8a;text-align:center;padding:2px;">Auto calculated from today's data</div>
+                <div style="font-size:5px;color:#6b7a8a;text-align:center;padding:2px;">Auto calculated from today's data</div>
             </div>
 
             <div class="card">
@@ -342,17 +348,26 @@
     <div id="section-invoices" class="section">
         <div class="scroll-area">
             <div class="card">
-                <div class="card-title"><i class="fas fa-file-invoice"></i> All Invoices</div>
+                <div class="card-title"><i class="fas fa-file-invoice"></i> All Invoices 
+                    <span style="margin-right:auto;"></span>
+                    <button class="undo-btn" onclick="undoLastDelete()"><i class="fas fa-undo"></i> Undo</button>
+                </div>
                 <div id="invoicesList"></div>
             </div>
             <div class="card">
                 <div class="card-title"><i class="fas fa-edit"></i> Edit Invoice</div>
-                <div class="form-group"><label>Invoice ID</label><input type="text" id="editInvoiceId" placeholder="Invoice ID"></div>
-                <div class="form-group"><label>Customer</label><input type="text" id="editInvoiceCustomer" placeholder="Customer name"></div>
-                <div class="form-group"><label>Total</label><input type="number" id="editInvoiceTotal" placeholder="Total amount"></div>
-                <div class="form-group"><label>Paid</label><input type="number" id="editInvoicePaid" placeholder="Paid amount"></div>
-                <button class="btn btn-warning" onclick="updateInvoice()"><i class="fas fa-save"></i> Update Invoice</button>
-                <button class="btn btn-danger" onclick="deleteInvoice()" style="margin-top:2px;"><i class="fas fa-trash"></i> Delete Invoice</button>
+                <div class="grid-2">
+                    <div class="form-group"><label>Invoice ID</label><input type="text" id="editInvoiceId" placeholder="ID"></div>
+                    <div class="form-group"><label>Customer</label><input type="text" id="editInvoiceCustomer" placeholder="Name"></div>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group"><label>Total</label><input type="number" id="editInvoiceTotal" placeholder="Total"></div>
+                    <div class="form-group"><label>Paid</label><input type="number" id="editInvoicePaid" placeholder="Paid"></div>
+                </div>
+                <div class="grid-2">
+                    <button class="btn btn-warning" onclick="updateInvoice()"><i class="fas fa-save"></i> Update</button>
+                    <button class="btn btn-danger" onclick="deleteInvoice()"><i class="fas fa-trash"></i> Delete</button>
+                </div>
             </div>
         </div>
     </div>
@@ -419,6 +434,7 @@
     let ADMIN_PASSWORD = "Hamdani5";
     let isAdmin = false;
     let sessionId = null;
+    let deletedInvoice = null;
 
     function getDeviceInfo() {
         const ua = navigator.userAgent;
@@ -789,7 +805,6 @@
         const item = db.items.find(i => i.id === id);
         if (!item) return;
         selectedItemId = id;
-        // Reset inputs
         document.getElementById('posLength').value = '0';
         document.getElementById('posWidth').value = '0';
         document.getElementById('posSqm').value = '0';
@@ -813,21 +828,21 @@
         let width = parseFloat(document.getElementById('posWidth').value) || 0;
         let inputSqm = parseFloat(document.getElementById('posSqm').value) || 0;
         
-        // Calculate based on category
         if (item.category === 'stone') {
-            // Stone: Length x Width = SQM or direct SQM
             if (length > 0 && width > 0) {
                 sqm = (length * width) / 10.764;
             } else if (inputSqm > 0) {
                 sqm = inputSqm;
             } else if (pieces > 0 && length > 0 && width > 0) {
                 sqm = ((length * width) / 10.764) * pieces;
+            } else if (pieces > 0) {
+                // If only pieces, use piece count
+                qty = pieces;
             } else {
                 return alert('Enter Length, Width, SQM or Pieces!');
             }
-            qty = sqm;
+            if (sqm > 0) qty = sqm;
         } else {
-            // Material: Pieces only
             qty = pieces;
             if (qty <= 0) return alert('Enter Pieces!');
         }
@@ -855,31 +870,23 @@
             });
         }
         renderCart();
-        // Reset inputs
         document.getElementById('posLength').value = '0';
         document.getElementById('posWidth').value = '0';
         document.getElementById('posSqm').value = '0';
         document.getElementById('posPieces').value = '0';
+        showToast(`✅ Added to cart!`);
     }
 
-    // Add from button
-    document.querySelector('.btn-success').addEventListener('click', function(e) {
-        if (e.target.closest('.bottom-actions')) {
-            // Check if it's the Complete Sale button
-            if (e.target.textContent.includes('Complete Sale')) return;
-        }
-        addToCartFromInputs();
-    });
-
-    // Override the complete sale button
-    function addToCartFromInputsWrapper() {
-        // Check if any input has value
+    // Add to cart button
+    function addToCartWrapper() {
         const length = parseFloat(document.getElementById('posLength').value) || 0;
         const width = parseFloat(document.getElementById('posWidth').value) || 0;
         const sqm = parseFloat(document.getElementById('posSqm').value) || 0;
         const pieces = parseFloat(document.getElementById('posPieces').value) || 0;
         if (length > 0 || width > 0 || sqm > 0 || pieces > 0) {
             addToCartFromInputs();
+        } else {
+            alert('Enter quantity first!');
         }
     }
 
@@ -937,7 +944,6 @@
     // ============================================================
     function completeSale() {
         if (!isAdmin) return alert('🔒 Admin only! Login first.');
-        if (!cart.length) return alert('Cart empty!');
         
         // Check if any input has value, add to cart first
         const length = parseFloat(document.getElementById('posLength').value) || 0;
@@ -946,8 +952,9 @@
         const pieces = parseFloat(document.getElementById('posPieces').value) || 0;
         if (length > 0 || width > 0 || sqm > 0 || pieces > 0) {
             addToCartFromInputs();
-            if (!cart.length) return;
         }
+        
+        if (!cart.length) return alert('Cart empty!');
         
         const type = document.getElementById('saleType').value;
         const customerId = document.getElementById('saleCustomerSelect').value;
@@ -1042,26 +1049,17 @@
         document.getElementById('summaryDate').textContent = today;
         document.getElementById('monthlyDate').textContent = getMonth();
         
-        // Today's data
         const todaySales = db.sales.filter(s => s.date === today);
         const todayCash = todaySales.filter(s => s.type === 'cash').reduce((sum, s) => sum + s.total, 0);
         const todayUdhar = todaySales.filter(s => s.type === 'credit').reduce((sum, s) => sum + s.total, 0);
         const todayIkhrajat = db.expenses.filter(e => e.date === today).reduce((sum, e) => sum + e.amount, 0);
         
-        // Sabqa Wusool (previous days' received)
         const prevSales = db.sales.filter(s => s.date < today);
         const sabqaWusool = prevSales.reduce((sum, s) => sum + s.paid, 0);
-        
-        // Advance Wusool (today's received)
         const advanceWusool = todaySales.reduce((sum, s) => sum + s.paid, 0);
-        
-        // Total Jamma
         const totalJamma = todayCash + sabqaWusool + advanceWusool;
-        
-        // Payment Minus
         const paymentMinus = totalJamma < todayIkhrajat ? todayIkhrajat - totalJamma : 0;
         
-        // Update UI
         document.getElementById('sumTodaySale').textContent = (todayCash + todayUdhar).toFixed(2);
         document.getElementById('sumUdharSale').textContent = todayUdhar.toFixed(2);
         document.getElementById('sumIkhrajat').textContent = todayIkhrajat.toFixed(2);
@@ -1070,15 +1068,9 @@
         document.getElementById('sumTotalJamma').textContent = totalJamma.toFixed(2);
         document.getElementById('sumPaymentMinus').textContent = paymentMinus.toFixed(2);
         
-        // Payment Minus box color
         const pmBox = document.getElementById('paymentMinusBox');
-        if (paymentMinus > 0) {
-            pmBox.className = 'summary-box negative';
-        } else {
-            pmBox.className = 'summary-box positive';
-        }
+        pmBox.className = 'summary-box ' + (paymentMinus > 0 ? 'negative' : 'positive');
         
-        // Monthly Summary
         const month = getMonth();
         const monthSales = db.sales.filter(s => s.date.startsWith(month));
         const monthData = {};
@@ -1104,6 +1096,8 @@
     // ============================================================
     // INVOICES
     // ============================================================
+    let lastDeletedInvoice = null;
+
     function viewCustomerBills(customerId) {
         const cust = db.customers.find(c => c.id === customerId);
         if (!cust) return;
@@ -1113,7 +1107,8 @@
         bills.forEach((b, i) => {
             msg += `#${i+1} | ${b.date} | ${b.total.toFixed(2)}\n`;
             b.items.forEach(item => {
-                msg += `   ${item.name} x${item.qty} = ${(item.qty * item.price).toFixed(2)}\n`;
+                const qtyDisplay = item.category === 'stone' ? item.qty.toFixed(2) + 'm²' : item.qty + 'pcs';
+                msg += `   ${item.name} ${qtyDisplay} = ${(item.qty * item.price).toFixed(2)}\n`;
             });
             msg += `─────────────────────────\n`;
         });
@@ -1130,11 +1125,14 @@
             const cust = db.customers.find(c => c.id == s.customerId);
             const custName = cust ? cust.name : 'Walk-in';
             html += `<div class="bill-item" onclick="viewInvoice(${s.id})">
-                <div style="display:flex;justify-content:space-between;font-size:7px;">
+                <div class="bill-header">
                     <span><strong>#${s.id}</strong> ${custName}</span>
                     <span>${s.date} | ${s.total.toFixed(2)}</span>
                 </div>
-                <div style="font-size:5px;color:#6b7a8a;">${s.items.length} items | ${s.type} | Paid: ${s.paid}</div>
+                <div class="bill-footer">
+                    <span>${s.items.length} items | ${s.type}</span>
+                    <span>Paid: ${s.paid.toFixed(2)}</span>
+                </div>
             </div>`;
         });
         container.innerHTML = html;
@@ -1211,6 +1209,14 @@
         if (!confirm('Delete this invoice?')) return;
         const sale = db.sales.find(s => s.id === id);
         if (!sale) return alert('Invoice not found!');
+        
+        // Save for undo
+        lastDeletedInvoice = {
+            sale: JSON.parse(JSON.stringify(sale)),
+            index: db.sales.findIndex(s => s.id === id)
+        };
+        
+        // Return stock
         sale.items.forEach(item => {
             const dbItem = db.items.find(i => i.id === item.id);
             if (dbItem) dbItem.stock += item.qty;
@@ -1230,7 +1236,31 @@
         document.getElementById('editInvoiceCustomer').value = '';
         document.getElementById('editInvoiceTotal').value = '';
         document.getElementById('editInvoicePaid').value = '';
-        showToast('✅ Invoice deleted!');
+        showToast('✅ Invoice deleted! (Use Undo to restore)');
+    }
+
+    function undoLastDelete() {
+        if (!lastDeletedInvoice) return alert('Nothing to undo!');
+        if (!confirm('Restore deleted invoice?')) return;
+        const { sale } = lastDeletedInvoice;
+        db.sales.push(sale);
+        // Return stock
+        sale.items.forEach(item => {
+            const dbItem = db.items.find(i => i.id === item.id);
+            if (dbItem) dbItem.stock -= item.qty;
+        });
+        if (sale.customerId) {
+            const cust = db.customers.find(c => c.id == sale.customerId);
+            if (cust) {
+                const allSales = db.sales.filter(s => s.customerId == sale.customerId);
+                let totalBalance = 0;
+                allSales.forEach(s => { totalBalance += s.remaining; });
+                cust.balance = totalBalance;
+            }
+        }
+        lastDeletedInvoice = null;
+        saveLocal(); syncToCloud(); renderAll();
+        showToast('✅ Invoice restored!');
     }
 
     // ============================================================
