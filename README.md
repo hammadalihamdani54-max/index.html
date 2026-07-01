@@ -18,15 +18,22 @@
         .header-controls button{background:rgba(255,255,255,0.12);border:none;color:white;padding:3px 10px;border-radius:20px;cursor:pointer;font-size:9px;font-weight:600;transition:0.2s}
         .header-controls button:hover{background:rgba(255,255,255,0.25)}
         .header-controls button:active{transform:scale(0.95)}
-        .password-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(4px)}
-        .password-modal .box{background:white;padding:25px;border-radius:16px;max-width:340px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
-        .password-modal .box h2{font-size:18px;color:#1a2a4a;margin-bottom:8px}
-        .password-modal .box p{font-size:12px;color:#718096;margin-bottom:15px}
-        .password-modal .box input{width:100%;padding:10px;border:2px solid #e2e8f0;border-radius:10px;font-size:14px;text-align:center;margin-bottom:12px}
-        .password-modal .box input:focus{border-color:#1a2a4a;outline:none}
-        .password-modal .box .btn{width:100%;padding:10px;border:none;border-radius:10px;background:#1a2a4a;color:white;font-size:14px;font-weight:600;cursor:pointer}
-        .password-modal .box .btn:active{transform:scale(0.95)}
-        .password-modal .box .error{color:#c0392b;font-size:11px;margin-top:6px;display:none}
+        .login-btn{background:#2d8f5e !important}
+        .login-btn:hover{background:#3aaf7a !important}
+        .logout-btn{background:#c0392b !important}
+        .logout-btn:hover{background:#e74c3c !important}
+        .admin-badge{background:#d4a017;color:white;padding:2px 10px;border-radius:20px;font-size:8px;font-weight:600}
+        .viewer-badge{background:#718096;color:white;padding:2px 10px;border-radius:20px;font-size:8px;font-weight:600}
+        .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(4px)}
+        .modal-box{background:white;padding:25px;border-radius:16px;max-width:360px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+        .modal-box h2{font-size:18px;color:#1a2a4a;margin-bottom:8px}
+        .modal-box p{font-size:12px;color:#718096;margin-bottom:15px}
+        .modal-box input{width:100%;padding:10px;border:2px solid #e2e8f0;border-radius:10px;font-size:14px;text-align:center;margin-bottom:12px}
+        .modal-box input:focus{border-color:#1a2a4a;outline:none}
+        .modal-box .btn{width:100%;padding:10px;border:none;border-radius:10px;background:#1a2a4a;color:white;font-size:14px;font-weight:600;cursor:pointer}
+        .modal-box .btn:active{transform:scale(0.95)}
+        .modal-box .error{color:#c0392b;font-size:11px;margin-top:6px;display:none}
+        .modal-box .hint{font-size:10px;color:#a0aec0;margin-top:8px}
         .tabs{display:flex;gap:3px;margin:5px 0;flex-shrink:0;background:#f0f4f8;padding:3px;border-radius:10px;flex-wrap:wrap}
         .tab{flex:1;padding:5px 3px;text-align:center;border-radius:8px;font-weight:600;font-size:8px;cursor:pointer;transition:0.3s;min-width:38px;color:#5a6a7a;background:transparent}
         .tab i{display:block;font-size:14px;margin-bottom:2px}
@@ -96,12 +103,9 @@
         .del-btn{background:#f8d7da;border:none;padding:1px 6px;border-radius:4px;cursor:pointer;font-size:8px;color:#721c24}
         .del-btn:hover{background:#f5c6cb}
         .invoice-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px;font-size:10px;font-family:monospace;white-space:pre-wrap;max-height:200px;overflow-y:auto}
-        .invoice-box .inv-header{text-align:center;font-weight:700;font-size:13px;border-bottom:1px dashed #ccc;padding-bottom:5px;margin-bottom:5px}
-        .invoice-box .inv-line{display:flex;justify-content:space-between;padding:2px 0}
-        .invoice-box .inv-total{font-weight:700;border-top:1px solid #ccc;padding-top:4px;margin-top:4px}
-        .invoice-box .inv-footer{text-align:center;font-size:9px;color:#718096;border-top:1px dashed #ccc;padding-top:4px;margin-top:4px}
-        .admin-badge{background:#d4a017;color:white;padding:2px 10px;border-radius:20px;font-size:8px;font-weight:600}
-        .viewer-badge{background:#718096;color:white;padding:2px 10px;border-radius:20px;font-size:8px;font-weight:600}
+        .sessions-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px;margin-top:4px;font-size:9px}
+        .sessions-box .session-item{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #eef2f6}
+        .sessions-box .session-item:last-child{border-bottom:none}
         @media(max-width:480px){.pos-grid{grid-template-columns:1fr 1fr 1fr}.header h1{font-size:13px}.bottom-actions{grid-template-columns:1fr 1fr}}
         @media(min-width:768px){.pos-grid{grid-template-columns:1fr 1fr 1fr 1fr 1fr}}
     </style>
@@ -113,9 +117,10 @@
         <h1><i class="fas fa-store"></i> <span id="shopName">Warda Marble Tabuk</span></h1>
         <div class="header-controls">
             <span class="sync-status"><span class="dot green" id="statusDot"></span><span id="statusText">Online</span></span>
-            <span id="roleBadge" class="admin-badge">👑 Admin</span>
+            <span id="roleBadge" class="viewer-badge">👁️ Viewer</span>
             <button onclick="toggleLang()"><i class="fas fa-language"></i> <span id="langLabel">اردو</span></button>
-            <button onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
+            <button id="loginBtn" class="login-btn" onclick="showLoginModal()"><i class="fas fa-sign-in-alt"></i> Login</button>
+            <button id="logoutBtn" class="logout-btn" onclick="logout()" style="display:none;"><i class="fas fa-sign-out-alt"></i> Logout</button>
         </div>
     </div>
 
@@ -126,6 +131,7 @@
         <div class="tab" data-tab="customers"><i class="fas fa-users"></i> Cust</div>
         <div class="tab" data-tab="reports"><i class="fas fa-chart-pie"></i> Report</div>
         <div class="tab" data-tab="itemdetails"><i class="fas fa-list-ul"></i> Details</div>
+        <div class="tab" data-tab="sessions"><i class="fas fa-users-cog"></i> Sessions</div>
     </div>
 
     <!-- ========== POS ========== -->
@@ -306,6 +312,23 @@
             </div>
         </div>
     </div>
+
+    <!-- ========== SESSIONS ========== -->
+    <div id="section-sessions" class="section">
+        <div class="scroll-area">
+            <div class="card">
+                <div class="card-title"><i class="fas fa-users-cog"></i> Active Sessions</div>
+                <div id="sessionsDisplay" class="sessions-box">
+                    <div class="session-item">
+                        <span><i class="fas fa-circle" style="color:#4ade80;font-size:8px;"></i> <span id="currentDevice">This Device (You)</span></span>
+                        <span><span id="currentStatus" class="badge badge-success">Active</span></span>
+                    </div>
+                    <div id="otherSessions"></div>
+                </div>
+                <button class="btn btn-danger" onclick="removeAllSessions()" style="margin-top:4px;padding:4px;font-size:9px;"><i class="fas fa-user-slash"></i> Remove All Other Sessions</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Bottom Nav -->
@@ -315,19 +338,19 @@
     <div class="nav-item" data-tab="customers"><i class="fas fa-users"></i> Cust</div>
     <div class="nav-item" data-tab="reports"><i class="fas fa-chart-pie"></i> Report</div>
     <div class="nav-item" data-tab="itemdetails"><i class="fas fa-list-ul"></i> Details</div>
+    <div class="nav-item" data-tab="sessions"><i class="fas fa-users-cog"></i> Sessions</div>
 </div>
 
 <!-- ============================================================ -->
-<!-- 🔑 PASSWORD MODAL -->
+<!-- 🔑 LOGIN MODAL -->
 <!-- ============================================================ -->
-<div id="passwordModal" class="password-modal">
-    <div class="box">
+<div id="loginModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
         <h2><i class="fas fa-lock"></i> Admin Login</h2>
         <p>Enter password to manage system</p>
         <input type="password" id="passwordInput" placeholder="Enter password..." onkeydown="if(event.key==='Enter') checkPassword()">
-        <button class="btn" onclick="checkPassword()"><i class="fas fa-unlock"></i> Unlock</button>
+        <button class="btn" onclick="checkPassword()"><i class="fas fa-unlock"></i> Login</button>
         <div id="passwordError" class="error">❌ Wrong password! Try again.</div>
-        <div style="margin-top:10px;font-size:10px;color:#a0aec0;">Default password: <strong>admin123</strong></div>
     </div>
 </div>
 
@@ -351,33 +374,113 @@
     // ============================================================
     // PASSWORD SYSTEM
     // ============================================================
-    const ADMIN_PASSWORD = "admin123";  // 🔑 Change this password
+    const ADMIN_PASSWORD = "Hamdani5";
     let isAdmin = false;
+    let sessionId = null;
 
+    // Generate unique session ID
+    function generateSessionId() {
+        return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+    }
+
+    // Get device info
+    function getDeviceInfo() {
+        const ua = navigator.userAgent;
+        let device = 'Unknown Device';
+        if (/Android/i.test(ua)) device = 'Android Phone';
+        else if (/iPhone|iPad|iPod/i.test(ua)) device = 'iPhone/iPad';
+        else if (/Windows/i.test(ua)) device = 'Windows PC';
+        else if (/Macintosh/i.test(ua)) device = 'Mac';
+        else if (/Linux/i.test(ua)) device = 'Linux';
+        return device;
+    }
+
+    // Get browser info
+    function getBrowserInfo() {
+        const ua = navigator.userAgent;
+        if (/Chrome/i.test(ua) && !/Edge/i.test(ua)) return 'Chrome';
+        if (/Firefox/i.test(ua)) return 'Firefox';
+        if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) return 'Safari';
+        if (/Edge/i.test(ua)) return 'Edge';
+        return 'Browser';
+    }
+
+    function getSessionKey() {
+        return 'warda_session_' + window.location.hostname;
+    }
+
+    function saveSession() {
+        const session = {
+            id: sessionId,
+            device: getDeviceInfo(),
+            browser: getBrowserInfo(),
+            time: new Date().toLocaleString(),
+            active: true
+        };
+        localStorage.setItem(getSessionKey(), JSON.stringify(session));
+    }
+
+    function loadSession() {
+        const data = localStorage.getItem(getSessionKey());
+        if (data) {
+            try {
+                const session = JSON.parse(data);
+                if (session.active) {
+                    sessionId = session.id;
+                    return session;
+                }
+            } catch(e) {}
+        }
+        return null;
+    }
+
+    function clearSession() {
+        localStorage.removeItem(getSessionKey());
+    }
+
+    // Session Management
     function checkPassword() {
         const input = document.getElementById('passwordInput').value;
         const error = document.getElementById('passwordError');
         if (input === ADMIN_PASSWORD) {
             isAdmin = true;
-            document.getElementById('passwordModal').style.display = 'none';
+            document.getElementById('loginModal').style.display = 'none';
             document.getElementById('roleBadge').textContent = '👑 Admin';
             document.getElementById('roleBadge').className = 'admin-badge';
+            document.getElementById('loginBtn').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'inline-block';
+            
+            // Save session
+            if (!sessionId) sessionId = generateSessionId();
+            saveSession();
+            syncSessionToCloud();
+            
             enableEditing(true);
             showToast('✅ Admin mode activated!');
+            renderSessions();
         } else {
             error.style.display = 'block';
             setTimeout(() => error.style.display = 'none', 3000);
         }
     }
 
+    function showLoginModal() {
+        document.getElementById('loginModal').style.display = 'flex';
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('passwordInput').focus();
+    }
+
     function logout() {
         isAdmin = false;
-        document.getElementById('passwordModal').style.display = 'flex';
-        document.getElementById('passwordInput').value = '';
         document.getElementById('roleBadge').textContent = '👁️ Viewer';
         document.getElementById('roleBadge').className = 'viewer-badge';
+        document.getElementById('loginBtn').style.display = 'inline-block';
+        document.getElementById('logoutBtn').style.display = 'none';
+        clearSession();
+        removeSessionFromCloud();
         enableEditing(false);
         showToast('👁️ Viewer mode activated');
+        renderSessions();
     }
 
     function enableEditing(enable) {
@@ -394,6 +497,107 @@
         // Always allow viewing
         document.querySelectorAll('.tab, .bottom-nav .nav-item, .pos-item, table, .invoice-box').forEach(el => {
             el.style.pointerEvents = 'auto';
+        });
+    }
+
+    // ============================================================
+    // SESSION SYNC WITH CLOUD
+    // ============================================================
+    function syncSessionToCloud() {
+        if (!sessionId) return;
+        const sessionsRef = database.ref('warda_sessions');
+        sessionsRef.child(sessionId).set({
+            device: getDeviceInfo(),
+            browser: getBrowserInfo(),
+            time: new Date().toLocaleString(),
+            active: true,
+            lastSeen: Date.now()
+        });
+    }
+
+    function removeSessionFromCloud() {
+        if (!sessionId) return;
+        const sessionsRef = database.ref('warda_sessions');
+        sessionsRef.child(sessionId).update({ active: false });
+    }
+
+    function loadSessionsFromCloud() {
+        const sessionsRef = database.ref('warda_sessions');
+        sessionsRef.once('value').then(snapshot => {
+            const data = snapshot.val();
+            renderSessions(data);
+        });
+    }
+
+    function renderSessions(cloudData) {
+        const container = document.getElementById('otherSessions');
+        const currentDevice = document.getElementById('currentDevice');
+        
+        // Update current device info
+        if (sessionId) {
+            currentDevice.textContent = `This Device (${getDeviceInfo()} - ${getBrowserInfo()})`;
+            document.getElementById('currentStatus').textContent = 'Active';
+            document.getElementById('currentStatus').className = 'badge badge-success';
+        } else {
+            currentDevice.textContent = 'Not Logged In';
+            document.getElementById('currentStatus').textContent = 'Viewer';
+            document.getElementById('currentStatus').className = 'badge badge-warning';
+        }
+
+        if (!cloudData) {
+            container.innerHTML = '<div style="color:#a0aec0;font-size:9px;padding:4px;">No other active sessions</div>';
+            return;
+        }
+
+        let html = '';
+        let hasOthers = false;
+        Object.keys(cloudData).forEach(key => {
+            const session = cloudData[key];
+            if (session.active && key !== sessionId) {
+                hasOthers = true;
+                const isOld = (Date.now() - (session.lastSeen || 0)) > 60000; // 1 minute
+                html += `<div class="session-item">
+                    <span><i class="fas fa-circle" style="color:${isOld ? '#f87171' : '#4ade80'};font-size:8px;"></i> 
+                    ${session.device || 'Unknown'} (${session.browser || 'Browser'})</span>
+                    <span>
+                        <span class="badge ${isOld ? 'badge-danger' : 'badge-success'}">${isOld ? 'Inactive' : 'Active'}</span>
+                        ${isAdmin ? `<button onclick="removeSession('${key}')" class="btn-sm btn-danger" style="padding:1px 6px;font-size:7px;margin-left:4px;">Remove</button>` : ''}
+                    </span>
+                </div>`;
+            }
+        });
+        
+        if (!hasOthers) {
+            container.innerHTML = '<div style="color:#a0aec0;font-size:9px;padding:4px;">No other active sessions</div>';
+        } else {
+            container.innerHTML = html;
+        }
+    }
+
+    function removeSession(sessionKey) {
+        if (!isAdmin) return alert('🔒 Admin only!');
+        if (!confirm('Remove this session?')) return;
+        const sessionsRef = database.ref('warda_sessions');
+        sessionsRef.child(sessionKey).update({ active: false });
+        showToast('✅ Session removed!');
+        loadSessionsFromCloud();
+    }
+
+    function removeAllSessions() {
+        if (!isAdmin) return alert('🔒 Admin only!');
+        if (!confirm('Remove all other sessions?')) return;
+        const sessionsRef = database.ref('warda_sessions');
+        sessionsRef.once('value').then(snapshot => {
+            const data = snapshot.val();
+            if (data) {
+                Object.keys(data).forEach(key => {
+                    if (key !== sessionId) {
+                        sessionsRef.child(key).update({ active: false });
+                    }
+                });
+            }
+            showToast('✅ All other sessions removed!');
+            loadSessionsFromCloud();
         });
     }
 
@@ -476,7 +680,7 @@
     // ITEMS - Full CRUD (Only Admin)
     // ============================================================
     function addItem() {
-        if (!isAdmin) return alert('🔒 Admin only!');
+        if (!isAdmin) return alert('🔒 Admin only! Login first.');
         const name = document.getElementById('itemName').value.trim();
         if (!name) return alert('Enter name!');
         const item = {
@@ -496,7 +700,7 @@
     }
 
     function updateItem() {
-        if (!isAdmin) return alert('🔒 Admin only!');
+        if (!isAdmin) return alert('🔒 Admin only! Login first.');
         const id = parseInt(document.getElementById('editItemId').value);
         if (!id) return alert('Select an item first!');
         const item = db.items.find(i => i.id === id);
@@ -513,7 +717,7 @@
     }
 
     function deleteItem() {
-        if (!isAdmin) return alert('🔒 Admin only!');
+        if (!isAdmin) return alert('🔒 Admin only! Login first.');
         const id = parseInt(document.getElementById('editItemId').value);
         if (!id) return alert('Select an item first!');
         if (!confirm('Delete this item?')) return;
@@ -524,7 +728,7 @@
     }
 
     function selectItem(id) {
-        if (!isAdmin) return alert('🔒 Admin only!');
+        if (!isAdmin) return alert('🔒 Admin only! Login first.');
         const item = db.items.find(i => i.id === id);
         if (!item) return;
         document.getElementById('editItemId').value = id;
@@ -545,7 +749,7 @@
     }
 
     function stockIn() {
-        if (!isAdmin) return alert('🔒 Admin only!');
+        if (!isAdmin) return alert('🔒 Admin only! Login first.');
         const id = parseInt(document.getElementById('stockSelect').value);
         const qty = parseFloat(document.getElementById('stockQty').value);
         if (!id || !qty || qty <= 0) return alert('Select item and qty!');
@@ -560,7 +764,7 @@
     }
 
     function stockOut() {
-        if (!isAdmin) return alert('🔒 Admin only!');
+        if (!isAdmin) return alert('🔒 Admin only! Login first.');
         const id = parseInt(document.getElementById('stockSelect').value);
         const qty = parseFloat(document.getElementById('stockQty').value);
         if (!id || !qty || qty <= 0) return alert('Select item and qty!');
@@ -701,7 +905,7 @@
     // COMPLETE SALE
     // ============================================================
     function completeSale() {
-        if (!isAdmin) return alert('🔒 Admin only!');
+        if (!isAdmin) return alert('🔒 Admin only! Login first.');
         if (!cart.length) return alert('Cart empty!');
         const type = document.getElementById('saleType').value;
         const customerId = document.getElementById('saleCustomerSelect').value;
@@ -739,7 +943,7 @@
     // CUSTOMERS
     // ============================================================
     function addCustomer() {
-        if (!isAdmin) return alert('🔒 Admin only!');
+        if (!isAdmin) return alert('🔒 Admin only! Login first.');
         const name = document.getElementById('custName').value.trim();
         if (!name) return alert('Enter name!');
         db.customers.push({ id: Date.now(), name, phone: document.getElementById('custPhone').value, balance: 0 });
@@ -749,7 +953,7 @@
     }
 
     function receivePayment() {
-        if (!isAdmin) return alert('🔒 Admin only!');
+        if (!isAdmin) return alert('🔒 Admin only! Login first.');
         const id = document.getElementById('receiveSelect').value;
         const amount = parseFloat(document.getElementById('receiveAmount').value);
         if (!id || !amount || amount <= 0) return alert('Select customer and amount!');
@@ -927,6 +1131,7 @@
         const active = document.querySelector('.section.active');
         if (active && active.id === 'section-reports') genReport('daily');
         if (active && active.id === 'section-itemdetails') renderItemDetails();
+        if (active && active.id === 'section-sessions') loadSessionsFromCloud();
     }
 
     // ============================================================
@@ -946,6 +1151,7 @@
             if (id === 'customers') renderCustomers();
             if (id === 'reports') genReport('daily');
             if (id === 'itemdetails') renderItemDetails();
+            if (id === 'sessions') loadSessionsFromCloud();
         });
     });
 
@@ -963,13 +1169,39 @@
         saveLocal();
     }
 
-    // Show password modal on load
-    document.getElementById('passwordModal').style.display = 'flex';
-    enableEditing(false);
+    // Check if session exists
+    const savedSession = loadSession();
+    if (savedSession && savedSession.active) {
+        isAdmin = true;
+        document.getElementById('roleBadge').textContent = '👑 Admin';
+        document.getElementById('roleBadge').className = 'admin-badge';
+        document.getElementById('loginBtn').style.display = 'none';
+        document.getElementById('logoutBtn').style.display = 'inline-block';
+        enableEditing(true);
+    } else {
+        enableEditing(false);
+    }
 
     renderAll();
     syncFromCloud();
-    setInterval(() => { if (navigator.onLine) syncFromCloud(); else updateStatus('offline'); }, 30000);
+    setInterval(() => { 
+        if (navigator.onLine) {
+            syncFromCloud();
+            if (isAdmin && sessionId) {
+                syncSessionToCloud();
+            }
+        } else {
+            updateStatus('offline');
+        }
+    }, 30000);
+
+    // Load sessions periodically
+    setInterval(() => {
+        if (document.getElementById('section-sessions').classList.contains('active')) {
+            loadSessionsFromCloud();
+        }
+    }, 10000);
+
     console.log('🚀 Warda Marble Tabuk Ready! Items:', db.items.length);
 </script>
 </body>
