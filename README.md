@@ -9,96 +9,113 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
-        html,body{height:100%;overflow:hidden;background:#f0f4f8}
-        body{padding:6px;padding-bottom:65px}
-        .app-container{max-width:100%;height:100%;margin:0 auto;background:white;border-radius:15px;overflow:hidden;padding:8px;display:flex;flex-direction:column}
-        .header{background:linear-gradient(135deg,#1a365d,#2d3748);color:white;padding:8px 12px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;flex-shrink:0}
-        .header h1{font-size:14px;font-weight:700}
-        .header-controls{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
-        .header-controls button{background:rgba(255,255,255,0.15);border:none;color:white;padding:2px 8px;border-radius:15px;cursor:pointer;font-size:9px;font-weight:600}
+        html,body{height:100%;overflow:hidden;background:#e8edf3}
+        body{padding:6px;padding-bottom:62px}
+        .app-container{max-width:100%;height:100%;margin:0 auto;background:white;border-radius:16px;overflow:hidden;padding:8px;display:flex;flex-direction:column;box-shadow:0 2px 20px rgba(0,0,0,0.08)}
+        .header{background:linear-gradient(135deg,#1a2a4a,#2d3b5a);color:white;padding:8px 14px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;flex-shrink:0}
+        .header h1{font-size:15px;font-weight:700;letter-spacing:0.5px}
+        .header-controls{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+        .header-controls button{background:rgba(255,255,255,0.12);border:none;color:white;padding:3px 10px;border-radius:20px;cursor:pointer;font-size:9px;font-weight:600;transition:0.2s}
+        .header-controls button:hover{background:rgba(255,255,255,0.25)}
         .header-controls button:active{transform:scale(0.95)}
-        .tabs{display:flex;gap:3px;margin:5px 0;flex-shrink:0;background:#f7fafc;padding:3px;border-radius:10px;flex-wrap:wrap}
-        .tab{flex:1;padding:4px 2px;text-align:center;border-radius:8px;font-weight:600;font-size:8px;cursor:pointer;transition:0.3s;min-width:35px;color:#4a5568;background:transparent}
-        .tab i{display:block;font-size:13px;margin-bottom:1px}
-        .tab.active{background:#1a365d;color:white}
+        .password-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(4px)}
+        .password-modal .box{background:white;padding:25px;border-radius:16px;max-width:340px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+        .password-modal .box h2{font-size:18px;color:#1a2a4a;margin-bottom:8px}
+        .password-modal .box p{font-size:12px;color:#718096;margin-bottom:15px}
+        .password-modal .box input{width:100%;padding:10px;border:2px solid #e2e8f0;border-radius:10px;font-size:14px;text-align:center;margin-bottom:12px}
+        .password-modal .box input:focus{border-color:#1a2a4a;outline:none}
+        .password-modal .box .btn{width:100%;padding:10px;border:none;border-radius:10px;background:#1a2a4a;color:white;font-size:14px;font-weight:600;cursor:pointer}
+        .password-modal .box .btn:active{transform:scale(0.95)}
+        .password-modal .box .error{color:#c0392b;font-size:11px;margin-top:6px;display:none}
+        .tabs{display:flex;gap:3px;margin:5px 0;flex-shrink:0;background:#f0f4f8;padding:3px;border-radius:10px;flex-wrap:wrap}
+        .tab{flex:1;padding:5px 3px;text-align:center;border-radius:8px;font-weight:600;font-size:8px;cursor:pointer;transition:0.3s;min-width:38px;color:#5a6a7a;background:transparent}
+        .tab i{display:block;font-size:14px;margin-bottom:2px}
+        .tab.active{background:#1a2a4a;color:white;box-shadow:0 2px 8px rgba(26,42,74,0.3)}
         .section{display:none;flex:1;overflow:hidden;padding-top:4px}
         .section.active{display:flex;flex-direction:column}
         .card{background:white;border-radius:10px;padding:6px 8px;margin-bottom:4px;border:1px solid #e2e8f0;flex-shrink:0}
-        .card-title{font-size:11px;font-weight:700;color:#1a365d;display:flex;align-items:center;gap:4px;border-bottom:1px solid #e2e8f0;padding-bottom:3px;margin-bottom:4px}
-        .pos-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;max-height:120px;overflow-y:auto;padding:2px 0}
-        .pos-item{background:#f7fafc;border:1.5px solid #e2e8f0;border-radius:8px;padding:4px;text-align:center;cursor:pointer;transition:0.2s;font-size:9px}
-        .pos-item:active{transform:scale(0.95);background:#edf2f7}
-        .pos-item .name{font-weight:600;color:#2d3748;font-size:10px}
-        .pos-item .price{color:#1a365d;font-weight:700;font-size:11px}
+        .card-title{font-size:11px;font-weight:700;color:#1a2a4a;display:flex;align-items:center;gap:5px;border-bottom:1.5px solid #eef2f6;padding-bottom:4px;margin-bottom:5px}
+        .pos-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;max-height:110px;overflow-y:auto;padding:3px 0}
+        .pos-item{background:#f7fafc;border:1.5px solid #e2e8f0;border-radius:8px;padding:5px 3px;text-align:center;cursor:pointer;transition:0.2s;font-size:9px}
+        .pos-item:active{transform:scale(0.94);background:#edf2f7}
+        .pos-item .name{font-weight:600;color:#2d3748;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .pos-item .price{color:#1a2a4a;font-weight:700;font-size:11px}
         .pos-item .stock{font-size:7px;color:#718096}
         .pos-item.out-of-stock{opacity:0.4;pointer-events:none}
         .cart-area{flex:1;display:flex;flex-direction:column;min-height:0}
-        .cart-items{flex:1;overflow-y:auto;padding:2px 0;max-height:120px}
-        .cart-item{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #e2e8f0;font-size:10px;align-items:center}
-        .cart-item .qty-control{display:flex;gap:2px;align-items:center}
-        .cart-item .qty-control button{background:#e2e8f0;border:none;border-radius:50%;width:20px;height:20px;font-weight:700;cursor:pointer;font-size:11px}
-        .cart-item .qty-control button:active{transform:scale(0.9)}
-        .total-bar{background:#1a365d;color:white;padding:4px 8px;border-radius:8px;display:flex;justify-content:space-between;font-weight:700;font-size:13px;flex-shrink:0}
-        .bottom-actions{display:grid;grid-template-columns:1fr 1fr;gap:3px;flex-shrink:0;padding-top:3px}
-        .bottom-actions .btn{padding:4px;font-size:10px}
-        .btn{padding:4px 8px;border:none;border-radius:6px;font-size:10px;font-weight:600;cursor:pointer;transition:0.2s;display:flex;align-items:center;justify-content:center;gap:3px;width:100%}
+        .cart-items{flex:1;overflow-y:auto;padding:3px 0;max-height:100px}
+        .cart-item{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #eef2f6;font-size:10px;align-items:center}
+        .cart-item .qty-control{display:flex;gap:3px;align-items:center}
+        .cart-item .qty-control button{background:#e8edf3;border:none;border-radius:50%;width:22px;height:22px;font-weight:700;cursor:pointer;font-size:12px;transition:0.2s}
+        .cart-item .qty-control button:active{transform:scale(0.9);background:#d0d8e0}
+        .total-bar{background:linear-gradient(135deg,#1a2a4a,#2d3b5a);color:white;padding:6px 12px;border-radius:8px;display:flex;justify-content:space-between;font-weight:700;font-size:14px;flex-shrink:0}
+        .bottom-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;flex-shrink:0;padding-top:4px}
+        .bottom-actions .btn{padding:5px;font-size:9px}
+        .btn{padding:5px 10px;border:none;border-radius:6px;font-size:10px;font-weight:600;cursor:pointer;transition:0.2s;display:flex;align-items:center;justify-content:center;gap:4px;width:100%}
         .btn:active{transform:scale(0.95)}
-        .btn-primary{background:#1a365d;color:white}
-        .btn-success{background:#38a169;color:white}
-        .btn-danger{background:#e53e3e;color:white}
-        .btn-warning{background:#d69e2e;color:white}
-        .btn-outline{background:transparent;border:1.5px solid #1a365d;color:#1a365d}
+        .btn-primary{background:#1a2a4a;color:white}
+        .btn-success{background:#2d8f5e;color:white}
+        .btn-danger{background:#c0392b;color:white}
+        .btn-warning{background:#d4a017;color:white}
+        .btn-outline{background:transparent;border:1.5px solid #1a2a4a;color:#1a2a4a}
         .btn-sm{padding:2px 6px;font-size:8px}
         .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:4px}
         .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px}
         .form-group{margin-bottom:3px}
         .form-group label{display:block;font-size:9px;font-weight:600;color:#2d3748;margin-bottom:1px}
-        .form-group input,.form-group select{width:100%;padding:4px 6px;border:1.5px solid #e2e8f0;border-radius:6px;font-size:10px;background:#f7fafc}
-        .form-group input:focus{border-color:#1a365d;outline:none;background:white}
+        .form-group input,.form-group select{width:100%;padding:4px 6px;border:1.5px solid #e2e8f0;border-radius:6px;font-size:10px;background:#f7fafc;transition:0.2s}
+        .form-group input:focus{border-color:#1a2a4a;outline:none;background:white;box-shadow:0 0 0 2px rgba(26,42,74,0.1)}
         .table-wrap{overflow:auto;flex:1;min-height:0}
         table{width:100%;border-collapse:collapse;font-size:9px}
-        th{background:#1a365d;color:white;padding:3px 2px;text-align:center;font-size:8px;position:sticky;top:0;z-index:2}
-        td{padding:3px 2px;border-bottom:1px solid #e2e8f0;text-align:center;font-size:9px}
-        tr:nth-child(even){background:#f7fafc}
-        .badge{display:inline-block;padding:1px 5px;border-radius:12px;font-size:7px;font-weight:600}
-        .badge-success{background:#c6f6d5;color:#22543d}
-        .badge-danger{background:#fed7d7;color:#9b2c2c}
-        .badge-warning{background:#fefcbf;color:#744210}
-        .total-row{font-weight:700;background:#edf2f7}
-        .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;display:flex;justify-content:space-around;padding:3px 0;box-shadow:0 -2px 10px rgba(0,0,0,0.1);border-top:1px solid #e2e8f0;z-index:1000}
-        .bottom-nav .nav-item{text-align:center;font-size:7px;color:#718096;cursor:pointer;padding:2px 5px;border-radius:6px}
-        .bottom-nav .nav-item i{font-size:14px;display:block}
-        .bottom-nav .nav-item.active{color:#1a365d;font-weight:700}
+        th{background:#1a2a4a;color:white;padding:4px 3px;text-align:center;font-size:8px;position:sticky;top:0;z-index:2}
+        td{padding:4px 3px;border-bottom:1px solid #eef2f6;text-align:center;font-size:9px}
+        tr:nth-child(even){background:#f8fafc}
+        .badge{display:inline-block;padding:1px 6px;border-radius:12px;font-size:7px;font-weight:600}
+        .badge-success{background:#d4edda;color:#155724}
+        .badge-danger{background:#f8d7da;color:#721c24}
+        .badge-warning{background:#fff3cd;color:#856404}
+        .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;display:flex;justify-content:space-around;padding:4px 0;box-shadow:0 -2px 12px rgba(0,0,0,0.08);border-top:1px solid #eef2f6;z-index:1000}
+        .bottom-nav .nav-item{text-align:center;font-size:7px;color:#718096;cursor:pointer;padding:3px 6px;border-radius:6px;transition:0.2s}
+        .bottom-nav .nav-item i{font-size:15px;display:block}
+        .bottom-nav .nav-item.active{color:#1a2a4a;font-weight:700}
         .scroll-area{flex:1;overflow-y:auto;min-height:0;padding-right:2px}
-        .sync-status{font-size:8px;color:#a0aec0;display:flex;align-items:center;gap:3px}
+        .sync-status{font-size:8px;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:4px}
         .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
-        .dot.green{background:#48bb78}
-        .dot.red{background:#fc8181}
-        .dot.yellow{background:#ecc94b;animation:blink 1s infinite}
+        .dot.green{background:#4ade80}
+        .dot.red{background:#f87171}
+        .dot.yellow{background:#fbbf24;animation:blink 1s infinite}
         @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
         .view-only .btn,.view-only .pos-item,.view-only input,.view-only select{opacity:0.5;pointer-events:none}
-        .cat-tabs{display:flex;gap:2px;margin-bottom:3px;flex-wrap:wrap}
-        .cat-tab{padding:2px 8px;border-radius:6px;font-weight:600;font-size:8px;cursor:pointer;background:#e2e8f0;color:#4a5568;border:none;flex:1}
+        .cat-tabs{display:flex;gap:3px;margin-bottom:3px;flex-wrap:wrap}
+        .cat-tab{padding:2px 10px;border-radius:6px;font-weight:600;font-size:8px;cursor:pointer;background:#e8edf3;color:#5a6a7a;border:none;flex:1;transition:0.2s}
         .cat-tab.active{color:white}
         .cat-tab.stone-active{background:#8B7355;color:white}
         .cat-tab.material-active{background:#2b6cb0;color:white}
-        .edit-btn{background:#e2e8f0;border:none;padding:1px 5px;border-radius:4px;cursor:pointer;font-size:8px}
-        .edit-btn:active{transform:scale(0.9)}
-        .del-btn{background:#fed7d7;border:none;padding:1px 5px;border-radius:4px;cursor:pointer;font-size:8px;color:#9b2c2c}
-        .del-btn:active{transform:scale(0.9)}
-        @media(max-width:480px){.pos-grid{grid-template-columns:1fr 1fr 1fr}.header h1{font-size:12px}}
+        .edit-btn{background:#e8edf3;border:none;padding:1px 6px;border-radius:4px;cursor:pointer;font-size:8px;transition:0.2s}
+        .edit-btn:hover{background:#d0d8e0}
+        .del-btn{background:#f8d7da;border:none;padding:1px 6px;border-radius:4px;cursor:pointer;font-size:8px;color:#721c24}
+        .del-btn:hover{background:#f5c6cb}
+        .invoice-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px;font-size:10px;font-family:monospace;white-space:pre-wrap;max-height:200px;overflow-y:auto}
+        .invoice-box .inv-header{text-align:center;font-weight:700;font-size:13px;border-bottom:1px dashed #ccc;padding-bottom:5px;margin-bottom:5px}
+        .invoice-box .inv-line{display:flex;justify-content:space-between;padding:2px 0}
+        .invoice-box .inv-total{font-weight:700;border-top:1px solid #ccc;padding-top:4px;margin-top:4px}
+        .invoice-box .inv-footer{text-align:center;font-size:9px;color:#718096;border-top:1px dashed #ccc;padding-top:4px;margin-top:4px}
+        .admin-badge{background:#d4a017;color:white;padding:2px 10px;border-radius:20px;font-size:8px;font-weight:600}
+        .viewer-badge{background:#718096;color:white;padding:2px 10px;border-radius:20px;font-size:8px;font-weight:600}
+        @media(max-width:480px){.pos-grid{grid-template-columns:1fr 1fr 1fr}.header h1{font-size:13px}.bottom-actions{grid-template-columns:1fr 1fr}}
         @media(min-width:768px){.pos-grid{grid-template-columns:1fr 1fr 1fr 1fr 1fr}}
     </style>
 </head>
 <body>
-<div class="app-container">
+<div class="app-container" id="app">
     <!-- Header -->
     <div class="header">
         <h1><i class="fas fa-store"></i> <span id="shopName">Warda Marble Tabuk</span></h1>
         <div class="header-controls">
             <span class="sync-status"><span class="dot green" id="statusDot"></span><span id="statusText">Online</span></span>
-            <button onclick="toggleMode()"><i class="fas fa-user-shield"></i> <span id="modeLabel">View</span></button>
+            <span id="roleBadge" class="admin-badge">👑 Admin</span>
             <button onclick="toggleLang()"><i class="fas fa-language"></i> <span id="langLabel">اردو</span></button>
+            <button onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
         </div>
     </div>
 
@@ -114,11 +131,11 @@
     <!-- ========== POS ========== -->
     <div id="section-pos" class="section active">
         <div class="card" style="flex-shrink:0;padding:5px;">
-            <div class="card-title" style="font-size:10px;margin-bottom:2px;">
+            <div class="card-title" style="font-size:10px;margin-bottom:3px;">
                 <i class="fas fa-list"></i> Items
                 <span style="margin-right:auto;"></span>
-                <span class="badge badge-stone">Stone</span>
-                <span class="badge badge-material">Material</span>
+                <span class="badge" style="background:#8B7355;color:white;">Stone</span>
+                <span class="badge" style="background:#2b6cb0;color:white;">Material</span>
             </div>
             <div class="cat-tabs">
                 <button class="cat-tab stone-active active" onclick="filterCategory('stone')" id="catStone">Stone</button>
@@ -130,19 +147,23 @@
 
         <div class="cart-area">
             <div class="card" style="flex:1;display:flex;flex-direction:column;padding:5px;margin-bottom:0;">
-                <div class="card-title" style="font-size:10px;margin-bottom:2px;"><i class="fas fa-shopping-cart"></i> Cart (<span id="cartCount">0</span>)</div>
+                <div class="card-title" style="font-size:10px;margin-bottom:2px;">
+                    <i class="fas fa-shopping-cart"></i> Cart (<span id="cartCount">0</span>)
+                    <span style="margin-right:auto;"></span>
+                    <button class="btn btn-sm btn-danger" onclick="clearCart()" style="width:auto;padding:1px 8px;font-size:8px;"><i class="fas fa-trash"></i></button>
+                </div>
                 <div class="cart-items" id="cartItems"></div>
                 <div class="total-bar"><span>Total:</span><span id="cartTotal">0</span></div>
                 <div class="bottom-actions">
-                    <select id="saleType" style="padding:3px 4px;border-radius:5px;border:1.5px solid #e2e8f0;font-size:9px;">
+                    <select id="saleType" style="padding:4px;border-radius:6px;border:1.5px solid #e2e8f0;font-size:9px;">
                         <option value="cash">Cash</option>
                         <option value="credit">Credit</option>
                     </select>
-                    <select id="saleCustomerSelect" style="padding:3px 4px;border-radius:5px;border:1.5px solid #e2e8f0;font-size:9px;">
+                    <select id="saleCustomerSelect" style="padding:4px;border-radius:6px;border:1.5px solid #e2e8f0;font-size:9px;">
                         <option value="">Walk-in</option>
                     </select>
-                    <input type="number" id="salePaid" placeholder="Paid" value="0" style="padding:3px 4px;border-radius:5px;border:1.5px solid #e2e8f0;font-size:9px;grid-column:1/-1;">
-                    <button class="btn btn-success" onclick="completeSale()" style="grid-column:1/-1;padding:4px;font-size:10px;"><i class="fas fa-check"></i> Complete Sale</button>
+                    <button class="btn btn-success" onclick="completeSale()" style="font-size:9px;padding:4px;"><i class="fas fa-check"></i> Sale</button>
+                    <input type="number" id="salePaid" placeholder="Paid" value="0" style="padding:4px;border-radius:6px;border:1.5px solid #e2e8f0;font-size:9px;grid-column:1/-1;">
                 </div>
             </div>
         </div>
@@ -165,17 +186,17 @@
                     <div class="form-group"><label>Purchase Price</label><input type="number" id="itemPurchasePrice" placeholder="Cost"></div>
                     <div class="form-group"><label>Stock</label><input type="number" id="itemStock" placeholder="Qty"></div>
                 </div>
-                <div class="grid-2">
+                <div class="grid-3">
                     <button class="btn btn-primary" onclick="addItem()"><i class="fas fa-save"></i> Add</button>
                     <button class="btn btn-warning" onclick="updateItem()"><i class="fas fa-edit"></i> Update</button>
+                    <button class="btn btn-danger" onclick="deleteItem()"><i class="fas fa-trash"></i> Delete</button>
                 </div>
-                <button class="btn btn-danger" onclick="deleteItem()" style="margin-top:3px;"><i class="fas fa-trash"></i> Delete Selected</button>
                 <input type="hidden" id="editItemId" value="">
             </div>
 
             <div class="card">
                 <div class="card-title"><i class="fas fa-list"></i> Stock List</div>
-                <div class="table-wrap" style="max-height:150px;">
+                <div class="table-wrap" style="max-height:120px;">
                     <table><thead><tr><th>Name</th><th>Unit</th><th>Stock</th><th>Price</th><th>Action</th></tr></thead>
                     <tbody id="stockListBody"></tbody></table>
                 </div>
@@ -190,6 +211,14 @@
                 <div class="grid-2">
                     <button class="btn btn-success" onclick="stockIn()"><i class="fas fa-plus"></i> In</button>
                     <button class="btn btn-danger" onclick="stockOut()"><i class="fas fa-minus"></i> Out</button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title"><i class="fas fa-clock"></i> Stock History</div>
+                <div class="table-wrap" style="max-height:80px;">
+                    <table><thead><tr><th>Date</th><th>Item</th><th>Qty</th><th>Type</th></tr></thead>
+                    <tbody id="stockHistoryBody"></tbody></table>
                 </div>
             </div>
         </div>
@@ -236,21 +265,21 @@
                     <button class="btn btn-warning" onclick="genReport('weekly')"><i class="fas fa-calendar-week"></i> Weekly</button>
                     <button class="btn btn-danger" onclick="genReport('monthly')"><i class="fas fa-calendar-alt"></i> Monthly</button>
                 </div>
-                <div style="display:flex;gap:3px;margin-top:3px;">
+                <div style="display:flex;gap:3px;margin-top:4px;">
                     <button class="btn btn-success" onclick="printReport()" style="flex:1;"><i class="fas fa-print"></i> Print</button>
                     <button class="btn btn-outline" onclick="shareReport()" style="flex:1;"><i class="fab fa-whatsapp"></i> Share</button>
                 </div>
-                <div id="reportDisplay" style="background:#f7fafc;padding:6px;border-radius:6px;margin-top:4px;font-size:9px;white-space:pre-wrap;font-family:monospace;max-height:150px;overflow-y:auto;"></div>
+                <div id="reportDisplay" class="invoice-box" style="margin-top:6px;"></div>
             </div>
 
             <div class="card">
                 <div class="card-title"><i class="fas fa-chart-line"></i> Profit / Loss</div>
-                <div id="plDisplay" style="text-align:center;padding:6px;font-size:14px;font-weight:700;"></div>
+                <div id="plDisplay" style="text-align:center;padding:8px;font-size:15px;font-weight:700;"></div>
             </div>
 
             <div class="card">
                 <div class="card-title"><i class="fas fa-history"></i> All Transactions</div>
-                <div class="table-wrap" style="max-height:120px;">
+                <div class="table-wrap" style="max-height:100px;">
                     <table><thead><tr><th>Date</th><th>Desc</th><th>Amount</th></tr></thead>
                     <tbody id="transactionsBody"></tbody></table>
                 </div>
@@ -263,11 +292,17 @@
         <div class="scroll-area">
             <div class="card">
                 <div class="card-title"><i class="fas fa-list-ul"></i> Item Sales Details</div>
-                <div id="itemDetailsDisplay"></div>
+                <div class="table-wrap" style="max-height:180px;">
+                    <table><thead><tr><th>Item</th><th>Unit</th><th>Total Sold</th><th>Revenue</th></tr></thead>
+                    <tbody id="itemDetailsBody"></tbody></table>
+                </div>
             </div>
             <div class="card">
-                <div class="card-title"><i class="fas fa-shopping-bag"></i> Monthly Summary</div>
-                <div id="monthlySummaryDisplay"></div>
+                <div class="card-title"><i class="fas fa-calendar-alt"></i> Monthly Summary</div>
+                <div class="table-wrap" style="max-height:120px;">
+                    <table><thead><tr><th>Month</th><th>Sales</th><th>Orders</th></tr></thead>
+                    <tbody id="monthlySummaryBody"></tbody></table>
+                </div>
             </div>
         </div>
     </div>
@@ -280,6 +315,20 @@
     <div class="nav-item" data-tab="customers"><i class="fas fa-users"></i> Cust</div>
     <div class="nav-item" data-tab="reports"><i class="fas fa-chart-pie"></i> Report</div>
     <div class="nav-item" data-tab="itemdetails"><i class="fas fa-list-ul"></i> Details</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 🔑 PASSWORD MODAL -->
+<!-- ============================================================ -->
+<div id="passwordModal" class="password-modal">
+    <div class="box">
+        <h2><i class="fas fa-lock"></i> Admin Login</h2>
+        <p>Enter password to manage system</p>
+        <input type="password" id="passwordInput" placeholder="Enter password..." onkeydown="if(event.key==='Enter') checkPassword()">
+        <button class="btn" onclick="checkPassword()"><i class="fas fa-unlock"></i> Unlock</button>
+        <div id="passwordError" class="error">❌ Wrong password! Try again.</div>
+        <div style="margin-top:10px;font-size:10px;color:#a0aec0;">Default password: <strong>admin123</strong></div>
+    </div>
 </div>
 
 <script>
@@ -300,12 +349,60 @@
     const database = firebase.database();
 
     // ============================================================
+    // PASSWORD SYSTEM
+    // ============================================================
+    const ADMIN_PASSWORD = "admin123";  // 🔑 Change this password
+    let isAdmin = false;
+
+    function checkPassword() {
+        const input = document.getElementById('passwordInput').value;
+        const error = document.getElementById('passwordError');
+        if (input === ADMIN_PASSWORD) {
+            isAdmin = true;
+            document.getElementById('passwordModal').style.display = 'none';
+            document.getElementById('roleBadge').textContent = '👑 Admin';
+            document.getElementById('roleBadge').className = 'admin-badge';
+            enableEditing(true);
+            showToast('✅ Admin mode activated!');
+        } else {
+            error.style.display = 'block';
+            setTimeout(() => error.style.display = 'none', 3000);
+        }
+    }
+
+    function logout() {
+        isAdmin = false;
+        document.getElementById('passwordModal').style.display = 'flex';
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('roleBadge').textContent = '👁️ Viewer';
+        document.getElementById('roleBadge').className = 'viewer-badge';
+        enableEditing(false);
+        showToast('👁️ Viewer mode activated');
+    }
+
+    function enableEditing(enable) {
+        const els = document.querySelectorAll('.btn, .pos-item, input, select');
+        els.forEach(el => {
+            if (enable) {
+                el.style.opacity = '1';
+                el.style.pointerEvents = 'auto';
+            } else {
+                el.style.opacity = '0.5';
+                el.style.pointerEvents = 'none';
+            }
+        });
+        // Always allow viewing
+        document.querySelectorAll('.tab, .bottom-nav .nav-item, .pos-item, table, .invoice-box').forEach(el => {
+            el.style.pointerEvents = 'auto';
+        });
+    }
+
+    // ============================================================
     // DATABASE
     // ============================================================
-    let db = { items: [], customers: [], sales: [], expenses: [], transactions: [] };
+    let db = { items: [], customers: [], sales: [], expenses: [], transactions: [], stockHistory: [] };
     let cart = [];
     let currentFilter = 'all';
-    let isAdmin = true;
     let currentLang = 'en';
     let isSyncing = false;
 
@@ -325,17 +422,17 @@
     // ============================================================
     // LANGUAGE
     // ============================================================
+    const langMap = {
+        en: { shop: 'Warda Marble Tabuk', cash: 'Cash', credit: 'Credit', walkin: 'Walk-in' },
+        ur: { shop: 'وردہ ماربل تبوک', cash: 'نقد', credit: 'ادھار', walkin: 'بغیر گاہک' }
+    };
+
+    function t(key) { return langMap[currentLang][key] || key; }
+
     function toggleLang() {
         currentLang = currentLang === 'en' ? 'ur' : 'en';
         document.getElementById('langLabel').textContent = currentLang === 'en' ? 'اردو' : 'English';
-        renderAll();
-    }
-
-    function toggleMode() {
-        isAdmin = !isAdmin;
-        document.getElementById('modeLabel').textContent = isAdmin ? 'View' : 'Admin';
-        const els = document.querySelectorAll('.btn, .pos-item, input, select');
-        els.forEach(el => { el.style.opacity = isAdmin ? '1' : '0.5'; el.style.pointerEvents = isAdmin ? 'auto' : 'none'; });
+        document.getElementById('shopName').textContent = t('shop');
         renderAll();
     }
 
@@ -369,17 +466,17 @@
 
     function showToast(msg) {
         const t = document.createElement('div');
-        t.style.cssText = 'position:fixed;bottom:75px;left:50%;transform:translateX(-50%);background:#1a365d;color:white;padding:5px 14px;border-radius:8px;font-size:11px;z-index:9999;max-width:90%;text-align:center';
+        t.style.cssText = 'position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#1a2a4a;color:white;padding:5px 16px;border-radius:8px;font-size:11px;z-index:9999;max-width:90%;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,0.2)';
         t.textContent = msg;
         document.body.appendChild(t);
         setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 2000);
     }
 
     // ============================================================
-    // ITEMS - Full CRUD
+    // ITEMS - Full CRUD (Only Admin)
     // ============================================================
     function addItem() {
-        if (!isAdmin) return alert('Admin only!');
+        if (!isAdmin) return alert('🔒 Admin only!');
         const name = document.getElementById('itemName').value.trim();
         if (!name) return alert('Enter name!');
         const item = {
@@ -399,7 +496,7 @@
     }
 
     function updateItem() {
-        if (!isAdmin) return alert('Admin only!');
+        if (!isAdmin) return alert('🔒 Admin only!');
         const id = parseInt(document.getElementById('editItemId').value);
         if (!id) return alert('Select an item first!');
         const item = db.items.find(i => i.id === id);
@@ -416,7 +513,7 @@
     }
 
     function deleteItem() {
-        if (!isAdmin) return alert('Admin only!');
+        if (!isAdmin) return alert('🔒 Admin only!');
         const id = parseInt(document.getElementById('editItemId').value);
         if (!id) return alert('Select an item first!');
         if (!confirm('Delete this item?')) return;
@@ -427,6 +524,7 @@
     }
 
     function selectItem(id) {
+        if (!isAdmin) return alert('🔒 Admin only!');
         const item = db.items.find(i => i.id === id);
         if (!item) return;
         document.getElementById('editItemId').value = id;
@@ -447,13 +545,14 @@
     }
 
     function stockIn() {
-        if (!isAdmin) return alert('Admin only!');
+        if (!isAdmin) return alert('🔒 Admin only!');
         const id = parseInt(document.getElementById('stockSelect').value);
         const qty = parseFloat(document.getElementById('stockQty').value);
         if (!id || !qty || qty <= 0) return alert('Select item and qty!');
         const item = db.items.find(i => i.id === id);
         if (!item) return;
         item.stock += qty;
+        db.stockHistory.push({ date: getToday(), item: item.name, qty: qty, type: 'In' });
         db.transactions.push({ id: Date.now(), type: 'stock_in', desc: `${item.name} +${qty}`, amount: qty * item.purchasePrice, date: getToday() });
         saveLocal(); syncToCloud(); renderAll();
         document.getElementById('stockQty').value = '';
@@ -461,7 +560,7 @@
     }
 
     function stockOut() {
-        if (!isAdmin) return alert('Admin only!');
+        if (!isAdmin) return alert('🔒 Admin only!');
         const id = parseInt(document.getElementById('stockSelect').value);
         const qty = parseFloat(document.getElementById('stockQty').value);
         if (!id || !qty || qty <= 0) return alert('Select item and qty!');
@@ -469,6 +568,7 @@
         if (!item) return;
         if (item.stock < qty) return alert('Not enough stock!');
         item.stock -= qty;
+        db.stockHistory.push({ date: getToday(), item: item.name, qty: qty, type: 'Out' });
         db.transactions.push({ id: Date.now(), type: 'stock_out', desc: `${item.name} -${qty}`, amount: qty * item.sellPrice, date: getToday() });
         saveLocal(); syncToCloud(); renderAll();
         document.getElementById('stockQty').value = '';
@@ -494,6 +594,14 @@
         const sel = document.getElementById('stockSelect');
         sel.innerHTML = '';
         db.items.forEach(i => { const o = document.createElement('option'); o.value = i.id; o.textContent = `${i.name} (${i.stock})`; sel.appendChild(o); });
+
+        const htbody = document.getElementById('stockHistoryBody');
+        if (!db.stockHistory.length) { htbody.innerHTML = '<tr><td colspan="4">No history</td></tr>'; return; }
+        let hhtml = '';
+        db.stockHistory.slice(-20).reverse().forEach(h => {
+            hhtml += `<tr><td>${h.date}</td><td>${h.item}</td><td>${h.qty}</td><td class="${h.type === 'In' ? 'badge-success' : 'badge-danger'}">${h.type}</td></tr>`;
+        });
+        htbody.innerHTML = hhtml;
     }
 
     // ============================================================
@@ -556,10 +664,17 @@
         renderCart();
     }
 
+    function clearCart() {
+        if (!cart.length) return;
+        if (!confirm('Clear cart?')) return;
+        cart = [];
+        renderCart();
+    }
+
     function renderCart() {
         const container = document.getElementById('cartItems');
         if (!cart.length) {
-            container.innerHTML = '<div style="text-align:center;color:#718096;padding:8px;font-size:10px;">Cart empty</div>';
+            container.innerHTML = '<div style="text-align:center;color:#a0aec0;padding:8px;font-size:10px;">Cart empty</div>';
             document.getElementById('cartTotal').textContent = '0';
             document.getElementById('cartCount').textContent = '0';
             return;
@@ -571,9 +686,9 @@
                 <span><strong>${c.name}</strong> (${c.price} x ${c.qty})</span>
                 <div class="qty-control">
                     <button onclick="updateQty(${c.id}, -1)">−</button>
-                    <span style="min-width:15px;text-align:center;">${c.qty}</span>
+                    <span style="min-width:16px;text-align:center;">${c.qty}</span>
                     <button onclick="updateQty(${c.id}, 1)">+</button>
-                    <button onclick="removeFromCart(${c.id})" style="background:#fed7d7;border:none;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:10px;">✕</button>
+                    <button onclick="removeFromCart(${c.id})" style="background:#f8d7da;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:10px;color:#721c24;">✕</button>
                 </div>
             </div>`;
         });
@@ -586,15 +701,16 @@
     // COMPLETE SALE
     // ============================================================
     function completeSale() {
-        if (!isAdmin) return alert('Admin only!');
+        if (!isAdmin) return alert('🔒 Admin only!');
         if (!cart.length) return alert('Cart empty!');
         const type = document.getElementById('saleType').value;
         const customerId = document.getElementById('saleCustomerSelect').value;
         const paid = parseFloat(document.getElementById('salePaid').value) || 0;
         let total = 0, stoneTotal = 0, materialTotal = 0, items = [];
+        let valid = true;
         cart.forEach(c => {
             const item = db.items.find(i => i.id === c.id);
-            if (!item || item.stock < c.qty) return alert(`${c.name} not enough stock!`);
+            if (!item || item.stock < c.qty) { alert(`${c.name} not enough stock!`); valid = false; return; }
             const subtotal = c.qty * c.price;
             total += subtotal;
             if (item.category === 'stone') stoneTotal += subtotal;
@@ -602,6 +718,7 @@
             items.push({ id: c.id, name: c.name, qty: c.qty, price: c.price, unit: c.unit, category: c.category, purchasePrice: c.purchasePrice });
             item.stock -= c.qty;
         });
+        if (!valid) return;
         const remaining = total - paid;
         const sale = { id: Date.now(), items, total, paid, remaining, type, customerId: customerId || null, date: getToday(), stoneTotal, materialTotal };
         db.sales.push(sale);
@@ -622,7 +739,7 @@
     // CUSTOMERS
     // ============================================================
     function addCustomer() {
-        if (!isAdmin) return alert('Admin only!');
+        if (!isAdmin) return alert('🔒 Admin only!');
         const name = document.getElementById('custName').value.trim();
         if (!name) return alert('Enter name!');
         db.customers.push({ id: Date.now(), name, phone: document.getElementById('custPhone').value, balance: 0 });
@@ -632,7 +749,7 @@
     }
 
     function receivePayment() {
-        if (!isAdmin) return alert('Admin only!');
+        if (!isAdmin) return alert('🔒 Admin only!');
         const id = document.getElementById('receiveSelect').value;
         const amount = parseFloat(document.getElementById('receiveAmount').value);
         if (!id || !amount || amount <= 0) return alert('Select customer and amount!');
@@ -667,16 +784,14 @@
     // ============================================================
     function genReport(type) {
         const today = getToday();
-        let sales = [], expenses = [];
+        let sales = [];
         if (type === 'daily') { sales = db.sales.filter(s => s.date === today); }
         else if (type === 'weekly') {
             const d = new Date(); d.setDate(d.getDate() - 7);
-            const start = d.toISOString().split('T')[0];
-            sales = db.sales.filter(s => s.date >= start);
+            sales = db.sales.filter(s => s.date >= d.toISOString().split('T')[0]);
         } else {
             const d = new Date(); d.setMonth(d.getMonth() - 1);
-            const start = d.toISOString().split('T')[0];
-            sales = db.sales.filter(s => s.date >= start);
+            sales = db.sales.filter(s => s.date >= d.toISOString().split('T')[0]);
         }
         const totalSales = sales.reduce((s, i) => s + i.total, 0);
         let stone = 0, material = 0, stoneCost = 0, materialCost = 0;
@@ -687,12 +802,38 @@
             });
         });
         const profit = (stone + material) - (stoneCost + materialCost);
-        const report = `📊 ${type.toUpperCase()} REPORT - ${today}\n━━━━━━━━━━━━━━━━━━━━━\n💰 Total Sales: ${totalSales}\n🪨 Stone Sales: ${stone}\n🧱 Material Sales: ${material}\n📈 Profit: ${profit >= 0 ? '✅ ' + profit : '❌ ' + Math.abs(profit)}\n━━━━━━━━━━━━━━━━━━━━━`;
-        document.getElementById('reportDisplay').textContent = report;
+        
+        let report = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+        report += `  🏪 WARDA MARBLE TABUK\n`;
+        report += `  📍 ${type.toUpperCase()} REPORT\n`;
+        report += `  📅 ${today}\n`;
+        report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+        report += `  💰 Total Sales    : ${totalSales}\n`;
+        report += `  🪨 Stone Sales    : ${stone}\n`;
+        report += `  🧱 Material Sales : ${material}\n`;
+        report += `  📈 Profit/Loss    : ${profit >= 0 ? '✅ ' + profit : '❌ ' + Math.abs(profit)}\n`;
+        report += `  📦 Total Orders   : ${sales.length}\n`;
+        report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+        if (sales.length > 0) {
+            report += `  📋 ORDER DETAILS\n`;
+            report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            sales.forEach((s, idx) => {
+                report += `  #${idx+1} | ${s.date} | ${s.total}\n`;
+                s.items.forEach(i => {
+                    report += `     ${i.name} x${i.qty} = ${i.qty * i.price}\n`;
+                });
+                report += `  ─────────────────────────────\n`;
+            });
+        }
+        report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+        report += `  📱 Thank you! Visit again.\n`;
+        report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+        
+        document.getElementById('reportDisplay').innerHTML = `<pre style="font-family:monospace;font-size:10px;margin:0;white-space:pre-wrap;">${report}</pre>`;
         document.getElementById('plDisplay').innerHTML = `
-            <div style="padding:8px;background:${profit>=0?'#f0fff4':'#fff5f5'};border-radius:8px;">
-                <div style="font-size:20px;font-weight:700;color:${profit>=0?'#38a169':'#e53e3e'};">${profit >= 0 ? '✅ Profit: ' + profit : '❌ Loss: ' + Math.abs(profit)}</div>
-                <div style="font-size:10px;color:#718096;">Stone: ${stone - stoneCost} | Material: ${material - materialCost}</div>
+            <div style="padding:8px;background:${profit>=0?'#d4edda':'#f8d7da'};border-radius:8px;">
+                <div style="font-size:20px;font-weight:700;color:${profit>=0?'#155724':'#721c24'};">${profit >= 0 ? '✅ Profit: ' + profit : '❌ Loss: ' + Math.abs(profit)}</div>
+                <div style="font-size:10px;color:#6c757d;">Stone: ${stone - stoneCost} | Material: ${material - materialCost}</div>
             </div>
         `;
         renderTransactions();
@@ -706,8 +847,8 @@
         let html = '';
         const sorted = [...db.transactions].reverse().slice(0, 30);
         sorted.forEach(t => {
-            const color = t.type === 'expense' ? '#e53e3e' : '#38a169';
-            html += `<tr><td>${t.date}</td><td>${t.desc}</td><td style="color:${color}">${t.amount}</td></tr>`;
+            const color = t.type === 'expense' ? '#c0392b' : '#2d8f5e';
+            html += `<tr><td>${t.date}</td><td>${t.desc}</td><td style="color:${color};font-weight:600;">${t.amount}</td></tr>`;
         });
         tbody.innerHTML = html;
     }
@@ -716,15 +857,14 @@
     // ITEM DETAILS
     // ============================================================
     function renderItemDetails() {
-        const container = document.getElementById('itemDetailsDisplay');
-        const monthlyContainer = document.getElementById('monthlySummaryDisplay');
+        const tbody = document.getElementById('itemDetailsBody');
+        const mbody = document.getElementById('monthlySummaryBody');
         if (!db.items.length) {
-            container.innerHTML = '<div style="font-size:10px;color:#718096;">No items</div>';
-            monthlyContainer.innerHTML = '<div style="font-size:10px;color:#718096;">No data</div>';
+            tbody.innerHTML = '<tr><td colspan="4">No items</td></tr>';
+            mbody.innerHTML = '<tr><td colspan="3">No data</td></tr>';
             return;
         }
-        // Item-wise sales
-        let html = '<div class="table-wrap" style="max-height:200px;"><table><thead><tr><th>Item</th><th>Unit</th><th>Total Sold</th><th>Total Revenue</th></tr></thead><tbody>';
+        let html = '';
         db.items.forEach(item => {
             const sales = db.sales.filter(s => s.items.some(i => i.id === item.id));
             let totalQty = 0, totalRevenue = 0;
@@ -738,10 +878,8 @@
             });
             html += `<tr><td>${item.name}</td><td>${item.unit}</td><td>${totalQty}</td><td>${totalRevenue}</td></tr>`;
         });
-        html += '</tbody></table></div>';
-        container.innerHTML = html;
+        tbody.innerHTML = html;
 
-        // Monthly summary
         const months = {};
         db.sales.forEach(s => {
             const m = s.date.substring(0, 7);
@@ -749,31 +887,31 @@
             months[m].total += s.total;
             months[m].count += 1;
         });
-        let mhtml = '<div class="table-wrap" style="max-height:150px;"><table><thead><tr><th>Month</th><th>Sales</th><th>Orders</th></tr></thead><tbody>';
+        let mhtml = '';
         Object.keys(months).sort().forEach(m => {
             mhtml += `<tr><td>${m}</td><td>${months[m].total}</td><td>${months[m].count}</td></tr>`;
         });
-        mhtml += '</tbody></table></div>';
-        monthlyContainer.innerHTML = mhtml;
+        mbody.innerHTML = mhtml || '<tr><td colspan="3">No data</td></tr>';
     }
 
     // ============================================================
     // PRINT & SHARE
     // ============================================================
     function printReport() {
-        const content = document.getElementById('reportDisplay').textContent;
+        const content = document.querySelector('#reportDisplay pre');
         if (!content) return alert('Generate report first!');
         const w = window.open('', '', 'width=600,height=500');
-        w.document.write(`<pre style="font-family:monospace;padding:20px;font-size:14px;">${content}</pre>`);
+        w.document.write(`<style>body{font-family:monospace;padding:20px;font-size:14px;background:white;}</style>`);
+        w.document.write(content.textContent);
         w.document.close();
         w.print();
     }
 
     function shareReport() {
-        const report = document.getElementById('reportDisplay').textContent;
-        if (!report) return alert('Generate report first!');
+        const content = document.querySelector('#reportDisplay pre');
+        if (!content) return alert('Generate report first!');
         const phone = '923001234567';
-        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(report)}`, '_blank');
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(content.textContent)}`, '_blank');
     }
 
     // ============================================================
@@ -812,7 +950,7 @@
     });
 
     // ============================================================
-    // INIT - Sample Items
+    // INIT
     // ============================================================
     if (!db.items.length) {
         db.items = [
@@ -824,6 +962,10 @@
         ];
         saveLocal();
     }
+
+    // Show password modal on load
+    document.getElementById('passwordModal').style.display = 'flex';
+    enableEditing(false);
 
     renderAll();
     syncFromCloud();
