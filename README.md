@@ -10,107 +10,114 @@
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
         html,body{height:100%;overflow:hidden;background:#eef2f7}
-        body{padding:4px;padding-bottom:58px}
-        .app-container{max-width:100%;height:100%;margin:0 auto;background:white;border-radius:14px;overflow:hidden;padding:5px;display:flex;flex-direction:column;box-shadow:0 2px 16px rgba(0,0,0,0.06)}
-        .header{background:linear-gradient(135deg,#0f1a2e,#1a2a4a);color:white;padding:6px 12px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;min-height:36px}
-        .header h1{font-size:13px;font-weight:700}
+        body{padding:3px;padding-bottom:55px}
+        .app-container{max-width:100%;height:100%;margin:0 auto;background:white;border-radius:12px;overflow:hidden;padding:4px;display:flex;flex-direction:column;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+        .header{background:linear-gradient(135deg,#0f1a2e,#1a2a4a);color:white;padding:5px 10px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;min-height:32px}
+        .header h1{font-size:12px;font-weight:700}
         .header-controls{display:flex;gap:3px;align-items:center}
-        .header-controls button{background:rgba(255,255,255,0.1);border:none;color:white;padding:2px 8px;border-radius:14px;cursor:pointer;font-size:8px;font-weight:600;transition:0.2s;display:flex;align-items:center;gap:2px}
+        .header-controls button{background:rgba(255,255,255,0.1);border:none;color:white;padding:2px 7px;border-radius:12px;cursor:pointer;font-size:7px;font-weight:600;transition:0.2s;display:flex;align-items:center;gap:2px}
         .header-controls button:hover{background:rgba(255,255,255,0.2)}
-        .settings-btn{background:rgba(255,255,255,0.08);padding:3px 9px;border-radius:50%;font-size:13px}
+        .settings-btn{background:rgba(255,255,255,0.08);padding:2px 8px;border-radius:50%;font-size:12px}
         .settings-btn:hover{transform:rotate(90deg)}
-        .admin-badge{background:#d4a017;color:white;padding:1px 8px;border-radius:10px;font-size:7px;font-weight:600}
-        .viewer-badge{background:#6b7a8a;color:white;padding:1px 8px;border-radius:10px;font-size:7px;font-weight:600}
-        .tabs{display:flex;gap:2px;margin:3px 0;flex-shrink:0;background:#f0f4f8;padding:2px;border-radius:8px;flex-wrap:wrap}
-        .tab{flex:1;padding:3px 2px;text-align:center;border-radius:6px;font-weight:600;font-size:7px;cursor:pointer;transition:0.2s;min-width:30px;color:#6b7a8a;background:transparent}
-        .tab i{display:block;font-size:12px;margin-bottom:1px}
+        .admin-badge{background:#d4a017;color:white;padding:1px 6px;border-radius:8px;font-size:6px;font-weight:600}
+        .viewer-badge{background:#6b7a8a;color:white;padding:1px 6px;border-radius:8px;font-size:6px;font-weight:600}
+        .tabs{display:flex;gap:2px;margin:2px 0;flex-shrink:0;background:#f0f4f8;padding:2px;border-radius:6px;flex-wrap:wrap}
+        .tab{flex:1;padding:3px 2px;text-align:center;border-radius:5px;font-weight:600;font-size:6px;cursor:pointer;transition:0.2s;min-width:28px;color:#6b7a8a;background:transparent}
+        .tab i{display:block;font-size:11px;margin-bottom:1px}
         .tab.active{background:#0f1a2e;color:white}
         .section{display:none;flex:1;overflow:hidden;padding-top:2px}
         .section.active{display:flex;flex-direction:column}
-        .card{background:white;border-radius:8px;padding:4px 5px;margin-bottom:3px;border:1px solid #e8ecf0;flex-shrink:0}
-        .card-title{font-size:9px;font-weight:700;color:#0f1a2e;display:flex;align-items:center;gap:4px;border-bottom:1px solid #eef2f6;padding-bottom:3px;margin-bottom:3px}
-        .pos-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:3px;max-height:90px;overflow-y:auto;padding:2px 0}
-        .pos-item{background:#f7f9fb;border:1px solid #e2e6ea;border-radius:5px;padding:3px 2px;text-align:center;cursor:pointer;transition:0.15s;font-size:8px}
-        .pos-item:active{transform:scale(0.93);background:#edf1f5}
-        .pos-item .name{font-weight:600;color:#1a2a3a;font-size:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .pos-item .price{color:#0f1a2e;font-weight:700;font-size:9px}
-        .pos-item .stock{font-size:6px;color:#8a9aaa}
-        .pos-item .size{font-size:6px;color:#6b7a8a}
+        .card{background:white;border-radius:6px;padding:3px 4px;margin-bottom:2px;border:1px solid #e8ecf0;flex-shrink:0}
+        .card-title{font-size:8px;font-weight:700;color:#0f1a2e;display:flex;align-items:center;gap:3px;border-bottom:1px solid #eef2f6;padding-bottom:2px;margin-bottom:2px}
+        .pos-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:2px;max-height:80px;overflow-y:auto;padding:2px 0}
+        .pos-item{background:#f7f9fb;border:1px solid #e2e6ea;border-radius:4px;padding:3px 2px;text-align:center;cursor:pointer;transition:0.15s;font-size:7px}
+        .pos-item:active{transform:scale(0.92);background:#edf1f5}
+        .pos-item .name{font-weight:600;color:#1a2a3a;font-size:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .pos-item .price{color:#0f1a2e;font-weight:700;font-size:8px}
+        .pos-item .stock{font-size:5px;color:#8a9aaa}
+        .pos-item .size{font-size:5px;color:#6b7a8a}
         .pos-item.out-of-stock{opacity:0.4;pointer-events:none}
         .cart-area{flex:1;display:flex;flex-direction:column;min-height:0}
-        .cart-items{flex:1;overflow-y:auto;padding:2px 0;max-height:70px}
-        .cart-item{display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid #eef2f6;font-size:8px;align-items:center}
+        .cart-items{flex:1;overflow-y:auto;padding:2px 0;max-height:60px}
+        .cart-item{display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid #eef2f6;font-size:7px;align-items:center}
         .cart-item .qty-control{display:flex;gap:2px;align-items:center}
-        .cart-item .qty-control button{background:#e8ecf0;border:none;border-radius:50%;width:18px;height:18px;font-weight:700;cursor:pointer;font-size:9px;transition:0.15s}
+        .cart-item .qty-control button{background:#e8ecf0;border:none;border-radius:50%;width:16px;height:16px;font-weight:700;cursor:pointer;font-size:8px;transition:0.15s}
         .cart-item .qty-control button:active{transform:scale(0.85)}
-        .total-bar{background:linear-gradient(135deg,#0f1a2e,#1a2a4a);color:white;padding:4px 8px;border-radius:5px;display:flex;justify-content:space-between;font-weight:700;font-size:12px;flex-shrink:0}
+        .total-bar{background:linear-gradient(135deg,#0f1a2e,#1a2a4a);color:white;padding:3px 6px;border-radius:4px;display:flex;justify-content:space-between;font-weight:700;font-size:10px;flex-shrink:0}
         .bottom-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;flex-shrink:0;padding-top:2px}
-        .bottom-actions .btn{padding:3px;font-size:7px}
-        .btn{padding:3px 6px;border:none;border-radius:4px;font-size:8px;font-weight:600;cursor:pointer;transition:0.15s;display:flex;align-items:center;justify-content:center;gap:2px;width:100%}
-        .btn:active{transform:scale(0.93)}
+        .bottom-actions .btn{padding:2px;font-size:6px}
+        .btn{padding:2px 5px;border:none;border-radius:3px;font-size:7px;font-weight:600;cursor:pointer;transition:0.15s;display:flex;align-items:center;justify-content:center;gap:2px;width:100%}
+        .btn:active{transform:scale(0.92)}
         .btn-primary{background:#0f1a2e;color:white}
         .btn-success{background:#218838;color:white}
         .btn-danger{background:#c0392b;color:white}
         .btn-warning{background:#d4a017;color:white}
         .btn-outline{background:transparent;border:1px solid #0f1a2e;color:#0f1a2e}
-        .btn-sm{padding:1px 4px;font-size:6px}
+        .btn-sm{padding:1px 3px;font-size:5px}
         .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:2px}
         .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px}
-        .form-group{margin-bottom:2px}
-        .form-group label{display:block;font-size:7px;font-weight:600;color:#2d3748;margin-bottom:1px}
-        .form-group input,.form-group select{width:100%;padding:2px 4px;border:1px solid #e2e6ea;border-radius:4px;font-size:8px;background:#f7f9fb}
+        .grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:2px}
+        .form-group{margin-bottom:1px}
+        .form-group label{display:block;font-size:6px;font-weight:600;color:#2d3748;margin-bottom:1px}
+        .form-group input,.form-group select{width:100%;padding:2px 3px;border:1px solid #e2e6ea;border-radius:3px;font-size:7px;background:#f7f9fb}
         .form-group input:focus{border-color:#0f1a2e;outline:none;background:white}
         .table-wrap{overflow:auto;flex:1;min-height:0}
-        table{width:100%;border-collapse:collapse;font-size:7px}
-        th{background:#0f1a2e;color:white;padding:2px 2px;text-align:center;font-size:6px;position:sticky;top:0;z-index:2}
-        td{padding:2px 2px;border-bottom:1px solid #eef2f6;text-align:center;font-size:7px}
+        table{width:100%;border-collapse:collapse;font-size:6px}
+        th{background:#0f1a2e;color:white;padding:2px 2px;text-align:center;font-size:5px;position:sticky;top:0;z-index:2}
+        td{padding:2px 2px;border-bottom:1px solid #eef2f6;text-align:center;font-size:6px}
         tr:nth-child(even){background:#f8fafc}
-        .badge{display:inline-block;padding:1px 4px;border-radius:8px;font-size:6px;font-weight:600}
+        .badge{display:inline-block;padding:1px 4px;border-radius:6px;font-size:5px;font-weight:600}
         .badge-success{background:#d4edda;color:#155724}
         .badge-danger{background:#f8d7da;color:#721c24}
         .badge-warning{background:#fff3cd;color:#856404}
         .badge-info{background:#d1ecf1;color:#0c5460}
-        .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;display:flex;justify-content:space-around;padding:3px 0;box-shadow:0 -1px 10px rgba(0,0,0,0.06);border-top:1px solid #eef2f6;z-index:1000}
-        .bottom-nav .nav-item{text-align:center;font-size:6px;color:#8a9aaa;cursor:pointer;padding:2px 4px;border-radius:4px;transition:0.15s}
-        .bottom-nav .nav-item i{font-size:13px;display:block}
+        .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;display:flex;justify-content:space-around;padding:2px 0;box-shadow:0 -1px 8px rgba(0,0,0,0.06);border-top:1px solid #eef2f6;z-index:1000}
+        .bottom-nav .nav-item{text-align:center;font-size:5px;color:#8a9aaa;cursor:pointer;padding:2px 4px;border-radius:4px;transition:0.15s}
+        .bottom-nav .nav-item i{font-size:12px;display:block}
         .bottom-nav .nav-item.active{color:#0f1a2e;font-weight:700}
         .scroll-area{flex:1;overflow-y:auto;min-height:0;padding-right:2px}
-        .sync-status{font-size:6px;color:rgba(255,255,255,0.6);display:flex;align-items:center;gap:2px}
-        .dot{width:5px;height:5px;border-radius:50%;display:inline-block}
+        .sync-status{font-size:5px;color:rgba(255,255,255,0.6);display:flex;align-items:center;gap:2px}
+        .dot{width:4px;height:4px;border-radius:50%;display:inline-block}
         .dot.green{background:#4ade80}
         .dot.red{background:#f87171}
         .dot.yellow{background:#fbbf24;animation:blink 1s infinite}
         @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
         .view-only .btn,.view-only .pos-item,.view-only input,.view-only select{opacity:0.5;pointer-events:none}
         .cat-tabs{display:flex;gap:2px;margin-bottom:2px;flex-wrap:wrap}
-        .cat-tab{padding:1px 6px;border-radius:4px;font-weight:600;font-size:6px;cursor:pointer;background:#e8ecf0;color:#6b7a8a;border:none;flex:1;transition:0.15s}
+        .cat-tab{padding:1px 5px;border-radius:3px;font-weight:600;font-size:5px;cursor:pointer;background:#e8ecf0;color:#6b7a8a;border:none;flex:1;transition:0.15s}
         .cat-tab.active{color:white}
         .cat-tab.stone-active{background:#8B7355;color:white}
         .cat-tab.material-active{background:#2b6cb0;color:white}
-        .edit-btn{background:#e8ecf0;border:none;padding:0 4px;border-radius:3px;cursor:pointer;font-size:6px}
-        .invoice-box{background:white;border:1px solid #d4a017;border-radius:6px;padding:8px;font-size:8px;font-family:monospace;white-space:pre-wrap;max-height:160px;overflow-y:auto}
-        .invoice-box .inv-header{text-align:center;font-weight:700;font-size:11px;border-bottom:2px solid #0f1a2e;padding-bottom:4px;margin-bottom:4px}
-        .invoice-box .inv-footer{text-align:center;font-size:7px;color:#6b7a8a;border-top:1px dashed #ccc;padding-top:4px;margin-top:4px}
+        .edit-btn{background:#e8ecf0;border:none;padding:0 3px;border-radius:2px;cursor:pointer;font-size:5px}
+        .invoice-box{background:white;border:1px solid #d4a017;border-radius:5px;padding:6px;font-size:7px;font-family:monospace;white-space:pre-wrap;max-height:140px;overflow-y:auto}
         .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(3px)}
-        .modal-box{background:white;padding:14px;border-radius:12px;max-width:340px;width:92%;max-height:80vh;overflow-y:auto;box-shadow:0 16px 48px rgba(0,0,0,0.2)}
-        .modal-box h2{font-size:15px;color:#0f1a2e;margin-bottom:8px;display:flex;align-items:center;gap:6px;border-bottom:2px solid #eef2f6;padding-bottom:6px}
-        .modal-box .modal-close{float:right;background:none;border:none;font-size:16px;cursor:pointer;color:#8a9aaa}
+        .modal-box{background:white;padding:12px;border-radius:10px;max-width:320px;width:92%;max-height:80vh;overflow-y:auto;box-shadow:0 16px 48px rgba(0,0,0,0.2)}
+        .modal-box h2{font-size:13px;color:#0f1a2e;margin-bottom:6px;display:flex;align-items:center;gap:5px;border-bottom:2px solid #eef2f6;padding-bottom:5px}
+        .modal-box .modal-close{float:right;background:none;border:none;font-size:14px;cursor:pointer;color:#8a9aaa}
         .modal-box .modal-close:hover{color:#0f1a2e}
-        .modal-box .setting-item{padding:6px 0;border-bottom:1px solid #eef2f6;display:flex;justify-content:space-between;align-items:center}
+        .modal-box .setting-item{padding:4px 0;border-bottom:1px solid #eef2f6;display:flex;justify-content:space-between;align-items:center}
         .modal-box .setting-item:last-child{border-bottom:none}
-        .modal-box .setting-item .label{font-size:11px;font-weight:600;color:#1a2a3a}
-        .modal-box .setting-item .desc{font-size:8px;color:#8a9aaa}
-        .modal-box input[type="password"]{width:100%;padding:5px 8px;border:1.5px solid #e2e6ea;border-radius:5px;font-size:11px;margin:2px 0}
+        .modal-box .setting-item .label{font-size:10px;font-weight:600;color:#1a2a3a}
+        .modal-box .setting-item .desc{font-size:7px;color:#8a9aaa}
+        .modal-box input[type="password"]{width:100%;padding:4px 6px;border:1.5px solid #e2e6ea;border-radius:4px;font-size:10px;margin:2px 0}
         .modal-box input[type="password"]:focus{border-color:#0f1a2e;outline:none}
-        .modal-box .btn{width:100%;padding:5px;border:none;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;margin-top:2px}
-        .modal-box .error{color:#c0392b;font-size:9px;margin-top:2px;display:none}
-        .sessions-box{background:#f8fafc;border:1px solid #e2e6ea;border-radius:5px;padding:5px;margin-top:2px;font-size:7px}
-        .sessions-box .session-item{display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid #eef2f6;align-items:center}
-        .sessions-box .session-item:last-child{border-bottom:none}
-        .bill-item{cursor:pointer;padding:3px;border:1px solid #e2e6ea;border-radius:4px;margin:2px 0;background:#f8fafc}
-        .bill-item:hover{background:#edf1f5}
-        @media(max-width:480px){.pos-grid{grid-template-columns:1fr 1fr 1fr}.header h1{font-size:11px}.bottom-actions{grid-template-columns:1fr 1fr}}
+        .modal-box .btn{width:100%;padding:4px;border:none;border-radius:4px;font-size:10px;font-weight:600;cursor:pointer;margin-top:2px}
+        .modal-box .error{color:#c0392b;font-size:8px;margin-top:2px;display:none}
+        .summary-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px}
+        .summary-box{background:#f8fafc;padding:3px;border-radius:4px;text-align:center;border:1px solid #e2e6ea}
+        .summary-box .num{font-size:11px;font-weight:700;color:#0f1a2e}
+        .summary-box .lbl{font-size:5px;color:#6b7a8a}
+        .summary-box.positive .num{color:#218838}
+        .summary-box.negative .num{color:#c0392b}
+        .summary-box.warning .num{color:#d4a017}
+        .pos-inputs{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:2px;padding:2px 0}
+        .pos-inputs input{width:100%;padding:2px 3px;border:1px solid #e2e6ea;border-radius:3px;font-size:7px;background:#f7f9fb;text-align:center}
+        .pos-inputs input:focus{border-color:#0f1a2e;outline:none;background:white}
+        .pos-inputs .label{font-size:5px;color:#6b7a8a;text-align:center}
+        @media(max-width:480px){.pos-grid{grid-template-columns:1fr 1fr 1fr}.header h1{font-size:10px}.bottom-actions{grid-template-columns:1fr 1fr}.summary-grid{grid-template-columns:1fr 1fr}}
         @media(min-width:768px){.pos-grid{grid-template-columns:1fr 1fr 1fr 1fr 1fr}}
+        .bill-item{cursor:pointer;padding:2px;border:1px solid #e2e6ea;border-radius:3px;margin:1px 0;background:#f8fafc;font-size:7px}
+        .bill-item:hover{background:#edf1f5}
     </style>
 </head>
 <body>
@@ -130,6 +137,7 @@
         <div class="tab active" data-tab="pos"><i class="fas fa-shopping-cart"></i> POS</div>
         <div class="tab" data-tab="stock"><i class="fas fa-boxes"></i> Stock</div>
         <div class="tab" data-tab="customers"><i class="fas fa-users"></i> Cust</div>
+        <div class="tab" data-tab="summary"><i class="fas fa-chart-bar"></i> Summary</div>
         <div class="tab" data-tab="reports"><i class="fas fa-chart-pie"></i> Report</div>
         <div class="tab" data-tab="invoices"><i class="fas fa-file-invoice"></i> Bills</div>
     </div>
@@ -137,7 +145,7 @@
     <!-- ========== POS ========== -->
     <div id="section-pos" class="section active">
         <div class="card" style="flex-shrink:0;padding:3px;">
-            <div class="card-title" style="font-size:8px;margin-bottom:2px;">
+            <div class="card-title" style="font-size:7px;margin-bottom:1px;">
                 <i class="fas fa-list"></i> Items
                 <span style="margin-right:auto;"></span>
                 <span class="badge" style="background:#8B7355;color:white;">Stone</span>
@@ -153,23 +161,32 @@
 
         <div class="cart-area">
             <div class="card" style="flex:1;display:flex;flex-direction:column;padding:3px;margin-bottom:0;">
-                <div class="card-title" style="font-size:8px;margin-bottom:2px;">
+                <div class="card-title" style="font-size:7px;margin-bottom:1px;">
                     <i class="fas fa-shopping-cart"></i> Cart (<span id="cartCount">0</span>)
                     <span style="margin-right:auto;"></span>
-                    <button class="btn btn-sm btn-danger" onclick="clearCart()" style="width:auto;padding:0 5px;font-size:6px;"><i class="fas fa-trash"></i></button>
+                    <button class="btn btn-sm btn-danger" onclick="clearCart()" style="width:auto;padding:0 4px;font-size:5px;"><i class="fas fa-trash"></i></button>
                 </div>
                 <div class="cart-items" id="cartItems"></div>
                 <div class="total-bar"><span>Total:</span><span id="cartTotal">0.00</span></div>
+                
+                <!-- POS Input Boxes -->
+                <div class="pos-inputs" id="posInputs">
+                    <div><div class="label">Length</div><input type="number" id="posLength" placeholder="L" value="0" step="0.01"></div>
+                    <div><div class="label">Width</div><input type="number" id="posWidth" placeholder="W" value="0" step="0.01"></div>
+                    <div><div class="label">SQM</div><input type="number" id="posSqm" placeholder="m²" value="0" step="0.01" readonly style="background:#edf2f7;"></div>
+                    <div><div class="label">Pieces</div><input type="number" id="posPieces" placeholder="Pcs" value="0" step="1"></div>
+                </div>
+                
                 <div class="bottom-actions">
-                    <select id="saleType" style="padding:2px 3px;border-radius:4px;border:1px solid #e2e6ea;font-size:7px;">
+                    <select id="saleType" style="padding:2px 3px;border-radius:3px;border:1px solid #e2e6ea;font-size:6px;">
                         <option value="cash">Cash</option>
                         <option value="credit">Credit</option>
                     </select>
-                    <select id="saleCustomerSelect" style="padding:2px 3px;border-radius:4px;border:1px solid #e2e6ea;font-size:7px;">
+                    <select id="saleCustomerSelect" style="padding:2px 3px;border-radius:3px;border:1px solid #e2e6ea;font-size:6px;">
                         <option value="">Walk-in</option>
                     </select>
-                    <input type="number" id="salePaid" placeholder="Paid" value="0" style="padding:2px 3px;border-radius:4px;border:1px solid #e2e6ea;font-size:7px;grid-column:1/-1;">
-                    <button class="btn btn-success" onclick="completeSale()" style="grid-column:1/-1;padding:3px;font-size:8px;"><i class="fas fa-check"></i> Complete Sale</button>
+                    <input type="number" id="salePaid" placeholder="Paid" value="0" style="padding:2px 3px;border-radius:3px;border:1px solid #e2e6ea;font-size:6px;grid-column:1/-1;">
+                    <button class="btn btn-success" onclick="completeSale()" style="grid-column:1/-1;padding:3px;font-size:7px;"><i class="fas fa-check"></i> Complete Sale</button>
                 </div>
             </div>
         </div>
@@ -203,7 +220,7 @@
 
             <div class="card">
                 <div class="card-title"><i class="fas fa-list"></i> Stock List</div>
-                <div class="table-wrap" style="max-height:100px;">
+                <div class="table-wrap" style="max-height:90px;">
                     <table><thead><tr><th>Name</th><th>Size</th><th>Stock</th><th>Price</th><th>Action</th></tr></thead>
                     <tbody id="stockListBody"></tbody></table>
                 </div>
@@ -212,8 +229,8 @@
             <div class="card">
                 <div class="card-title"><i class="fas fa-arrow-right"></i> Stock In/Out</div>
                 <div class="grid-2">
-                    <select id="stockSelect" style="padding:2px 3px;border-radius:4px;border:1px solid #e2e6ea;"></select>
-                    <input type="number" id="stockQty" placeholder="Qty" style="padding:2px 3px;border-radius:4px;border:1px solid #e2e6ea;">
+                    <select id="stockSelect" style="padding:2px 3px;border-radius:3px;border:1px solid #e2e6ea;"></select>
+                    <input type="number" id="stockQty" placeholder="Qty" style="padding:2px 3px;border-radius:3px;border:1px solid #e2e6ea;">
                 </div>
                 <div class="grid-2">
                     <button class="btn btn-success" onclick="stockIn()"><i class="fas fa-plus"></i> In</button>
@@ -223,7 +240,7 @@
             
             <div class="card">
                 <div class="card-title"><i class="fas fa-clock"></i> Stock History</div>
-                <div class="table-wrap" style="max-height:70px;">
+                <div class="table-wrap" style="max-height:60px;">
                     <table><thead><tr><th>Date</th><th>Item</th><th>Size</th><th>Qty</th><th>Type</th></tr></thead>
                     <tbody id="stockHistoryBody"></tbody></table>
                 </div>
@@ -245,7 +262,7 @@
 
             <div class="card">
                 <div class="card-title"><i class="fas fa-users"></i> Customers</div>
-                <div class="table-wrap" style="max-height:100px;">
+                <div class="table-wrap" style="max-height:90px;">
                     <table><thead><tr><th>Name</th><th>Phone</th><th>Balance</th><th>Bills</th></tr></thead>
                     <tbody id="customerListBody"></tbody></table>
                 </div>
@@ -254,10 +271,37 @@
             <div class="card">
                 <div class="card-title"><i class="fas fa-hand-holding-usd"></i> Receive Payment</div>
                 <div class="grid-2">
-                    <select id="receiveSelect" style="padding:2px 3px;border-radius:4px;border:1px solid #e2e6ea;"></select>
-                    <input type="number" id="receiveAmount" placeholder="Amount" style="padding:2px 3px;border-radius:4px;border:1px solid #e2e6ea;">
+                    <select id="receiveSelect" style="padding:2px 3px;border-radius:3px;border:1px solid #e2e6ea;"></select>
+                    <input type="number" id="receiveAmount" placeholder="Amount" style="padding:2px 3px;border-radius:3px;border:1px solid #e2e6ea;">
                 </div>
                 <button class="btn btn-success" onclick="receivePayment()"><i class="fas fa-money-bill-wave"></i> Receive</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SUMMARY ========== -->
+    <div id="section-summary" class="section">
+        <div class="scroll-area">
+            <div class="card">
+                <div class="card-title"><i class="fas fa-chart-bar"></i> Daily Summary - <span id="summaryDate"></span></div>
+                <div class="summary-grid" id="summaryGrid">
+                    <div class="summary-box positive"><div class="num" id="sumTodaySale">0.00</div><div class="lbl">Today's Sale</div></div>
+                    <div class="summary-box warning"><div class="num" id="sumUdharSale">0.00</div><div class="lbl">Udhar Sale</div></div>
+                    <div class="summary-box negative"><div class="num" id="sumIkhrajat">0.00</div><div class="lbl">Ikhrajat</div></div>
+                    <div class="summary-box positive"><div class="num" id="sumSabqaWusool">0.00</div><div class="lbl">Sabqa Wusool</div></div>
+                    <div class="summary-box positive"><div class="num" id="sumAdvanceWusool">0.00</div><div class="lbl">Advance Wusool</div></div>
+                    <div class="summary-box positive"><div class="num" id="sumTotalJamma">0.00</div><div class="lbl">Total Jamma</div></div>
+                    <div class="summary-box" id="paymentMinusBox"><div class="num" id="sumPaymentMinus">0.00</div><div class="lbl">Payment Minus</div></div>
+                </div>
+                <div style="font-size:6px;color:#6b7a8a;text-align:center;padding:2px;">Auto calculated from today's data</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title"><i class="fas fa-calendar-alt"></i> Monthly Summary - <span id="monthlyDate"></span></div>
+                <div class="table-wrap" style="max-height:100px;">
+                    <table><thead><tr><th>Date</th><th>Sale</th><th>Udhar</th><th>Ikhrajat</th><th>Jamma</th></tr></thead>
+                    <tbody id="monthlySummaryBody"></tbody></table>
+                </div>
             </div>
         </div>
     </div>
@@ -281,12 +325,12 @@
 
             <div class="card">
                 <div class="card-title"><i class="fas fa-chart-line"></i> Profit / Loss</div>
-                <div id="plDisplay" style="text-align:center;padding:5px;font-size:13px;font-weight:700;"></div>
+                <div id="plDisplay" style="text-align:center;padding:4px;font-size:12px;font-weight:700;"></div>
             </div>
 
             <div class="card">
                 <div class="card-title"><i class="fas fa-history"></i> All Transactions</div>
-                <div class="table-wrap" style="max-height:80px;">
+                <div class="table-wrap" style="max-height:70px;">
                     <table><thead><tr><th>Date</th><th>Desc</th><th>Amount</th></tr></thead>
                     <tbody id="transactionsBody"></tbody></table>
                 </div>
@@ -319,6 +363,7 @@
     <div class="nav-item active" data-tab="pos"><i class="fas fa-shopping-cart"></i> POS</div>
     <div class="nav-item" data-tab="stock"><i class="fas fa-boxes"></i> Stock</div>
     <div class="nav-item" data-tab="customers"><i class="fas fa-users"></i> Cust</div>
+    <div class="nav-item" data-tab="summary"><i class="fas fa-chart-bar"></i> Summary</div>
     <div class="nav-item" data-tab="reports"><i class="fas fa-chart-pie"></i> Report</div>
     <div class="nav-item" data-tab="invoices"><i class="fas fa-file-invoice"></i> Bills</div>
 </div>
@@ -339,16 +384,16 @@
         <div id="logoutSection" style="display:none;">
             <button class="btn btn-danger" onclick="settingsLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
         </div>
-        <div class="setting-item" style="margin-top:6px;">
+        <div class="setting-item" style="margin-top:4px;">
             <div><div class="label"><i class="fas fa-language"></i> Language</div><div class="desc">Switch between English / Urdu</div></div>
-            <button class="btn btn-outline" onclick="settingsToggleLang()" style="width:auto;padding:2px 8px;font-size:9px;"><span id="settingsLangLabel">اردو</span></button>
+            <button class="btn btn-outline" onclick="settingsToggleLang()" style="width:auto;padding:2px 8px;font-size:8px;"><span id="settingsLangLabel">اردو</span></button>
         </div>
         <div class="setting-item">
             <div><div class="label"><i class="fas fa-key"></i> Change Password</div><div class="desc">Set new admin password</div></div>
-            <div><input type="password" id="newPasswordInput" placeholder="New password..." style="width:120px;padding:2px 5px;border:1px solid #e2e6ea;border-radius:4px;font-size:8px;">
-            <button class="btn btn-warning" onclick="changePassword()" style="width:auto;padding:2px 6px;font-size:8px;margin-top:1px;">Change</button></div>
+            <div><input type="password" id="newPasswordInput" placeholder="New password..." style="width:100px;padding:2px 4px;border:1px solid #e2e6ea;border-radius:3px;font-size:7px;">
+            <button class="btn btn-warning" onclick="changePassword()" style="width:auto;padding:2px 6px;font-size:7px;margin-top:1px;">Change</button></div>
         </div>
-        <div style="text-align:center;font-size:7px;color:#8a9aaa;margin-top:8px;padding-top:6px;border-top:1px solid #eef2f6;">Warda Marble Pro v3.0</div>
+        <div style="text-align:center;font-size:6px;color:#8a9aaa;margin-top:6px;padding-top:4px;border-top:1px solid #eef2f6;">Warda Marble Pro v4.0</div>
     </div>
 </div>
 
@@ -513,11 +558,13 @@
     let cart = [];
     let currentFilter = 'all';
     let isSyncing = false;
+    let selectedItemId = null;
 
     function loadLocal() {
         const data = localStorage.getItem('warda_data');
         if (data) { const p = JSON.parse(data); db = p; }
         if (!db.stockHistory) db.stockHistory = [];
+        if (!db.expenses) db.expenses = [];
     }
     loadLocal();
 
@@ -526,6 +573,7 @@
     }
 
     function getToday() { return new Date().toISOString().split('T')[0]; }
+    function getMonth() { return new Date().toISOString().substring(0, 7); }
 
     // ============================================================
     // SYNC
@@ -550,18 +598,32 @@
         isSyncing = true; updateStatus('syncing');
         database.ref('warda_data').once('value').then(s => {
             const data = s.val();
-            if (data) { db = data; if (!db.stockHistory) db.stockHistory = []; saveLocal(); renderAll(); showToast('✅ Synced!'); }
+            if (data) { db = data; if (!db.stockHistory) db.stockHistory = []; if (!db.expenses) db.expenses = []; saveLocal(); renderAll(); showToast('✅ Synced!'); }
             updateStatus('online'); isSyncing = false;
         }).catch(() => { updateStatus('offline'); isSyncing = false; showToast('❌ Sync failed!'); });
     }
 
     function showToast(msg) {
         const t = document.createElement('div');
-        t.style.cssText = 'position:fixed;bottom:62px;left:50%;transform:translateX(-50%);background:#0f1a2e;color:white;padding:3px 12px;border-radius:5px;font-size:9px;z-index:9999;max-width:90%;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,0.15)';
+        t.style.cssText = 'position:fixed;bottom:58px;left:50%;transform:translateX(-50%);background:#0f1a2e;color:white;padding:3px 10px;border-radius:4px;font-size:8px;z-index:9999;max-width:90%;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,0.15)';
         t.textContent = msg;
         document.body.appendChild(t);
-        setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 1600);
+        setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 1400);
     }
+
+    // ============================================================
+    // POS INPUTS - Auto Calculate SQM
+    // ============================================================
+    function calculateSQM() {
+        const length = parseFloat(document.getElementById('posLength').value) || 0;
+        const width = parseFloat(document.getElementById('posWidth').value) || 0;
+        const sqm = (length * width) / 10.764;
+        document.getElementById('posSqm').value = sqm.toFixed(2);
+        return sqm;
+    }
+
+    document.getElementById('posLength').addEventListener('input', calculateSQM);
+    document.getElementById('posWidth').addEventListener('input', calculateSQM);
 
     // ============================================================
     // ITEMS
@@ -709,11 +771,11 @@
         const grid = document.getElementById('posGrid');
         let items = db.items;
         if (currentFilter !== 'all') items = items.filter(i => i.category === currentFilter);
-        if (!items.length) { grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#8a9aaa;padding:4px;font-size:7px;">No items</div>'; return; }
+        if (!items.length) { grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#8a9aaa;padding:4px;font-size:6px;">No items</div>'; return; }
         let html = '';
         items.forEach(item => {
             const out = item.stock <= 0 ? 'out-of-stock' : '';
-            html += `<div class="pos-item ${out}" onclick="${out ? '' : `addToCart(${item.id})`}" style="${out ? 'opacity:0.4;pointer-events:none;' : ''}">
+            html += `<div class="pos-item ${out}" onclick="${out ? '' : `selectPOSItem(${item.id})`}" style="${out ? 'opacity:0.4;pointer-events:none;' : ''}">
                 <div class="name">${item.name}</div>
                 <div class="size">${item.size || ''}</div>
                 <div class="price">${item.sellPrice}</div>
@@ -723,20 +785,102 @@
         grid.innerHTML = html;
     }
 
+    function selectPOSItem(id) {
+        const item = db.items.find(i => i.id === id);
+        if (!item) return;
+        selectedItemId = id;
+        // Reset inputs
+        document.getElementById('posLength').value = '0';
+        document.getElementById('posWidth').value = '0';
+        document.getElementById('posSqm').value = '0';
+        document.getElementById('posPieces').value = '0';
+        showToast(`✅ ${item.name} selected! Enter quantity`);
+    }
+
     // ============================================================
     // CART
     // ============================================================
-    function addToCart(id) {
-        const item = db.items.find(i => i.id === id);
-        if (!item || item.stock <= 0) return alert('Out of stock!');
-        const existing = cart.find(c => c.id === id);
-        if (existing) {
-            if (existing.qty >= item.stock) return alert('Not enough stock!');
-            existing.qty++;
+    function addToCartFromInputs() {
+        if (!selectedItemId) return alert('Select an item first!');
+        const item = db.items.find(i => i.id === selectedItemId);
+        if (!item) return;
+        if (item.stock <= 0) return alert('Out of stock!');
+        
+        let qty = 0;
+        let sqm = 0;
+        let pieces = parseFloat(document.getElementById('posPieces').value) || 0;
+        let length = parseFloat(document.getElementById('posLength').value) || 0;
+        let width = parseFloat(document.getElementById('posWidth').value) || 0;
+        let inputSqm = parseFloat(document.getElementById('posSqm').value) || 0;
+        
+        // Calculate based on category
+        if (item.category === 'stone') {
+            // Stone: Length x Width = SQM or direct SQM
+            if (length > 0 && width > 0) {
+                sqm = (length * width) / 10.764;
+            } else if (inputSqm > 0) {
+                sqm = inputSqm;
+            } else if (pieces > 0 && length > 0 && width > 0) {
+                sqm = ((length * width) / 10.764) * pieces;
+            } else {
+                return alert('Enter Length, Width, SQM or Pieces!');
+            }
+            qty = sqm;
         } else {
-            cart.push({ id: item.id, name: item.name, size: item.size || '', price: item.sellPrice, qty: 1, unit: item.unit, category: item.category, purchasePrice: item.purchasePrice || 0 });
+            // Material: Pieces only
+            qty = pieces;
+            if (qty <= 0) return alert('Enter Pieces!');
+        }
+        
+        if (qty <= 0) return alert('Invalid quantity!');
+        if (item.stock < qty) return alert(`Not enough stock! Available: ${item.stock}`);
+        
+        const existing = cart.find(c => c.id === item.id);
+        if (existing) {
+            existing.qty += qty;
+        } else {
+            cart.push({
+                id: item.id,
+                name: item.name,
+                size: item.size || '',
+                price: item.sellPrice,
+                qty: qty,
+                unit: item.unit,
+                category: item.category,
+                purchasePrice: item.purchasePrice || 0,
+                sqm: sqm,
+                pieces: pieces,
+                length: length,
+                width: width
+            });
         }
         renderCart();
+        // Reset inputs
+        document.getElementById('posLength').value = '0';
+        document.getElementById('posWidth').value = '0';
+        document.getElementById('posSqm').value = '0';
+        document.getElementById('posPieces').value = '0';
+    }
+
+    // Add from button
+    document.querySelector('.btn-success').addEventListener('click', function(e) {
+        if (e.target.closest('.bottom-actions')) {
+            // Check if it's the Complete Sale button
+            if (e.target.textContent.includes('Complete Sale')) return;
+        }
+        addToCartFromInputs();
+    });
+
+    // Override the complete sale button
+    function addToCartFromInputsWrapper() {
+        // Check if any input has value
+        const length = parseFloat(document.getElementById('posLength').value) || 0;
+        const width = parseFloat(document.getElementById('posWidth').value) || 0;
+        const sqm = parseFloat(document.getElementById('posSqm').value) || 0;
+        const pieces = parseFloat(document.getElementById('posPieces').value) || 0;
+        if (length > 0 || width > 0 || sqm > 0 || pieces > 0) {
+            addToCartFromInputs();
+        }
     }
 
     function removeFromCart(id) {
@@ -764,7 +908,7 @@
     function renderCart() {
         const container = document.getElementById('cartItems');
         if (!cart.length) {
-            container.innerHTML = '<div style="text-align:center;color:#8a9aaa;padding:4px;font-size:7px;">Cart empty</div>';
+            container.innerHTML = '<div style="text-align:center;color:#8a9aaa;padding:4px;font-size:6px;">Cart empty</div>';
             document.getElementById('cartTotal').textContent = '0.00';
             document.getElementById('cartCount').textContent = '0';
             return;
@@ -772,19 +916,20 @@
         let html = '', total = 0;
         cart.forEach(c => {
             total += c.qty * c.price;
+            const qtyDisplay = c.category === 'stone' ? c.qty.toFixed(2) + ' m²' : c.qty + ' pcs';
             html += `<div class="cart-item">
-                <span><strong>${c.name}</strong> ${c.size} (${c.price} x ${c.qty})</span>
+                <span><strong>${c.name}</strong> ${c.size} (${qtyDisplay})</span>
                 <div class="qty-control">
                     <button onclick="updateQty(${c.id}, -1)">−</button>
-                    <span style="min-width:12px;text-align:center;">${c.qty}</span>
+                    <span style="min-width:12px;text-align:center;">${c.category === 'stone' ? c.qty.toFixed(1) : c.qty}</span>
                     <button onclick="updateQty(${c.id}, 1)">+</button>
-                    <button onclick="removeFromCart(${c.id})" style="background:#f8d7da;border:none;border-radius:50%;width:16px;height:16px;cursor:pointer;font-size:7px;color:#721c24;">✕</button>
+                    <button onclick="removeFromCart(${c.id})" style="background:#f8d7da;border:none;border-radius:50%;width:16px;height:16px;cursor:pointer;font-size:6px;color:#721c24;">✕</button>
                 </div>
             </div>`;
         });
         container.innerHTML = html;
         document.getElementById('cartTotal').textContent = total.toFixed(2);
-        document.getElementById('cartCount').textContent = cart.reduce((s, c) => s + c.qty, 0);
+        document.getElementById('cartCount').textContent = cart.length;
     }
 
     // ============================================================
@@ -793,6 +938,17 @@
     function completeSale() {
         if (!isAdmin) return alert('🔒 Admin only! Login first.');
         if (!cart.length) return alert('Cart empty!');
+        
+        // Check if any input has value, add to cart first
+        const length = parseFloat(document.getElementById('posLength').value) || 0;
+        const width = parseFloat(document.getElementById('posWidth').value) || 0;
+        const sqm = parseFloat(document.getElementById('posSqm').value) || 0;
+        const pieces = parseFloat(document.getElementById('posPieces').value) || 0;
+        if (length > 0 || width > 0 || sqm > 0 || pieces > 0) {
+            addToCartFromInputs();
+            if (!cart.length) return;
+        }
+        
         const type = document.getElementById('saleType').value;
         const customerId = document.getElementById('saleCustomerSelect').value;
         const paid = parseFloat(document.getElementById('salePaid').value) || 0;
@@ -805,7 +961,7 @@
             total += subtotal;
             if (item.category === 'stone') stoneTotal += subtotal;
             else materialTotal += subtotal;
-            items.push({ id: c.id, name: c.name, size: c.size || '', qty: c.qty, price: c.price, unit: c.unit, category: c.category, purchasePrice: c.purchasePrice });
+            items.push({ id: c.id, name: c.name, size: c.size || '', qty: c.qty, price: c.price, unit: c.unit, category: c.category, purchasePrice: c.purchasePrice, sqm: c.sqm || 0, pieces: c.pieces || 0 });
             item.stock -= c.qty;
         });
         if (!valid) return;
@@ -818,11 +974,16 @@
         }
         let cost = 0;
         items.forEach(i => cost += i.qty * (i.purchasePrice || 0));
-        db.transactions.push({ id: Date.now(), type: 'sale', desc: `${items.length} items (${type})`, amount: total, profit: total - cost, date: getToday() });
+        const profit = total - cost;
+        db.transactions.push({ id: Date.now(), type: 'sale', desc: `${items.length} items (${type})`, amount: total, profit: profit, date: getToday() });
         cart = [];
         saveLocal(); syncToCloud(); renderAll();
         document.getElementById('salePaid').value = '0';
-        showToast(`✅ Sale: ${total.toFixed(2)} | Profit: ${(total - cost).toFixed(2)}`);
+        document.getElementById('posLength').value = '0';
+        document.getElementById('posWidth').value = '0';
+        document.getElementById('posSqm').value = '0';
+        document.getElementById('posPieces').value = '0';
+        showToast(`✅ Sale: ${total.toFixed(2)} | Profit: ${profit.toFixed(2)}`);
     }
 
     // ============================================================
@@ -832,7 +993,7 @@
         if (!isAdmin) return alert('🔒 Admin only! Login first.');
         const name = document.getElementById('custName').value.trim();
         if (!name) return alert('Enter name!');
-        db.customers.push({ id: Date.now(), name, phone: document.getElementById('custPhone').value, balance: 0 });
+        db.customers.push({ id: Date.now(), name, phone: document.getElementById('custPhone').value, balance: 0, advance: 0 });
         saveLocal(); syncToCloud(); renderAll();
         document.getElementById('custName').value = ''; document.getElementById('custPhone').value = '';
         showToast('✅ Customer added!');
@@ -859,7 +1020,7 @@
             db.customers.forEach(c => {
                 const billCount = db.sales.filter(s => s.customerId == c.id).length;
                 html += `<tr><td>${c.name}</td><td>${c.phone || '-'}</td><td>${c.balance}</td>
-                <td><button class="btn-sm btn-primary" onclick="viewCustomerBills(${c.id})" style="padding:0 4px;font-size:6px;">📄</button></td></tr>`;
+                <td><button class="btn-sm btn-primary" onclick="viewCustomerBills(${c.id})" style="padding:0 4px;font-size:5px;">📄</button></td></tr>`;
             });
             tbody.innerHTML = html;
         }
@@ -871,6 +1032,73 @@
             db.customers.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = `${c.name} (${c.balance})`; s.appendChild(o); });
             if (val) s.value = val;
         });
+    }
+
+    // ============================================================
+    // SUMMARY
+    // ============================================================
+    function updateSummary() {
+        const today = getToday();
+        document.getElementById('summaryDate').textContent = today;
+        document.getElementById('monthlyDate').textContent = getMonth();
+        
+        // Today's data
+        const todaySales = db.sales.filter(s => s.date === today);
+        const todayCash = todaySales.filter(s => s.type === 'cash').reduce((sum, s) => sum + s.total, 0);
+        const todayUdhar = todaySales.filter(s => s.type === 'credit').reduce((sum, s) => sum + s.total, 0);
+        const todayIkhrajat = db.expenses.filter(e => e.date === today).reduce((sum, e) => sum + e.amount, 0);
+        
+        // Sabqa Wusool (previous days' received)
+        const prevSales = db.sales.filter(s => s.date < today);
+        const sabqaWusool = prevSales.reduce((sum, s) => sum + s.paid, 0);
+        
+        // Advance Wusool (today's received)
+        const advanceWusool = todaySales.reduce((sum, s) => sum + s.paid, 0);
+        
+        // Total Jamma
+        const totalJamma = todayCash + sabqaWusool + advanceWusool;
+        
+        // Payment Minus
+        const paymentMinus = totalJamma < todayIkhrajat ? todayIkhrajat - totalJamma : 0;
+        
+        // Update UI
+        document.getElementById('sumTodaySale').textContent = (todayCash + todayUdhar).toFixed(2);
+        document.getElementById('sumUdharSale').textContent = todayUdhar.toFixed(2);
+        document.getElementById('sumIkhrajat').textContent = todayIkhrajat.toFixed(2);
+        document.getElementById('sumSabqaWusool').textContent = sabqaWusool.toFixed(2);
+        document.getElementById('sumAdvanceWusool').textContent = advanceWusool.toFixed(2);
+        document.getElementById('sumTotalJamma').textContent = totalJamma.toFixed(2);
+        document.getElementById('sumPaymentMinus').textContent = paymentMinus.toFixed(2);
+        
+        // Payment Minus box color
+        const pmBox = document.getElementById('paymentMinusBox');
+        if (paymentMinus > 0) {
+            pmBox.className = 'summary-box negative';
+        } else {
+            pmBox.className = 'summary-box positive';
+        }
+        
+        // Monthly Summary
+        const month = getMonth();
+        const monthSales = db.sales.filter(s => s.date.startsWith(month));
+        const monthData = {};
+        monthSales.forEach(s => {
+            if (!monthData[s.date]) monthData[s.date] = { sale: 0, udhar: 0, ikhrajat: 0 };
+            if (s.type === 'cash') monthData[s.date].sale += s.total;
+            else monthData[s.date].udhar += s.total;
+        });
+        db.expenses.filter(e => e.date.startsWith(month)).forEach(e => {
+            if (!monthData[e.date]) monthData[e.date] = { sale: 0, udhar: 0, ikhrajat: 0 };
+            monthData[e.date].ikhrajat += e.amount;
+        });
+        
+        let mhtml = '';
+        Object.keys(monthData).sort().forEach(d => {
+            const data = monthData[d];
+            const total = data.sale + data.udhar;
+            mhtml += `<tr><td>${d}</td><td>${total.toFixed(2)}</td><td>${data.udhar.toFixed(2)}</td><td>${data.ikhrajat.toFixed(2)}</td><td>${(total - data.ikhrajat).toFixed(2)}</td></tr>`;
+        });
+        document.getElementById('monthlySummaryBody').innerHTML = mhtml || '<tr><td colspan="5">No data</td></tr>';
     }
 
     // ============================================================
@@ -895,18 +1123,18 @@
 
     function renderInvoices() {
         const container = document.getElementById('invoicesList');
-        if (!db.sales.length) { container.innerHTML = '<div style="color:#8a9aaa;font-size:8px;padding:4px;">No invoices</div>'; return; }
+        if (!db.sales.length) { container.innerHTML = '<div style="color:#8a9aaa;font-size:7px;padding:3px;">No invoices</div>'; return; }
         let html = '';
         const sorted = [...db.sales].reverse();
-        sorted.forEach(s => {
+        sorted.slice(0, 20).forEach(s => {
             const cust = db.customers.find(c => c.id == s.customerId);
             const custName = cust ? cust.name : 'Walk-in';
             html += `<div class="bill-item" onclick="viewInvoice(${s.id})">
-                <div style="display:flex;justify-content:space-between;font-size:8px;">
+                <div style="display:flex;justify-content:space-between;font-size:7px;">
                     <span><strong>#${s.id}</strong> ${custName}</span>
                     <span>${s.date} | ${s.total.toFixed(2)}</span>
                 </div>
-                <div style="font-size:6px;color:#6b7a8a;">${s.items.length} items | ${s.type} | Paid: ${s.paid}</div>
+                <div style="font-size:5px;color:#6b7a8a;">${s.items.length} items | ${s.type} | Paid: ${s.paid}</div>
             </div>`;
         });
         container.innerHTML = html;
@@ -926,7 +1154,8 @@
         invoice += `  ITEM          QTY  PRICE  TOTAL\n`;
         sale.items.forEach(i => {
             const name = i.name + (i.size ? ' ' + i.size : '');
-            invoice += `  ${name.padEnd(12)} ${i.qty.toString().padStart(3)}  ${i.price.toString().padStart(5)}  ${(i.qty*i.price).toFixed(2).padStart(6)}\n`;
+            const qtyDisplay = i.category === 'stone' ? i.qty.toFixed(2) + 'm²' : i.qty + 'pcs';
+            invoice += `  ${name.padEnd(12)} ${qtyDisplay.padStart(6)}  ${i.price.toString().padStart(5)}  ${(i.qty*i.price).toFixed(2).padStart(6)}\n`;
         });
         invoice += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
         invoice += `  TOTAL: ${sale.total.toFixed(2)}\n`;
@@ -937,17 +1166,13 @@
         invoice += `  📱 Thank you! Visit again.\n`;
         invoice += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
         
-        // Show in report display
-        document.getElementById('reportDisplay').innerHTML = `<pre style="font-family:monospace;font-size:9px;margin:0;white-space:pre-wrap;line-height:1.4;">${invoice}</pre>`;
-        document.getElementById('reportDisplay').scrollIntoView();
+        document.getElementById('reportDisplay').innerHTML = `<pre style="font-family:monospace;font-size:8px;margin:0;white-space:pre-wrap;line-height:1.3;">${invoice}</pre>`;
         
-        // Fill edit form
         document.getElementById('editInvoiceId').value = sale.id;
         document.getElementById('editInvoiceCustomer').value = custName;
         document.getElementById('editInvoiceTotal').value = sale.total;
         document.getElementById('editInvoicePaid').value = sale.paid;
         
-        // Switch to reports tab
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelector('.tab[data-tab="reports"]').classList.add('active');
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -966,11 +1191,9 @@
         sale.total = newTotal;
         sale.paid = newPaid || 0;
         sale.remaining = newTotal - sale.paid;
-        // Update customer balance
         if (sale.customerId) {
             const cust = db.customers.find(c => c.id == sale.customerId);
             if (cust) {
-                // Recalculate balance
                 const allSales = db.sales.filter(s => s.customerId == sale.customerId);
                 let totalBalance = 0;
                 allSales.forEach(s => { totalBalance += s.remaining; });
@@ -988,13 +1211,11 @@
         if (!confirm('Delete this invoice?')) return;
         const sale = db.sales.find(s => s.id === id);
         if (!sale) return alert('Invoice not found!');
-        // Return stock
         sale.items.forEach(item => {
             const dbItem = db.items.find(i => i.id === item.id);
             if (dbItem) dbItem.stock += item.qty;
         });
         db.sales = db.sales.filter(s => s.id !== id);
-        // Update customer balance
         if (sale.customerId) {
             const cust = db.customers.find(c => c.id == sale.customerId);
             if (cust) {
@@ -1054,7 +1275,8 @@
                 const cust = db.customers.find(c => c.id == s.customerId);
                 report += `  #${idx+1} | ${s.date} | ${cust ? cust.name : 'Walk-in'} | ${s.total.toFixed(2)}\n`;
                 s.items.forEach(i => {
-                    report += `     ${i.name}${i.size ? ' '+i.size : ''} x${i.qty} = ${(i.qty * i.price).toFixed(2)}\n`;
+                    const qtyDisplay = i.category === 'stone' ? i.qty.toFixed(2) + 'm²' : i.qty + 'pcs';
+                    report += `     ${i.name}${i.size ? ' '+i.size : ''} ${qtyDisplay} = ${(i.qty * i.price).toFixed(2)}\n`;
                 });
                 report += `  ─────────────────────────────\n`;
             });
@@ -1064,11 +1286,11 @@
         report += `  📱 Thank you! Visit again.\n`;
         report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
         
-        document.getElementById('reportDisplay').innerHTML = `<pre style="font-family:monospace;font-size:8px;margin:0;white-space:pre-wrap;line-height:1.4;">${report}</pre>`;
+        document.getElementById('reportDisplay').innerHTML = `<pre style="font-family:monospace;font-size:7px;margin:0;white-space:pre-wrap;line-height:1.3;">${report}</pre>`;
         document.getElementById('plDisplay').innerHTML = `
-            <div style="padding:5px;background:${profit>=0?'#d4edda':'#f8d7da'};border-radius:5px;">
-                <div style="font-size:16px;font-weight:700;color:${profit>=0?'#155724':'#721c24'};">${profit >= 0 ? '✅ Profit: ' + profit.toFixed(2) : '❌ Loss: ' + Math.abs(profit).toFixed(2)}</div>
-                <div style="font-size:7px;color:#6c757d;">Stone: ${(stone - stoneCost).toFixed(2)} | Material: ${(material - materialCost).toFixed(2)}</div>
+            <div style="padding:4px;background:${profit>=0?'#d4edda':'#f8d7da'};border-radius:4px;">
+                <div style="font-size:14px;font-weight:700;color:${profit>=0?'#155724':'#721c24'};">${profit >= 0 ? '✅ Profit: ' + profit.toFixed(2) : '❌ Loss: ' + Math.abs(profit).toFixed(2)}</div>
+                <div style="font-size:6px;color:#6c757d;">Stone: ${(stone - stoneCost).toFixed(2)} | Material: ${(material - materialCost).toFixed(2)}</div>
             </div>
         `;
         renderTransactions();
@@ -1118,8 +1340,10 @@
         renderCustomers();
         renderTransactions();
         renderInvoices();
+        updateSummary();
         const active = document.querySelector('.section.active');
         if (active && active.id === 'section-reports') genReport('daily');
+        if (active && active.id === 'section-summary') updateSummary();
         if (active && active.id === 'section-invoices') renderInvoices();
     }
 
@@ -1138,6 +1362,7 @@
             if (id === 'pos') { renderPOS(); renderCart(); }
             if (id === 'stock') renderStockList();
             if (id === 'customers') renderCustomers();
+            if (id === 'summary') updateSummary();
             if (id === 'reports') genReport('daily');
             if (id === 'invoices') renderInvoices();
         });
@@ -1180,4 +1405,4 @@
     console.log('🚀 Warda Marble Pro Ready! Items:', db.items.length);
 </script>
 </body>
-</html>i(
+</html>
