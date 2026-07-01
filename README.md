@@ -9,120 +9,111 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
-        html,body{height:100%;overflow:hidden;background:#e8edf3;touch-action:manipulation}
-        body{padding:6px;padding-bottom:62px;user-select:none;-webkit-user-select:none}
-        .app-container{max-width:100%;height:100%;margin:0 auto;background:white;border-radius:16px;overflow:hidden;padding:8px;display:flex;flex-direction:column;box-shadow:0 2px 20px rgba(0,0,0,0.08)}
-        .header{background:linear-gradient(135deg,#1a2a4a,#2d3b5a);color:white;padding:8px 14px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;min-height:44px}
-        .header h1{font-size:15px;font-weight:700;letter-spacing:0.5px}
-        .header-controls{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
-        .header-controls button{background:rgba(255,255,255,0.12);border:none;color:white;padding:4px 10px;border-radius:20px;cursor:pointer;font-size:10px;font-weight:600;transition:0.2s;display:flex;align-items:center;gap:4px}
-        .header-controls button:hover{background:rgba(255,255,255,0.25)}
-        .header-controls button:active{transform:scale(0.95)}
-        .settings-btn{background:rgba(255,255,255,0.15);padding:5px 12px;border-radius:50%;font-size:16px}
-        .settings-btn:hover{background:rgba(255,255,255,0.3);transform:rotate(90deg)}
-        .admin-badge{background:#d4a017;color:white;padding:2px 10px;border-radius:20px;font-size:8px;font-weight:600}
-        .viewer-badge{background:#718096;color:white;padding:2px 10px;border-radius:20px;font-size:8px;font-weight:600}
-        .tabs{display:flex;gap:3px;margin:5px 0;flex-shrink:0;background:#f0f4f8;padding:3px;border-radius:10px;flex-wrap:wrap}
-        .tab{flex:1;padding:5px 3px;text-align:center;border-radius:8px;font-weight:600;font-size:8px;cursor:pointer;transition:0.3s;min-width:38px;color:#5a6a7a;background:transparent}
-        .tab i{display:block;font-size:14px;margin-bottom:2px}
-        .tab.active{background:#1a2a4a;color:white;box-shadow:0 2px 8px rgba(26,42,74,0.3)}
-        .section{display:none;flex:1;overflow:hidden;padding-top:4px}
+        html,body{height:100%;overflow:hidden;background:#eef2f7}
+        body{padding:6px;padding-bottom:60px}
+        .app-container{max-width:100%;height:100%;margin:0 auto;background:white;border-radius:14px;overflow:hidden;padding:6px;display:flex;flex-direction:column;box-shadow:0 2px 16px rgba(0,0,0,0.06)}
+        .header{background:linear-gradient(135deg,#0f1a2e,#1a2a4a);color:white;padding:6px 12px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;min-height:38px}
+        .header h1{font-size:14px;font-weight:700}
+        .header-controls{display:flex;gap:4px;align-items:center}
+        .header-controls button{background:rgba(255,255,255,0.1);border:none;color:white;padding:3px 8px;border-radius:16px;cursor:pointer;font-size:9px;font-weight:600;transition:0.2s;display:flex;align-items:center;gap:3px}
+        .header-controls button:hover{background:rgba(255,255,255,0.2)}
+        .header-controls button:active{transform:scale(0.93)}
+        .settings-btn{background:rgba(255,255,255,0.08);padding:4px 10px;border-radius:50%;font-size:14px}
+        .settings-btn:hover{background:rgba(255,255,255,0.2);transform:rotate(90deg)}
+        .admin-badge{background:#d4a017;color:white;padding:1px 8px;border-radius:12px;font-size:7px;font-weight:600}
+        .viewer-badge{background:#6b7a8a;color:white;padding:1px 8px;border-radius:12px;font-size:7px;font-weight:600}
+        .tabs{display:flex;gap:2px;margin:4px 0;flex-shrink:0;background:#f0f4f8;padding:2px;border-radius:8px;flex-wrap:wrap}
+        .tab{flex:1;padding:4px 2px;text-align:center;border-radius:6px;font-weight:600;font-size:7px;cursor:pointer;transition:0.2s;min-width:32px;color:#6b7a8a;background:transparent}
+        .tab i{display:block;font-size:13px;margin-bottom:1px}
+        .tab.active{background:#0f1a2e;color:white}
+        .section{display:none;flex:1;overflow:hidden;padding-top:3px}
         .section.active{display:flex;flex-direction:column}
-        .card{background:white;border-radius:10px;padding:6px 8px;margin-bottom:4px;border:1px solid #e2e8f0;flex-shrink:0}
-        .card-title{font-size:11px;font-weight:700;color:#1a2a4a;display:flex;align-items:center;gap:5px;border-bottom:1.5px solid #eef2f6;padding-bottom:4px;margin-bottom:5px}
-        .pos-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;max-height:110px;overflow-y:auto;padding:3px 0}
-        .pos-item{background:#f7fafc;border:1.5px solid #e2e8f0;border-radius:8px;padding:5px 3px;text-align:center;cursor:pointer;transition:0.2s;font-size:9px}
-        .pos-item:active{transform:scale(0.94);background:#edf2f7}
-        .pos-item .name{font-weight:600;color:#2d3748;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .pos-item .price{color:#1a2a4a;font-weight:700;font-size:11px}
-        .pos-item .stock{font-size:7px;color:#718096}
+        .card{background:white;border-radius:8px;padding:5px 6px;margin-bottom:3px;border:1px solid #e8ecf0;flex-shrink:0}
+        .card-title{font-size:10px;font-weight:700;color:#0f1a2e;display:flex;align-items:center;gap:4px;border-bottom:1px solid #eef2f6;padding-bottom:3px;margin-bottom:4px}
+        .pos-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:3px;max-height:100px;overflow-y:auto;padding:2px 0}
+        .pos-item{background:#f7f9fb;border:1px solid #e2e6ea;border-radius:6px;padding:4px 2px;text-align:center;cursor:pointer;transition:0.15s;font-size:8px}
+        .pos-item:active{transform:scale(0.94);background:#edf1f5}
+        .pos-item .name{font-weight:600;color:#1a2a3a;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .pos-item .price{color:#0f1a2e;font-weight:700;font-size:10px}
+        .pos-item .stock{font-size:6px;color:#8a9aaa}
         .pos-item.out-of-stock{opacity:0.4;pointer-events:none}
         .cart-area{flex:1;display:flex;flex-direction:column;min-height:0}
-        .cart-items{flex:1;overflow-y:auto;padding:3px 0;max-height:100px}
-        .cart-item{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #eef2f6;font-size:10px;align-items:center}
-        .cart-item .qty-control{display:flex;gap:3px;align-items:center}
-        .cart-item .qty-control button{background:#e8edf3;border:none;border-radius:50%;width:22px;height:22px;font-weight:700;cursor:pointer;font-size:12px;transition:0.2s}
-        .cart-item .qty-control button:active{transform:scale(0.9);background:#d0d8e0}
-        .total-bar{background:linear-gradient(135deg,#1a2a4a,#2d3b5a);color:white;padding:6px 12px;border-radius:8px;display:flex;justify-content:space-between;font-weight:700;font-size:14px;flex-shrink:0}
-        .bottom-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;flex-shrink:0;padding-top:4px}
-        .bottom-actions .btn{padding:5px;font-size:9px}
-        .btn{padding:5px 10px;border:none;border-radius:6px;font-size:10px;font-weight:600;cursor:pointer;transition:0.2s;display:flex;align-items:center;justify-content:center;gap:4px;width:100%}
-        .btn:active{transform:scale(0.95)}
-        .btn-primary{background:#1a2a4a;color:white}
-        .btn-success{background:#2d8f5e;color:white}
+        .cart-items{flex:1;overflow-y:auto;padding:2px 0;max-height:80px}
+        .cart-item{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #eef2f6;font-size:9px;align-items:center}
+        .cart-item .qty-control{display:flex;gap:2px;align-items:center}
+        .cart-item .qty-control button{background:#e8ecf0;border:none;border-radius:50%;width:20px;height:20px;font-weight:700;cursor:pointer;font-size:10px;transition:0.15s}
+        .cart-item .qty-control button:active{transform:scale(0.88);background:#d0d6dc}
+        .total-bar{background:linear-gradient(135deg,#0f1a2e,#1a2a4a);color:white;padding:5px 10px;border-radius:6px;display:flex;justify-content:space-between;font-weight:700;font-size:13px;flex-shrink:0}
+        .bottom-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;flex-shrink:0;padding-top:3px}
+        .bottom-actions .btn{padding:4px;font-size:8px}
+        .btn{padding:4px 8px;border:none;border-radius:5px;font-size:9px;font-weight:600;cursor:pointer;transition:0.15s;display:flex;align-items:center;justify-content:center;gap:3px;width:100%}
+        .btn:active{transform:scale(0.94)}
+        .btn-primary{background:#0f1a2e;color:white}
+        .btn-success{background:#218838;color:white}
         .btn-danger{background:#c0392b;color:white}
         .btn-warning{background:#d4a017;color:white}
-        .btn-outline{background:transparent;border:1.5px solid #1a2a4a;color:#1a2a4a}
-        .btn-sm{padding:2px 6px;font-size:8px}
-        .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:4px}
-        .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px}
-        .form-group{margin-bottom:3px}
-        .form-group label{display:block;font-size:9px;font-weight:600;color:#2d3748;margin-bottom:1px}
-        .form-group input,.form-group select{width:100%;padding:4px 6px;border:1.5px solid #e2e8f0;border-radius:6px;font-size:10px;background:#f7fafc;transition:0.2s}
-        .form-group input:focus{border-color:#1a2a4a;outline:none;background:white;box-shadow:0 0 0 2px rgba(26,42,74,0.1)}
+        .btn-outline{background:transparent;border:1px solid #0f1a2e;color:#0f1a2e}
+        .btn-sm{padding:1px 5px;font-size:7px}
+        .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+        .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px}
+        .form-group{margin-bottom:2px}
+        .form-group label{display:block;font-size:8px;font-weight:600;color:#2d3748;margin-bottom:1px}
+        .form-group input,.form-group select{width:100%;padding:3px 5px;border:1px solid #e2e6ea;border-radius:5px;font-size:9px;background:#f7f9fb}
+        .form-group input:focus{border-color:#0f1a2e;outline:none;background:white}
         .table-wrap{overflow:auto;flex:1;min-height:0}
-        table{width:100%;border-collapse:collapse;font-size:9px}
-        th{background:#1a2a4a;color:white;padding:4px 3px;text-align:center;font-size:8px;position:sticky;top:0;z-index:2}
-        td{padding:4px 3px;border-bottom:1px solid #eef2f6;text-align:center;font-size:9px}
+        table{width:100%;border-collapse:collapse;font-size:8px}
+        th{background:#0f1a2e;color:white;padding:3px 2px;text-align:center;font-size:7px;position:sticky;top:0;z-index:2}
+        td{padding:3px 2px;border-bottom:1px solid #eef2f6;text-align:center;font-size:8px}
         tr:nth-child(even){background:#f8fafc}
-        .badge{display:inline-block;padding:1px 6px;border-radius:12px;font-size:7px;font-weight:600}
+        .badge{display:inline-block;padding:1px 5px;border-radius:10px;font-size:6px;font-weight:600}
         .badge-success{background:#d4edda;color:#155724}
         .badge-danger{background:#f8d7da;color:#721c24}
         .badge-warning{background:#fff3cd;color:#856404}
-        .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;display:flex;justify-content:space-around;padding:4px 0;box-shadow:0 -2px 12px rgba(0,0,0,0.08);border-top:1px solid #eef2f6;z-index:1000}
-        .bottom-nav .nav-item{text-align:center;font-size:7px;color:#718096;cursor:pointer;padding:3px 6px;border-radius:6px;transition:0.2s}
-        .bottom-nav .nav-item i{font-size:15px;display:block}
-        .bottom-nav .nav-item.active{color:#1a2a4a;font-weight:700}
+        .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;display:flex;justify-content:space-around;padding:3px 0;box-shadow:0 -1px 10px rgba(0,0,0,0.06);border-top:1px solid #eef2f6;z-index:1000}
+        .bottom-nav .nav-item{text-align:center;font-size:6px;color:#8a9aaa;cursor:pointer;padding:2px 5px;border-radius:5px;transition:0.15s}
+        .bottom-nav .nav-item i{font-size:14px;display:block}
+        .bottom-nav .nav-item.active{color:#0f1a2e;font-weight:700}
         .scroll-area{flex:1;overflow-y:auto;min-height:0;padding-right:2px}
-        .sync-status{font-size:8px;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:4px}
-        .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+        .sync-status{font-size:7px;color:rgba(255,255,255,0.6);display:flex;align-items:center;gap:3px}
+        .dot{width:6px;height:6px;border-radius:50%;display:inline-block}
         .dot.green{background:#4ade80}
         .dot.red{background:#f87171}
         .dot.yellow{background:#fbbf24;animation:blink 1s infinite}
         @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
         .view-only .btn,.view-only .pos-item,.view-only input,.view-only select{opacity:0.5;pointer-events:none}
-        .cat-tabs{display:flex;gap:3px;margin-bottom:3px;flex-wrap:wrap}
-        .cat-tab{padding:2px 10px;border-radius:6px;font-weight:600;font-size:8px;cursor:pointer;background:#e8edf3;color:#5a6a7a;border:none;flex:1;transition:0.2s}
+        .cat-tabs{display:flex;gap:2px;margin-bottom:2px;flex-wrap:wrap}
+        .cat-tab{padding:2px 8px;border-radius:4px;font-weight:600;font-size:7px;cursor:pointer;background:#e8ecf0;color:#6b7a8a;border:none;flex:1;transition:0.15s}
         .cat-tab.active{color:white}
         .cat-tab.stone-active{background:#8B7355;color:white}
         .cat-tab.material-active{background:#2b6cb0;color:white}
-        .edit-btn{background:#e8edf3;border:none;padding:1px 6px;border-radius:4px;cursor:pointer;font-size:8px;transition:0.2s}
-        .edit-btn:hover{background:#d0d8e0}
-        .del-btn{background:#f8d7da;border:none;padding:1px 6px;border-radius:4px;cursor:pointer;font-size:8px;color:#721c24}
-        .del-btn:hover{background:#f5c6cb}
-        .invoice-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px;font-size:10px;font-family:monospace;white-space:pre-wrap;max-height:200px;overflow-y:auto}
-        .sessions-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px;margin-top:4px;font-size:9px}
-        .sessions-box .session-item{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #eef2f6;align-items:center}
-        .sessions-box .session-item:last-child{border-bottom:none}
-        /* Settings Modal */
-        .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(4px)}
-        .modal-box{background:white;padding:20px;border-radius:16px;max-width:380px;width:92%;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
-        .modal-box h2{font-size:18px;color:#1a2a4a;margin-bottom:12px;display:flex;align-items:center;gap:8px;border-bottom:2px solid #eef2f6;padding-bottom:10px}
-        .modal-box .modal-close{float:right;background:none;border:none;font-size:20px;cursor:pointer;color:#a0aec0}
-        .modal-box .modal-close:hover{color:#1a2a4a}
-        .modal-box .setting-item{padding:10px 0;border-bottom:1px solid #eef2f6;display:flex;justify-content:space-between;align-items:center}
+        .edit-btn{background:#e8ecf0;border:none;padding:1px 5px;border-radius:3px;cursor:pointer;font-size:7px}
+        .edit-btn:hover{background:#d0d6dc}
+        .invoice-box{background:#f8fafc;border:1px solid #e2e6ea;border-radius:6px;padding:8px;font-size:9px;font-family:monospace;white-space:pre-wrap;max-height:160px;overflow-y:auto}
+        .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(3px)}
+        .modal-box{background:white;padding:16px;border-radius:12px;max-width:340px;width:92%;max-height:80vh;overflow-y:auto;box-shadow:0 16px 48px rgba(0,0,0,0.2)}
+        .modal-box h2{font-size:16px;color:#0f1a2e;margin-bottom:10px;display:flex;align-items:center;gap:6px;border-bottom:2px solid #eef2f6;padding-bottom:8px}
+        .modal-box .modal-close{float:right;background:none;border:none;font-size:18px;cursor:pointer;color:#8a9aaa}
+        .modal-box .modal-close:hover{color:#0f1a2e}
+        .modal-box .setting-item{padding:8px 0;border-bottom:1px solid #eef2f6;display:flex;justify-content:space-between;align-items:center}
         .modal-box .setting-item:last-child{border-bottom:none}
-        .modal-box .setting-item .label{font-size:13px;font-weight:600;color:#2d3748}
-        .modal-box .setting-item .desc{font-size:10px;color:#718096}
-        .modal-box .setting-item .value{font-size:12px;color:#1a2a4a}
-        .modal-box input[type="password"]{width:100%;padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;margin:4px 0}
-        .modal-box input[type="password"]:focus{border-color:#1a2a4a;outline:none}
-        .modal-box .btn{width:100%;padding:8px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;margin-top:4px}
-        .modal-box .btn-primary{background:#1a2a4a;color:white}
-        .modal-box .btn-success{background:#2d8f5e;color:white}
-        .modal-box .btn-danger{background:#c0392b;color:white}
-        .modal-box .btn-outline{background:transparent;border:2px solid #1a2a4a;color:#1a2a4a}
-        .modal-box .error{color:#c0392b;font-size:11px;margin-top:4px;display:none}
-        .modal-box .hint{font-size:10px;color:#a0aec0;margin-top:4px}
-        @media(max-width:480px){.pos-grid{grid-template-columns:1fr 1fr 1fr}.header h1{font-size:13px}.bottom-actions{grid-template-columns:1fr 1fr}.modal-box{max-width:95%;padding:15px}}
+        .modal-box .setting-item .label{font-size:12px;font-weight:600;color:#1a2a3a}
+        .modal-box .setting-item .desc{font-size:9px;color:#8a9aaa}
+        .modal-box input[type="password"]{width:100%;padding:6px 10px;border:1.5px solid #e2e6ea;border-radius:6px;font-size:12px;margin:3px 0}
+        .modal-box input[type="password"]:focus{border-color:#0f1a2e;outline:none}
+        .modal-box .btn{width:100%;padding:6px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;margin-top:2px}
+        .modal-box .error{color:#c0392b;font-size:10px;margin-top:3px;display:none}
+        .sessions-box{background:#f8fafc;border:1px solid #e2e6ea;border-radius:6px;padding:6px;margin-top:3px;font-size:8px}
+        .sessions-box .session-item{display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid #eef2f6;align-items:center}
+        .sessions-box .session-item:last-child{border-bottom:none}
+        @media(max-width:480px){.pos-grid{grid-template-columns:1fr 1fr 1fr}.header h1{font-size:12px}.bottom-actions{grid-template-columns:1fr 1fr}}
         @media(min-width:768px){.pos-grid{grid-template-columns:1fr 1fr 1fr 1fr 1fr}}
     </style>
 </head>
 <body>
-<div class="app-container" id="app">
+<div class="app-container">
     <!-- Header -->
     <div class="header">
-        <h1><i class="fas fa-store"></i> <span id="shopName">Warda Marble Tabuk</span></h1>
+        <h1><i class="fas fa-store"></i> <span id="shopName">Warda Marble</span></h1>
         <div class="header-controls">
             <span class="sync-status"><span class="dot green" id="statusDot"></span><span id="statusText">Online</span></span>
             <span id="roleBadge" class="viewer-badge">👁️ Viewer</span>
@@ -136,14 +127,13 @@
         <div class="tab" data-tab="stock"><i class="fas fa-boxes"></i> Stock</div>
         <div class="tab" data-tab="customers"><i class="fas fa-users"></i> Cust</div>
         <div class="tab" data-tab="reports"><i class="fas fa-chart-pie"></i> Report</div>
-        <div class="tab" data-tab="itemdetails"><i class="fas fa-list-ul"></i> Details</div>
-        <div class="tab" data-tab="sessions"><i class="fas fa-users-cog"></i> Sessions</div>
+        <div class="tab" data-tab="details"><i class="fas fa-list-ul"></i> Details</div>
     </div>
 
     <!-- ========== POS ========== -->
     <div id="section-pos" class="section active">
-        <div class="card" style="flex-shrink:0;padding:5px;">
-            <div class="card-title" style="font-size:10px;margin-bottom:3px;">
+        <div class="card" style="flex-shrink:0;padding:4px;">
+            <div class="card-title" style="font-size:9px;margin-bottom:2px;">
                 <i class="fas fa-list"></i> Items
                 <span style="margin-right:auto;"></span>
                 <span class="badge" style="background:#8B7355;color:white;">Stone</span>
@@ -158,24 +148,24 @@
         </div>
 
         <div class="cart-area">
-            <div class="card" style="flex:1;display:flex;flex-direction:column;padding:5px;margin-bottom:0;">
-                <div class="card-title" style="font-size:10px;margin-bottom:2px;">
+            <div class="card" style="flex:1;display:flex;flex-direction:column;padding:4px;margin-bottom:0;">
+                <div class="card-title" style="font-size:9px;margin-bottom:2px;">
                     <i class="fas fa-shopping-cart"></i> Cart (<span id="cartCount">0</span>)
                     <span style="margin-right:auto;"></span>
-                    <button class="btn btn-sm btn-danger" onclick="clearCart()" style="width:auto;padding:1px 8px;font-size:8px;"><i class="fas fa-trash"></i></button>
+                    <button class="btn btn-sm btn-danger" onclick="clearCart()" style="width:auto;padding:0 6px;font-size:7px;"><i class="fas fa-trash"></i></button>
                 </div>
                 <div class="cart-items" id="cartItems"></div>
-                <div class="total-bar"><span>Total:</span><span id="cartTotal">0</span></div>
+                <div class="total-bar"><span>Total:</span><span id="cartTotal">0.00</span></div>
                 <div class="bottom-actions">
-                    <select id="saleType" style="padding:4px;border-radius:6px;border:1.5px solid #e2e8f0;font-size:9px;">
+                    <select id="saleType" style="padding:3px 4px;border-radius:4px;border:1px solid #e2e6ea;font-size:8px;">
                         <option value="cash">Cash</option>
                         <option value="credit">Credit</option>
                     </select>
-                    <select id="saleCustomerSelect" style="padding:4px;border-radius:6px;border:1.5px solid #e2e8f0;font-size:9px;">
+                    <select id="saleCustomerSelect" style="padding:3px 4px;border-radius:4px;border:1px solid #e2e6ea;font-size:8px;">
                         <option value="">Walk-in</option>
                     </select>
-                    <button class="btn btn-success" onclick="completeSale()" style="font-size:9px;padding:4px;"><i class="fas fa-check"></i> Sale</button>
-                    <input type="number" id="salePaid" placeholder="Paid" value="0" style="padding:4px;border-radius:6px;border:1.5px solid #e2e8f0;font-size:9px;grid-column:1/-1;">
+                    <input type="number" id="salePaid" placeholder="Paid" value="0" style="padding:3px 4px;border-radius:4px;border:1px solid #e2e6ea;font-size:8px;grid-column:1/-1;">
+                    <button class="btn btn-success" onclick="completeSale()" style="grid-column:1/-1;padding:4px;font-size:9px;"><i class="fas fa-check"></i> Complete Sale</button>
                 </div>
             </div>
         </div>
@@ -192,7 +182,7 @@
                 </div>
                 <div class="grid-2">
                     <div class="form-group"><label>Unit</label><select id="itemUnit"><option value="m²">m²</option><option value="running_ft">Running ft</option><option value="pcs">Pieces</option></select></div>
-                    <div class="form-group"><label>Sell Price</label><input type="number" id="itemSellPrice" placeholder="Sell price"></div>
+                    <div class="form-group"><label>Sell Price</label><input type="number" id="itemSellPrice" placeholder="Sell"></div>
                 </div>
                 <div class="grid-2">
                     <div class="form-group"><label>Purchase Price</label><input type="number" id="itemPurchasePrice" placeholder="Cost"></div>
@@ -208,7 +198,7 @@
 
             <div class="card">
                 <div class="card-title"><i class="fas fa-list"></i> Stock List</div>
-                <div class="table-wrap" style="max-height:120px;">
+                <div class="table-wrap" style="max-height:110px;">
                     <table><thead><tr><th>Name</th><th>Unit</th><th>Stock</th><th>Price</th><th>Action</th></tr></thead>
                     <tbody id="stockListBody"></tbody></table>
                 </div>
@@ -217,8 +207,8 @@
             <div class="card">
                 <div class="card-title"><i class="fas fa-arrow-right"></i> Stock In/Out</div>
                 <div class="grid-2">
-                    <select id="stockSelect" style="padding:4px;border-radius:6px;border:1.5px solid #e2e8f0;"></select>
-                    <input type="number" id="stockQty" placeholder="Qty" style="padding:4px;border-radius:6px;border:1.5px solid #e2e8f0;">
+                    <select id="stockSelect" style="padding:3px 4px;border-radius:4px;border:1px solid #e2e6ea;"></select>
+                    <input type="number" id="stockQty" placeholder="Qty" style="padding:3px 4px;border-radius:4px;border:1px solid #e2e6ea;">
                 </div>
                 <div class="grid-2">
                     <button class="btn btn-success" onclick="stockIn()"><i class="fas fa-plus"></i> In</button>
@@ -228,7 +218,7 @@
             
             <div class="card">
                 <div class="card-title"><i class="fas fa-clock"></i> Stock History</div>
-                <div class="table-wrap" style="max-height:80px;">
+                <div class="table-wrap" style="max-height:70px;">
                     <table><thead><tr><th>Date</th><th>Item</th><th>Qty</th><th>Type</th></tr></thead>
                     <tbody id="stockHistoryBody"></tbody></table>
                 </div>
@@ -250,7 +240,7 @@
 
             <div class="card">
                 <div class="card-title"><i class="fas fa-users"></i> Customers</div>
-                <div class="table-wrap" style="max-height:120px;">
+                <div class="table-wrap" style="max-height:110px;">
                     <table><thead><tr><th>Name</th><th>Phone</th><th>Balance</th></tr></thead>
                     <tbody id="customerListBody"></tbody></table>
                 </div>
@@ -259,8 +249,8 @@
             <div class="card">
                 <div class="card-title"><i class="fas fa-hand-holding-usd"></i> Receive Payment</div>
                 <div class="grid-2">
-                    <select id="receiveSelect" style="padding:4px;border-radius:6px;border:1.5px solid #e2e8f0;"></select>
-                    <input type="number" id="receiveAmount" placeholder="Amount" style="padding:4px;border-radius:6px;border:1.5px solid #e2e8f0;">
+                    <select id="receiveSelect" style="padding:3px 4px;border-radius:4px;border:1px solid #e2e6ea;"></select>
+                    <input type="number" id="receiveAmount" placeholder="Amount" style="padding:3px 4px;border-radius:4px;border:1px solid #e2e6ea;">
                 </div>
                 <button class="btn btn-success" onclick="receivePayment()"><i class="fas fa-money-bill-wave"></i> Receive</button>
             </div>
@@ -277,21 +267,21 @@
                     <button class="btn btn-warning" onclick="genReport('weekly')"><i class="fas fa-calendar-week"></i> Weekly</button>
                     <button class="btn btn-danger" onclick="genReport('monthly')"><i class="fas fa-calendar-alt"></i> Monthly</button>
                 </div>
-                <div style="display:flex;gap:3px;margin-top:4px;">
+                <div style="display:flex;gap:2px;margin-top:3px;">
                     <button class="btn btn-success" onclick="printReport()" style="flex:1;"><i class="fas fa-print"></i> Print</button>
                     <button class="btn btn-outline" onclick="shareReport()" style="flex:1;"><i class="fab fa-whatsapp"></i> Share</button>
                 </div>
-                <div id="reportDisplay" class="invoice-box" style="margin-top:6px;"></div>
+                <div id="reportDisplay" class="invoice-box" style="margin-top:4px;"></div>
             </div>
 
             <div class="card">
                 <div class="card-title"><i class="fas fa-chart-line"></i> Profit / Loss</div>
-                <div id="plDisplay" style="text-align:center;padding:8px;font-size:15px;font-weight:700;"></div>
+                <div id="plDisplay" style="text-align:center;padding:6px;font-size:14px;font-weight:700;"></div>
             </div>
 
             <div class="card">
                 <div class="card-title"><i class="fas fa-history"></i> All Transactions</div>
-                <div class="table-wrap" style="max-height:100px;">
+                <div class="table-wrap" style="max-height:90px;">
                     <table><thead><tr><th>Date</th><th>Desc</th><th>Amount</th></tr></thead>
                     <tbody id="transactionsBody"></tbody></table>
                 </div>
@@ -299,39 +289,22 @@
         </div>
     </div>
 
-    <!-- ========== ITEM DETAILS ========== -->
-    <div id="section-itemdetails" class="section">
+    <!-- ========== DETAILS ========== -->
+    <div id="section-details" class="section">
         <div class="scroll-area">
             <div class="card">
                 <div class="card-title"><i class="fas fa-list-ul"></i> Item Sales Details</div>
-                <div class="table-wrap" style="max-height:180px;">
-                    <table><thead><tr><th>Item</th><th>Unit</th><th>Total Sold</th><th>Revenue</th></tr></thead>
+                <div class="table-wrap" style="max-height:170px;">
+                    <table><thead><tr><th>Item</th><th>Unit</th><th>Sold</th><th>Revenue</th></tr></thead>
                     <tbody id="itemDetailsBody"></tbody></table>
                 </div>
             </div>
             <div class="card">
                 <div class="card-title"><i class="fas fa-calendar-alt"></i> Monthly Summary</div>
-                <div class="table-wrap" style="max-height:120px;">
+                <div class="table-wrap" style="max-height:110px;">
                     <table><thead><tr><th>Month</th><th>Sales</th><th>Orders</th></tr></thead>
                     <tbody id="monthlySummaryBody"></tbody></table>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ========== SESSIONS ========== -->
-    <div id="section-sessions" class="section">
-        <div class="scroll-area">
-            <div class="card">
-                <div class="card-title"><i class="fas fa-users-cog"></i> Active Sessions</div>
-                <div id="sessionsDisplay" class="sessions-box">
-                    <div class="session-item">
-                        <span><i class="fas fa-circle" style="color:#4ade80;font-size:8px;"></i> <span id="currentDevice">This Device</span></span>
-                        <span><span id="currentStatus" class="badge badge-success">Active</span></span>
-                    </div>
-                    <div id="otherSessions"></div>
-                </div>
-                <button class="btn btn-danger" onclick="removeAllSessions()" style="margin-top:4px;padding:4px;font-size:9px;"><i class="fas fa-user-slash"></i> Remove All Others</button>
             </div>
         </div>
     </div>
@@ -343,26 +316,17 @@
     <div class="nav-item" data-tab="stock"><i class="fas fa-boxes"></i> Stock</div>
     <div class="nav-item" data-tab="customers"><i class="fas fa-users"></i> Cust</div>
     <div class="nav-item" data-tab="reports"><i class="fas fa-chart-pie"></i> Report</div>
-    <div class="nav-item" data-tab="itemdetails"><i class="fas fa-list-ul"></i> Details</div>
-    <div class="nav-item" data-tab="sessions"><i class="fas fa-users-cog"></i> Sessions</div>
+    <div class="nav-item" data-tab="details"><i class="fas fa-list-ul"></i> Details</div>
 </div>
 
-<!-- ============================================================ -->
-<!-- 🔧 SETTINGS MODAL -->
-<!-- ============================================================ -->
+<!-- ========== SETTINGS MODAL ========== -->
 <div id="settingsModal" class="modal-overlay" style="display:none;">
     <div class="modal-box">
         <h2><i class="fas fa-cog"></i> Settings <button class="modal-close" onclick="toggleSettings()">&times;</button></h2>
         
-        <!-- Login/Logout -->
         <div class="setting-item">
-            <div>
-                <div class="label"><i class="fas fa-user-shield"></i> Admin Access</div>
-                <div class="desc">Login to manage system</div>
-            </div>
-            <div>
-                <span id="settingsStatus" class="badge badge-warning">Viewer</span>
-            </div>
+            <div><div class="label"><i class="fas fa-user-shield"></i> Admin Access</div><div class="desc">Login to manage system</div></div>
+            <span id="settingsStatus" class="badge badge-warning">Viewer</span>
         </div>
         
         <div id="loginSection">
@@ -375,54 +339,35 @@
             <button class="btn btn-danger" onclick="settingsLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
         </div>
         
-        <!-- Language -->
-        <div class="setting-item" style="margin-top:12px;">
-            <div>
-                <div class="label"><i class="fas fa-language"></i> Language</div>
-                <div class="desc">Switch between English / Urdu</div>
-            </div>
-            <div>
-                <button class="btn btn-outline" onclick="settingsToggleLang()" style="width:auto;padding:4px 12px;font-size:11px;">
-                    <span id="settingsLangLabel">اردو</span>
-                </button>
-            </div>
-        </div>
-        
-        <!-- Change Password -->
         <div class="setting-item" style="margin-top:8px;">
-            <div>
-                <div class="label"><i class="fas fa-key"></i> Change Password</div>
-                <div class="desc">Set new admin password</div>
-            </div>
-            <div>
-                <input type="password" id="newPasswordInput" placeholder="New password..." style="width:140px;padding:4px 8px;border:1.5px solid #e2e8f0;border-radius:6px;font-size:10px;">
-                <button class="btn btn-warning" onclick="changePassword()" style="width:auto;padding:4px 10px;font-size:10px;margin-top:2px;">Change</button>
-            </div>
+            <div><div class="label"><i class="fas fa-language"></i> Language</div><div class="desc">Switch between English / Urdu</div></div>
+            <button class="btn btn-outline" onclick="settingsToggleLang()" style="width:auto;padding:2px 10px;font-size:10px;"><span id="settingsLangLabel">اردو</span></button>
         </div>
         
-        <!-- Version -->
-        <div style="text-align:center;font-size:9px;color:#a0aec0;margin-top:12px;padding-top:10px;border-top:1px solid #eef2f6;">
-            Warda Marble Tabuk v2.0
+        <div class="setting-item">
+            <div><div class="label"><i class="fas fa-key"></i> Change Password</div><div class="desc">Set new admin password</div></div>
+            <div><input type="password" id="newPasswordInput" placeholder="New password..." style="width:130px;padding:3px 6px;border:1px solid #e2e6ea;border-radius:4px;font-size:9px;">
+            <button class="btn btn-warning" onclick="changePassword()" style="width:auto;padding:2px 8px;font-size:9px;margin-top:2px;">Change</button></div>
         </div>
-    </div>
-</div>
-
-<!-- ============================================================ -->
-<!-- 🔑 LOGIN MODAL (Fallback) -->
-<!-- ============================================================ -->
-<div id="loginModal" class="modal-overlay" style="display:none;">
-    <div class="modal-box">
-        <h2><i class="fas fa-lock"></i> Admin Login <button class="modal-close" onclick="closeLoginModal()">&times;</button></h2>
-        <p style="font-size:12px;color:#718096;margin-bottom:12px;">Enter password to manage system</p>
-        <input type="password" id="passwordInput" placeholder="Enter password..." onkeydown="if(event.key==='Enter') checkPassword()">
-        <button class="btn btn-primary" onclick="checkPassword()"><i class="fas fa-unlock"></i> Login</button>
-        <div id="passwordError" class="error">❌ Wrong password! Try again.</div>
+        
+        <div class="setting-item">
+            <div><div class="label"><i class="fas fa-users-cog"></i> Active Sessions</div><div class="desc">Manage logged in devices</div></div>
+            <button class="btn btn-outline" onclick="showSessionsInSettings()" style="width:auto;padding:2px 10px;font-size:9px;">View</button>
+        </div>
+        
+        <div id="sessionsInSettings" style="display:none;margin-top:6px;padding:6px;background:#f8fafc;border-radius:6px;border:1px solid #e2e6ea;max-height:120px;overflow-y:auto;">
+            <div id="settingsSessionsList">Loading...</div>
+        </div>
+        
+        <div style="text-align:center;font-size:8px;color:#8a9aaa;margin-top:10px;padding-top:8px;border-top:1px solid #eef2f6;">
+            Warda Marble v2.0
+        </div>
     </div>
 </div>
 
 <script>
     // ============================================================
-    // FIREBASE CONFIG
+    // FIREBASE
     // ============================================================
     const firebaseConfig = {
         apiKey: "AIzaSyBacJhHOK-xZ9TgQfbN8swRNYIhmsIh0nk",
@@ -433,7 +378,6 @@
         messagingSenderId: "696018619200",
         appId: "1:696018619200:web:a4239b1f35ea7a98ad08a5"
     };
-
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
@@ -444,15 +388,11 @@
     let isAdmin = false;
     let sessionId = null;
 
-    function generateSessionId() {
-        return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
-    }
-
     function getDeviceInfo() {
         const ua = navigator.userAgent;
         if (/Android/i.test(ua)) return 'Android';
-        if (/iPhone|iPad|iPod/i.test(ua)) return 'iPhone/iPad';
-        if (/Windows/i.test(ua)) return 'Windows PC';
+        if (/iPhone|iPad|iPod/i.test(ua)) return 'iOS';
+        if (/Windows/i.test(ua)) return 'Windows';
         if (/Macintosh/i.test(ua)) return 'Mac';
         return 'Device';
     }
@@ -472,14 +412,16 @@
 
     function saveSession() {
         const session = {
-            id: sessionId,
+            id: sessionId || 'session_' + Date.now(),
             device: getDeviceInfo(),
             browser: getBrowserInfo(),
             time: new Date().toLocaleString(),
             active: true,
             lastSeen: Date.now()
         };
+        sessionId = session.id;
         localStorage.setItem(getSessionKey(), JSON.stringify(session));
+        syncSessionToCloud();
     }
 
     function loadSession() {
@@ -498,59 +440,42 @@
 
     function clearSession() {
         localStorage.removeItem(getSessionKey());
+        if (sessionId) {
+            database.ref('warda_sessions').child(sessionId).update({ active: false });
+        }
     }
 
     // ============================================================
     // LOGIN / LOGOUT
     // ============================================================
-    function checkPassword() {
-        const input = document.getElementById('passwordInput').value;
-        const error = document.getElementById('passwordError');
-        if (input === ADMIN_PASSWORD) {
-            loginSuccess();
-            document.getElementById('loginModal').style.display = 'none';
-        } else {
-            error.style.display = 'block';
-            setTimeout(() => error.style.display = 'none', 3000);
-        }
-    }
-
     function settingsLogin() {
         const input = document.getElementById('settingsPassword').value;
         const error = document.getElementById('settingsError');
         if (input === ADMIN_PASSWORD) {
-            loginSuccess();
-            document.getElementById('settingsModal').style.display = 'none';
-            toggleSettings();
+            isAdmin = true;
+            if (!sessionId) sessionId = 'session_' + Date.now();
+            saveSession();
+            
+            document.getElementById('roleBadge').textContent = '👑 Admin';
+            document.getElementById('roleBadge').className = 'admin-badge';
+            document.getElementById('settingsStatus').textContent = 'Admin';
+            document.getElementById('settingsStatus').className = 'badge badge-success';
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('logoutSection').style.display = 'block';
+            document.getElementById('settingsPassword').value = '';
+            
+            enableEditing(true);
+            showToast('✅ Admin mode activated!');
+            renderAll();
         } else {
             error.style.display = 'block';
             setTimeout(() => error.style.display = 'none', 3000);
         }
-    }
-
-    function loginSuccess() {
-        isAdmin = true;
-        if (!sessionId) sessionId = generateSessionId();
-        saveSession();
-        syncSessionToCloud();
-        
-        document.getElementById('roleBadge').textContent = '👑 Admin';
-        document.getElementById('roleBadge').className = 'admin-badge';
-        document.getElementById('settingsStatus').textContent = 'Admin';
-        document.getElementById('settingsStatus').className = 'badge badge-success';
-        document.getElementById('loginSection').style.display = 'none';
-        document.getElementById('logoutSection').style.display = 'block';
-        
-        enableEditing(true);
-        showToast('✅ Admin mode activated!');
-        renderSessions();
-        updateSettingsUI();
     }
 
     function logout() {
         isAdmin = false;
         clearSession();
-        removeSessionFromCloud();
         
         document.getElementById('roleBadge').textContent = '👁️ Viewer';
         document.getElementById('roleBadge').className = 'viewer-badge';
@@ -558,12 +483,10 @@
         document.getElementById('settingsStatus').className = 'badge badge-warning';
         document.getElementById('loginSection').style.display = 'block';
         document.getElementById('logoutSection').style.display = 'none';
-        document.getElementById('settingsPassword').value = '';
         
         enableEditing(false);
         showToast('👁️ Viewer mode activated');
-        renderSessions();
-        updateSettingsUI();
+        renderAll();
     }
 
     function settingsLogout() {
@@ -571,27 +494,13 @@
         document.getElementById('settingsModal').style.display = 'none';
     }
 
-    function showLoginModal() {
-        document.getElementById('loginModal').style.display = 'flex';
-        document.getElementById('passwordInput').value = '';
-        document.getElementById('passwordInput').focus();
-    }
-
-    function closeLoginModal() {
-        document.getElementById('loginModal').style.display = 'none';
-    }
-
     function enableEditing(enable) {
-        const els = document.querySelectorAll('.btn, .pos-item, input, select');
-        els.forEach(el => {
+        document.querySelectorAll('.btn, .pos-item, input, select').forEach(el => {
             el.style.opacity = enable ? '1' : '0.5';
             el.style.pointerEvents = enable ? 'auto' : 'none';
         });
     }
 
-    // ============================================================
-    // SETTINGS UI
-    // ============================================================
     function toggleSettings() {
         const modal = document.getElementById('settingsModal');
         if (modal.style.display === 'flex') {
@@ -599,6 +508,7 @@
         } else {
             modal.style.display = 'flex';
             updateSettingsUI();
+            loadSessionsForSettings();
         }
     }
 
@@ -617,9 +527,6 @@
         }
     }
 
-    // ============================================================
-    // CHANGE PASSWORD
-    // ============================================================
     function changePassword() {
         if (!isAdmin) return alert('🔒 Login first!');
         const newPass = document.getElementById('newPasswordInput').value.trim();
@@ -631,31 +538,7 @@
     }
 
     // ============================================================
-    // LANGUAGE
-    // ============================================================
-    let currentLang = 'en';
-    const langMap = {
-        en: { shop: 'Warda Marble Tabuk', cash: 'Cash', credit: 'Credit', walkin: 'Walk-in' },
-        ur: { shop: 'وردہ ماربل تبوک', cash: 'نقد', credit: 'ادھار', walkin: 'بغیر گاہک' }
-    };
-
-    function t(key) { return langMap[currentLang][key] || key; }
-
-    function toggleLang() {
-        currentLang = currentLang === 'en' ? 'ur' : 'en';
-        document.getElementById('langLabel')?.textContent = currentLang === 'en' ? 'اردو' : 'English';
-        document.getElementById('shopName').textContent = t('shop');
-        renderAll();
-        updateSettingsUI();
-    }
-
-    function settingsToggleLang() {
-        toggleLang();
-        document.getElementById('settingsLangLabel').textContent = currentLang === 'en' ? 'اردو' : 'English';
-    }
-
-    // ============================================================
-    // SESSION SYNC
+    // SESSIONS
     // ============================================================
     function syncSessionToCloud() {
         if (!sessionId) return;
@@ -668,55 +551,40 @@
         });
     }
 
-    function removeSessionFromCloud() {
-        if (!sessionId) return;
-        database.ref('warda_sessions').child(sessionId).update({ active: false });
-    }
-
-    function loadSessionsFromCloud() {
+    function loadSessionsForSettings() {
         database.ref('warda_sessions').once('value').then(snapshot => {
-            renderSessions(snapshot.val());
+            const data = snapshot.val();
+            const container = document.getElementById('settingsSessionsList');
+            if (!data) {
+                container.innerHTML = '<div style="color:#8a9aaa;font-size:8px;">No active sessions</div>';
+                return;
+            }
+            let html = '';
+            Object.keys(data).forEach(key => {
+                const s = data[key];
+                if (s.active) {
+                    const isCurrent = key === sessionId;
+                    html += `<div class="session-item" style="font-size:8px;padding:2px 0;">
+                        <span>${isCurrent ? '👑 ' : ''}${s.device || 'Unknown'} (${s.browser || 'Browser'})</span>
+                        <span>
+                            <span class="badge ${isCurrent ? 'badge-success' : 'badge-warning'}">${isCurrent ? 'Current' : 'Active'}</span>
+                            ${isAdmin && !isCurrent ? `<button onclick="removeSession('${key}')" class="btn-sm btn-danger" style="padding:0 4px;font-size:6px;">✕</button>` : ''}
+                        </span>
+                    </div>`;
+                }
+            });
+            container.innerHTML = html || '<div style="color:#8a9aaa;font-size:8px;">No active sessions</div>';
+            document.getElementById('sessionsInSettings').style.display = 'block';
         });
     }
 
-    function renderSessions(cloudData) {
-        const container = document.getElementById('otherSessions');
-        const currentDevice = document.getElementById('currentDevice');
-        
-        if (sessionId) {
-            currentDevice.textContent = `${getDeviceInfo()} (${getBrowserInfo()})`;
-            document.getElementById('currentStatus').textContent = 'Active';
-            document.getElementById('currentStatus').className = 'badge badge-success';
+    function showSessionsInSettings() {
+        const container = document.getElementById('sessionsInSettings');
+        if (container.style.display === 'block') {
+            container.style.display = 'none';
         } else {
-            currentDevice.textContent = 'Not Logged In';
-            document.getElementById('currentStatus').textContent = 'Viewer';
-            document.getElementById('currentStatus').className = 'badge badge-warning';
+            loadSessionsForSettings();
         }
-
-        if (!cloudData) {
-            container.innerHTML = '<div style="color:#a0aec0;font-size:9px;padding:4px;">No other active sessions</div>';
-            return;
-        }
-
-        let html = '';
-        let hasOthers = false;
-        Object.keys(cloudData).forEach(key => {
-            const session = cloudData[key];
-            if (session.active && key !== sessionId) {
-                hasOthers = true;
-                const isOld = (Date.now() - (session.lastSeen || 0)) > 60000;
-                html += `<div class="session-item">
-                    <span><i class="fas fa-circle" style="color:${isOld ? '#f87171' : '#4ade80'};font-size:8px;"></i> 
-                    ${session.device || 'Unknown'} (${session.browser || 'Browser'})</span>
-                    <span>
-                        <span class="badge ${isOld ? 'badge-danger' : 'badge-success'}">${isOld ? 'Inactive' : 'Active'}</span>
-                        ${isAdmin ? `<button onclick="removeSession('${key}')" class="btn-sm btn-danger" style="padding:1px 6px;font-size:7px;margin-left:4px;">Remove</button>` : ''}
-                    </span>
-                </div>`;
-            }
-        });
-        
-        container.innerHTML = hasOthers ? html : '<div style="color:#a0aec0;font-size:9px;padding:4px;">No other active sessions</div>';
     }
 
     function removeSession(sessionKey) {
@@ -724,24 +592,29 @@
         if (!confirm('Remove this session?')) return;
         database.ref('warda_sessions').child(sessionKey).update({ active: false });
         showToast('✅ Session removed!');
-        loadSessionsFromCloud();
+        loadSessionsForSettings();
     }
 
-    function removeAllSessions() {
-        if (!isAdmin) return alert('🔒 Admin only!');
-        if (!confirm('Remove all other sessions?')) return;
-        database.ref('warda_sessions').once('value').then(snapshot => {
-            const data = snapshot.val();
-            if (data) {
-                Object.keys(data).forEach(key => {
-                    if (key !== sessionId) {
-                        database.ref('warda_sessions').child(key).update({ active: false });
-                    }
-                });
-            }
-            showToast('✅ All others removed!');
-            loadSessionsFromCloud();
-        });
+    // ============================================================
+    // LANGUAGE
+    // ============================================================
+    let currentLang = 'en';
+    const langMap = {
+        en: { shop: 'Warda Marble', cash: 'Cash', credit: 'Credit', walkin: 'Walk-in' },
+        ur: { shop: 'وردہ ماربل', cash: 'نقد', credit: 'ادھار', walkin: 'بغیر گاہک' }
+    };
+
+    function t(key) { return langMap[currentLang][key] || key; }
+
+    function toggleLang() {
+        currentLang = currentLang === 'en' ? 'ur' : 'en';
+        document.getElementById('shopName').textContent = t('shop');
+        renderAll();
+    }
+
+    function settingsToggleLang() {
+        toggleLang();
+        document.getElementById('settingsLangLabel').textContent = currentLang === 'en' ? 'اردو' : 'English';
     }
 
     // ============================================================
@@ -794,10 +667,10 @@
 
     function showToast(msg) {
         const t = document.createElement('div');
-        t.style.cssText = 'position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#1a2a4a;color:white;padding:5px 16px;border-radius:8px;font-size:11px;z-index:9999;max-width:90%;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,0.2)';
+        t.style.cssText = 'position:fixed;bottom:65px;left:50%;transform:translateX(-50%);background:#0f1a2e;color:white;padding:4px 14px;border-radius:6px;font-size:10px;z-index:9999;max-width:90%;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,0.15)';
         t.textContent = msg;
         document.body.appendChild(t);
-        setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 2000);
+        setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 1800);
     }
 
     // ============================================================
@@ -909,13 +782,7 @@
         let html = '';
         db.items.forEach(item => {
             const warn = item.stock < item.minStock ? '⚠️' : '';
-            html += `<tr>
-                <td>${item.name}</td>
-                <td>${item.unit}</td>
-                <td>${item.stock} ${warn}</td>
-                <td>${item.sellPrice}</td>
-                <td><button class="edit-btn" onclick="selectItem(${item.id})">✏️</button></td>
-            </tr>`;
+            html += `<tr><td>${item.name}</td><td>${item.unit}</td><td>${item.stock} ${warn}</td><td>${item.sellPrice}</td><td><button class="edit-btn" onclick="selectItem(${item.id})">✏️</button></td></tr>`;
         });
         tbody.innerHTML = html;
 
@@ -948,7 +815,7 @@
         const grid = document.getElementById('posGrid');
         let items = db.items;
         if (currentFilter !== 'all') items = items.filter(i => i.category === currentFilter);
-        if (!items.length) { grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#718096;padding:8px;font-size:10px;">No items</div>'; return; }
+        if (!items.length) { grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#8a9aaa;padding:6px;font-size:8px;">No items</div>'; return; }
         let html = '';
         items.forEach(item => {
             const out = item.stock <= 0 ? 'out-of-stock' : '';
@@ -1002,8 +869,8 @@
     function renderCart() {
         const container = document.getElementById('cartItems');
         if (!cart.length) {
-            container.innerHTML = '<div style="text-align:center;color:#a0aec0;padding:8px;font-size:10px;">Cart empty</div>';
-            document.getElementById('cartTotal').textContent = '0';
+            container.innerHTML = '<div style="text-align:center;color:#8a9aaa;padding:6px;font-size:8px;">Cart empty</div>';
+            document.getElementById('cartTotal').textContent = '0.00';
             document.getElementById('cartCount').textContent = '0';
             return;
         }
@@ -1014,14 +881,14 @@
                 <span><strong>${c.name}</strong> (${c.price} x ${c.qty})</span>
                 <div class="qty-control">
                     <button onclick="updateQty(${c.id}, -1)">−</button>
-                    <span style="min-width:16px;text-align:center;">${c.qty}</span>
+                    <span style="min-width:14px;text-align:center;">${c.qty}</span>
                     <button onclick="updateQty(${c.id}, 1)">+</button>
-                    <button onclick="removeFromCart(${c.id})" style="background:#f8d7da;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:10px;color:#721c24;">✕</button>
+                    <button onclick="removeFromCart(${c.id})" style="background:#f8d7da;border:none;border-radius:50%;width:18px;height:18px;cursor:pointer;font-size:8px;color:#721c24;">✕</button>
                 </div>
             </div>`;
         });
         container.innerHTML = html;
-        document.getElementById('cartTotal').textContent = total;
+        document.getElementById('cartTotal').textContent = total.toFixed(2);
         document.getElementById('cartCount').textContent = cart.reduce((s, c) => s + c.qty, 0);
     }
 
@@ -1060,7 +927,7 @@
         cart = [];
         saveLocal(); syncToCloud(); renderAll();
         document.getElementById('salePaid').value = '0';
-        showToast(`✅ Sale: ${total} | Profit: ${total - cost}`);
+        showToast(`✅ Sale: ${total} | Profit: ${(total - cost).toFixed(2)}`);
     }
 
     // ============================================================
@@ -1132,36 +999,37 @@
         const profit = (stone + material) - (stoneCost + materialCost);
         
         let report = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-        report += `  🏪 WARDA MARBLE TABUK\n`;
+        report += `  🏪 WARDA MARBLE\n`;
         report += `  📍 ${type.toUpperCase()} REPORT\n`;
         report += `  📅 ${today}\n`;
         report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-        report += `  💰 Total Sales    : ${totalSales}\n`;
-        report += `  🪨 Stone Sales    : ${stone}\n`;
-        report += `  🧱 Material Sales : ${material}\n`;
-        report += `  📈 Profit/Loss    : ${profit >= 0 ? '✅ ' + profit : '❌ ' + Math.abs(profit)}\n`;
+        report += `  💰 Total Sales    : ${totalSales.toFixed(2)}\n`;
+        report += `  🪨 Stone Sales    : ${stone.toFixed(2)}\n`;
+        report += `  🧱 Material Sales : ${material.toFixed(2)}\n`;
+        report += `  📈 Profit/Loss    : ${profit >= 0 ? '✅ ' + profit.toFixed(2) : '❌ ' + Math.abs(profit).toFixed(2)}\n`;
         report += `  📦 Total Orders   : ${sales.length}\n`;
         report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
         if (sales.length > 0) {
             report += `  📋 ORDER DETAILS\n`;
             report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-            sales.forEach((s, idx) => {
-                report += `  #${idx+1} | ${s.date} | ${s.total}\n`;
+            sales.slice(0, 10).forEach((s, idx) => {
+                report += `  #${idx+1} | ${s.date} | ${s.total.toFixed(2)}\n`;
                 s.items.forEach(i => {
-                    report += `     ${i.name} x${i.qty} = ${i.qty * i.price}\n`;
+                    report += `     ${i.name} x${i.qty} = ${(i.qty * i.price).toFixed(2)}\n`;
                 });
                 report += `  ─────────────────────────────\n`;
             });
+            if (sales.length > 10) report += `  ... and ${sales.length - 10} more\n`;
         }
         report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
         report += `  📱 Thank you! Visit again.\n`;
         report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
         
-        document.getElementById('reportDisplay').innerHTML = `<pre style="font-family:monospace;font-size:10px;margin:0;white-space:pre-wrap;">${report}</pre>`;
+        document.getElementById('reportDisplay').innerHTML = `<pre style="font-family:monospace;font-size:9px;margin:0;white-space:pre-wrap;line-height:1.4;">${report}</pre>`;
         document.getElementById('plDisplay').innerHTML = `
-            <div style="padding:8px;background:${profit>=0?'#d4edda':'#f8d7da'};border-radius:8px;">
-                <div style="font-size:20px;font-weight:700;color:${profit>=0?'#155724':'#721c24'};">${profit >= 0 ? '✅ Profit: ' + profit : '❌ Loss: ' + Math.abs(profit)}</div>
-                <div style="font-size:10px;color:#6c757d;">Stone: ${stone - stoneCost} | Material: ${material - materialCost}</div>
+            <div style="padding:6px;background:${profit>=0?'#d4edda':'#f8d7da'};border-radius:6px;">
+                <div style="font-size:18px;font-weight:700;color:${profit>=0?'#155724':'#721c24'};">${profit >= 0 ? '✅ Profit: ' + profit.toFixed(2) : '❌ Loss: ' + Math.abs(profit).toFixed(2)}</div>
+                <div style="font-size:8px;color:#6c757d;">Stone: ${(stone - stoneCost).toFixed(2)} | Material: ${(material - materialCost).toFixed(2)}</div>
             </div>
         `;
         renderTransactions();
@@ -1173,9 +1041,9 @@
         const tbody = document.getElementById('transactionsBody');
         if (!db.transactions.length) { tbody.innerHTML = '<tr><td colspan="3">No transactions</td></tr>'; return; }
         let html = '';
-        const sorted = [...db.transactions].reverse().slice(0, 30);
+        const sorted = [...db.transactions].reverse().slice(0, 25);
         sorted.forEach(t => {
-            const color = t.type === 'expense' ? '#c0392b' : '#2d8f5e';
+            const color = t.type === 'expense' ? '#c0392b' : '#218838';
             html += `<tr><td>${t.date}</td><td>${t.desc}</td><td style="color:${color};font-weight:600;">${t.amount}</td></tr>`;
         });
         tbody.innerHTML = html;
@@ -1204,7 +1072,7 @@
                     }
                 });
             });
-            html += `<tr><td>${item.name}</td><td>${item.unit}</td><td>${totalQty}</td><td>${totalRevenue}</td></tr>`;
+            html += `<tr><td>${item.name}</td><td>${item.unit}</td><td>${totalQty}</td><td>${totalRevenue.toFixed(2)}</td></tr>`;
         });
         tbody.innerHTML = html;
 
@@ -1217,7 +1085,7 @@
         });
         let mhtml = '';
         Object.keys(months).sort().forEach(m => {
-            mhtml += `<tr><td>${m}</td><td>${months[m].total}</td><td>${months[m].count}</td></tr>`;
+            mhtml += `<tr><td>${m}</td><td>${months[m].total.toFixed(2)}</td><td>${months[m].count}</td></tr>`;
         });
         mbody.innerHTML = mhtml || '<tr><td colspan="3">No data</td></tr>';
     }
@@ -1254,8 +1122,7 @@
         renderItemDetails();
         const active = document.querySelector('.section.active');
         if (active && active.id === 'section-reports') genReport('daily');
-        if (active && active.id === 'section-itemdetails') renderItemDetails();
-        if (active && active.id === 'section-sessions') loadSessionsFromCloud();
+        if (active && active.id === 'section-details') renderItemDetails();
     }
 
     // ============================================================
@@ -1274,8 +1141,7 @@
             if (id === 'stock') renderStockList();
             if (id === 'customers') renderCustomers();
             if (id === 'reports') genReport('daily');
-            if (id === 'itemdetails') renderItemDetails();
-            if (id === 'sessions') loadSessionsFromCloud();
+            if (id === 'details') renderItemDetails();
         });
     });
 
@@ -1293,7 +1159,6 @@
         saveLocal();
     }
 
-    // Check session
     const savedSession = loadSession();
     if (savedSession && savedSession.active) {
         isAdmin = true;
@@ -1301,8 +1166,6 @@
         document.getElementById('roleBadge').className = 'admin-badge';
         enableEditing(true);
         updateSettingsUI();
-    } else {
-        enableEditing(false);
     }
 
     renderAll();
@@ -1316,13 +1179,7 @@
         }
     }, 30000);
 
-    setInterval(() => {
-        if (document.getElementById('section-sessions').classList.contains('active')) {
-            loadSessionsFromCloud();
-        }
-    }, 10000);
-
-    console.log('🚀 Warda Marble Tabuk Ready! Items:', db.items.length);
+    console.log('🚀 Warda Marble Ready! Items:', db.items.length);
 </script>
 </body>
 </html>
