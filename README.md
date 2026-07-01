@@ -9,31 +9,19 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
-        html,body{height:100%;overflow:hidden;background:#e8edf3}
-        body{padding:6px;padding-bottom:62px}
+        html,body{height:100%;overflow:hidden;background:#e8edf3;touch-action:manipulation}
+        body{padding:6px;padding-bottom:62px;user-select:none;-webkit-user-select:none}
         .app-container{max-width:100%;height:100%;margin:0 auto;background:white;border-radius:16px;overflow:hidden;padding:8px;display:flex;flex-direction:column;box-shadow:0 2px 20px rgba(0,0,0,0.08)}
-        .header{background:linear-gradient(135deg,#1a2a4a,#2d3b5a);color:white;padding:8px 14px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;flex-shrink:0}
+        .header{background:linear-gradient(135deg,#1a2a4a,#2d3b5a);color:white;padding:8px 14px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;min-height:44px}
         .header h1{font-size:15px;font-weight:700;letter-spacing:0.5px}
         .header-controls{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
-        .header-controls button{background:rgba(255,255,255,0.12);border:none;color:white;padding:3px 10px;border-radius:20px;cursor:pointer;font-size:9px;font-weight:600;transition:0.2s}
+        .header-controls button{background:rgba(255,255,255,0.12);border:none;color:white;padding:4px 10px;border-radius:20px;cursor:pointer;font-size:10px;font-weight:600;transition:0.2s;display:flex;align-items:center;gap:4px}
         .header-controls button:hover{background:rgba(255,255,255,0.25)}
         .header-controls button:active{transform:scale(0.95)}
-        .login-btn{background:#2d8f5e !important}
-        .login-btn:hover{background:#3aaf7a !important}
-        .logout-btn{background:#c0392b !important}
-        .logout-btn:hover{background:#e74c3c !important}
+        .settings-btn{background:rgba(255,255,255,0.15);padding:5px 12px;border-radius:50%;font-size:16px}
+        .settings-btn:hover{background:rgba(255,255,255,0.3);transform:rotate(90deg)}
         .admin-badge{background:#d4a017;color:white;padding:2px 10px;border-radius:20px;font-size:8px;font-weight:600}
         .viewer-badge{background:#718096;color:white;padding:2px 10px;border-radius:20px;font-size:8px;font-weight:600}
-        .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(4px)}
-        .modal-box{background:white;padding:25px;border-radius:16px;max-width:360px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
-        .modal-box h2{font-size:18px;color:#1a2a4a;margin-bottom:8px}
-        .modal-box p{font-size:12px;color:#718096;margin-bottom:15px}
-        .modal-box input{width:100%;padding:10px;border:2px solid #e2e8f0;border-radius:10px;font-size:14px;text-align:center;margin-bottom:12px}
-        .modal-box input:focus{border-color:#1a2a4a;outline:none}
-        .modal-box .btn{width:100%;padding:10px;border:none;border-radius:10px;background:#1a2a4a;color:white;font-size:14px;font-weight:600;cursor:pointer}
-        .modal-box .btn:active{transform:scale(0.95)}
-        .modal-box .error{color:#c0392b;font-size:11px;margin-top:6px;display:none}
-        .modal-box .hint{font-size:10px;color:#a0aec0;margin-top:8px}
         .tabs{display:flex;gap:3px;margin:5px 0;flex-shrink:0;background:#f0f4f8;padding:3px;border-radius:10px;flex-wrap:wrap}
         .tab{flex:1;padding:5px 3px;text-align:center;border-radius:8px;font-weight:600;font-size:8px;cursor:pointer;transition:0.3s;min-width:38px;color:#5a6a7a;background:transparent}
         .tab i{display:block;font-size:14px;margin-bottom:2px}
@@ -104,9 +92,29 @@
         .del-btn:hover{background:#f5c6cb}
         .invoice-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px;font-size:10px;font-family:monospace;white-space:pre-wrap;max-height:200px;overflow-y:auto}
         .sessions-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px;margin-top:4px;font-size:9px}
-        .sessions-box .session-item{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #eef2f6}
+        .sessions-box .session-item{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #eef2f6;align-items:center}
         .sessions-box .session-item:last-child{border-bottom:none}
-        @media(max-width:480px){.pos-grid{grid-template-columns:1fr 1fr 1fr}.header h1{font-size:13px}.bottom-actions{grid-template-columns:1fr 1fr}}
+        /* Settings Modal */
+        .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(4px)}
+        .modal-box{background:white;padding:20px;border-radius:16px;max-width:380px;width:92%;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+        .modal-box h2{font-size:18px;color:#1a2a4a;margin-bottom:12px;display:flex;align-items:center;gap:8px;border-bottom:2px solid #eef2f6;padding-bottom:10px}
+        .modal-box .modal-close{float:right;background:none;border:none;font-size:20px;cursor:pointer;color:#a0aec0}
+        .modal-box .modal-close:hover{color:#1a2a4a}
+        .modal-box .setting-item{padding:10px 0;border-bottom:1px solid #eef2f6;display:flex;justify-content:space-between;align-items:center}
+        .modal-box .setting-item:last-child{border-bottom:none}
+        .modal-box .setting-item .label{font-size:13px;font-weight:600;color:#2d3748}
+        .modal-box .setting-item .desc{font-size:10px;color:#718096}
+        .modal-box .setting-item .value{font-size:12px;color:#1a2a4a}
+        .modal-box input[type="password"]{width:100%;padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;margin:4px 0}
+        .modal-box input[type="password"]:focus{border-color:#1a2a4a;outline:none}
+        .modal-box .btn{width:100%;padding:8px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;margin-top:4px}
+        .modal-box .btn-primary{background:#1a2a4a;color:white}
+        .modal-box .btn-success{background:#2d8f5e;color:white}
+        .modal-box .btn-danger{background:#c0392b;color:white}
+        .modal-box .btn-outline{background:transparent;border:2px solid #1a2a4a;color:#1a2a4a}
+        .modal-box .error{color:#c0392b;font-size:11px;margin-top:4px;display:none}
+        .modal-box .hint{font-size:10px;color:#a0aec0;margin-top:4px}
+        @media(max-width:480px){.pos-grid{grid-template-columns:1fr 1fr 1fr}.header h1{font-size:13px}.bottom-actions{grid-template-columns:1fr 1fr}.modal-box{max-width:95%;padding:15px}}
         @media(min-width:768px){.pos-grid{grid-template-columns:1fr 1fr 1fr 1fr 1fr}}
     </style>
 </head>
@@ -118,9 +126,7 @@
         <div class="header-controls">
             <span class="sync-status"><span class="dot green" id="statusDot"></span><span id="statusText">Online</span></span>
             <span id="roleBadge" class="viewer-badge">👁️ Viewer</span>
-            <button onclick="toggleLang()"><i class="fas fa-language"></i> <span id="langLabel">اردو</span></button>
-            <button id="loginBtn" class="login-btn" onclick="showLoginModal()"><i class="fas fa-sign-in-alt"></i> Login</button>
-            <button id="logoutBtn" class="logout-btn" onclick="logout()" style="display:none;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            <button class="settings-btn" onclick="toggleSettings()" title="Settings"><i class="fas fa-cog"></i></button>
         </div>
     </div>
 
@@ -320,12 +326,12 @@
                 <div class="card-title"><i class="fas fa-users-cog"></i> Active Sessions</div>
                 <div id="sessionsDisplay" class="sessions-box">
                     <div class="session-item">
-                        <span><i class="fas fa-circle" style="color:#4ade80;font-size:8px;"></i> <span id="currentDevice">This Device (You)</span></span>
+                        <span><i class="fas fa-circle" style="color:#4ade80;font-size:8px;"></i> <span id="currentDevice">This Device</span></span>
                         <span><span id="currentStatus" class="badge badge-success">Active</span></span>
                     </div>
                     <div id="otherSessions"></div>
                 </div>
-                <button class="btn btn-danger" onclick="removeAllSessions()" style="margin-top:4px;padding:4px;font-size:9px;"><i class="fas fa-user-slash"></i> Remove All Other Sessions</button>
+                <button class="btn btn-danger" onclick="removeAllSessions()" style="margin-top:4px;padding:4px;font-size:9px;"><i class="fas fa-user-slash"></i> Remove All Others</button>
             </div>
         </div>
     </div>
@@ -342,14 +348,74 @@
 </div>
 
 <!-- ============================================================ -->
-<!-- 🔑 LOGIN MODAL -->
+<!-- 🔧 SETTINGS MODAL -->
+<!-- ============================================================ -->
+<div id="settingsModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+        <h2><i class="fas fa-cog"></i> Settings <button class="modal-close" onclick="toggleSettings()">&times;</button></h2>
+        
+        <!-- Login/Logout -->
+        <div class="setting-item">
+            <div>
+                <div class="label"><i class="fas fa-user-shield"></i> Admin Access</div>
+                <div class="desc">Login to manage system</div>
+            </div>
+            <div>
+                <span id="settingsStatus" class="badge badge-warning">Viewer</span>
+            </div>
+        </div>
+        
+        <div id="loginSection">
+            <input type="password" id="settingsPassword" placeholder="Enter password..." onkeydown="if(event.key==='Enter') settingsLogin()">
+            <button class="btn btn-success" onclick="settingsLogin()"><i class="fas fa-sign-in-alt"></i> Login</button>
+            <div id="settingsError" class="error">❌ Wrong password!</div>
+        </div>
+        
+        <div id="logoutSection" style="display:none;">
+            <button class="btn btn-danger" onclick="settingsLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+        
+        <!-- Language -->
+        <div class="setting-item" style="margin-top:12px;">
+            <div>
+                <div class="label"><i class="fas fa-language"></i> Language</div>
+                <div class="desc">Switch between English / Urdu</div>
+            </div>
+            <div>
+                <button class="btn btn-outline" onclick="settingsToggleLang()" style="width:auto;padding:4px 12px;font-size:11px;">
+                    <span id="settingsLangLabel">اردو</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Change Password -->
+        <div class="setting-item" style="margin-top:8px;">
+            <div>
+                <div class="label"><i class="fas fa-key"></i> Change Password</div>
+                <div class="desc">Set new admin password</div>
+            </div>
+            <div>
+                <input type="password" id="newPasswordInput" placeholder="New password..." style="width:140px;padding:4px 8px;border:1.5px solid #e2e8f0;border-radius:6px;font-size:10px;">
+                <button class="btn btn-warning" onclick="changePassword()" style="width:auto;padding:4px 10px;font-size:10px;margin-top:2px;">Change</button>
+            </div>
+        </div>
+        
+        <!-- Version -->
+        <div style="text-align:center;font-size:9px;color:#a0aec0;margin-top:12px;padding-top:10px;border-top:1px solid #eef2f6;">
+            Warda Marble Tabuk v2.0
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 🔑 LOGIN MODAL (Fallback) -->
 <!-- ============================================================ -->
 <div id="loginModal" class="modal-overlay" style="display:none;">
     <div class="modal-box">
-        <h2><i class="fas fa-lock"></i> Admin Login</h2>
-        <p>Enter password to manage system</p>
+        <h2><i class="fas fa-lock"></i> Admin Login <button class="modal-close" onclick="closeLoginModal()">&times;</button></h2>
+        <p style="font-size:12px;color:#718096;margin-bottom:12px;">Enter password to manage system</p>
         <input type="password" id="passwordInput" placeholder="Enter password..." onkeydown="if(event.key==='Enter') checkPassword()">
-        <button class="btn" onclick="checkPassword()"><i class="fas fa-unlock"></i> Login</button>
+        <button class="btn btn-primary" onclick="checkPassword()"><i class="fas fa-unlock"></i> Login</button>
         <div id="passwordError" class="error">❌ Wrong password! Try again.</div>
     </div>
 </div>
@@ -374,28 +440,23 @@
     // ============================================================
     // PASSWORD SYSTEM
     // ============================================================
-    const ADMIN_PASSWORD = "Hamdani5";
+    let ADMIN_PASSWORD = "Hamdani5";
     let isAdmin = false;
     let sessionId = null;
 
-    // Generate unique session ID
     function generateSessionId() {
         return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
     }
 
-    // Get device info
     function getDeviceInfo() {
         const ua = navigator.userAgent;
-        let device = 'Unknown Device';
-        if (/Android/i.test(ua)) device = 'Android Phone';
-        else if (/iPhone|iPad|iPod/i.test(ua)) device = 'iPhone/iPad';
-        else if (/Windows/i.test(ua)) device = 'Windows PC';
-        else if (/Macintosh/i.test(ua)) device = 'Mac';
-        else if (/Linux/i.test(ua)) device = 'Linux';
-        return device;
+        if (/Android/i.test(ua)) return 'Android';
+        if (/iPhone|iPad|iPod/i.test(ua)) return 'iPhone/iPad';
+        if (/Windows/i.test(ua)) return 'Windows PC';
+        if (/Macintosh/i.test(ua)) return 'Mac';
+        return 'Device';
     }
 
-    // Get browser info
     function getBrowserInfo() {
         const ua = navigator.userAgent;
         if (/Chrome/i.test(ua) && !/Edge/i.test(ua)) return 'Chrome';
@@ -415,7 +476,8 @@
             device: getDeviceInfo(),
             browser: getBrowserInfo(),
             time: new Date().toLocaleString(),
-            active: true
+            active: true,
+            lastSeen: Date.now()
         };
         localStorage.setItem(getSessionKey(), JSON.stringify(session));
     }
@@ -438,30 +500,75 @@
         localStorage.removeItem(getSessionKey());
     }
 
-    // Session Management
+    // ============================================================
+    // LOGIN / LOGOUT
+    // ============================================================
     function checkPassword() {
         const input = document.getElementById('passwordInput').value;
         const error = document.getElementById('passwordError');
         if (input === ADMIN_PASSWORD) {
-            isAdmin = true;
+            loginSuccess();
             document.getElementById('loginModal').style.display = 'none';
-            document.getElementById('roleBadge').textContent = '👑 Admin';
-            document.getElementById('roleBadge').className = 'admin-badge';
-            document.getElementById('loginBtn').style.display = 'none';
-            document.getElementById('logoutBtn').style.display = 'inline-block';
-            
-            // Save session
-            if (!sessionId) sessionId = generateSessionId();
-            saveSession();
-            syncSessionToCloud();
-            
-            enableEditing(true);
-            showToast('✅ Admin mode activated!');
-            renderSessions();
         } else {
             error.style.display = 'block';
             setTimeout(() => error.style.display = 'none', 3000);
         }
+    }
+
+    function settingsLogin() {
+        const input = document.getElementById('settingsPassword').value;
+        const error = document.getElementById('settingsError');
+        if (input === ADMIN_PASSWORD) {
+            loginSuccess();
+            document.getElementById('settingsModal').style.display = 'none';
+            toggleSettings();
+        } else {
+            error.style.display = 'block';
+            setTimeout(() => error.style.display = 'none', 3000);
+        }
+    }
+
+    function loginSuccess() {
+        isAdmin = true;
+        if (!sessionId) sessionId = generateSessionId();
+        saveSession();
+        syncSessionToCloud();
+        
+        document.getElementById('roleBadge').textContent = '👑 Admin';
+        document.getElementById('roleBadge').className = 'admin-badge';
+        document.getElementById('settingsStatus').textContent = 'Admin';
+        document.getElementById('settingsStatus').className = 'badge badge-success';
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('logoutSection').style.display = 'block';
+        
+        enableEditing(true);
+        showToast('✅ Admin mode activated!');
+        renderSessions();
+        updateSettingsUI();
+    }
+
+    function logout() {
+        isAdmin = false;
+        clearSession();
+        removeSessionFromCloud();
+        
+        document.getElementById('roleBadge').textContent = '👁️ Viewer';
+        document.getElementById('roleBadge').className = 'viewer-badge';
+        document.getElementById('settingsStatus').textContent = 'Viewer';
+        document.getElementById('settingsStatus').className = 'badge badge-warning';
+        document.getElementById('loginSection').style.display = 'block';
+        document.getElementById('logoutSection').style.display = 'none';
+        document.getElementById('settingsPassword').value = '';
+        
+        enableEditing(false);
+        showToast('👁️ Viewer mode activated');
+        renderSessions();
+        updateSettingsUI();
+    }
+
+    function settingsLogout() {
+        logout();
+        document.getElementById('settingsModal').style.display = 'none';
     }
 
     function showLoginModal() {
@@ -470,43 +577,89 @@
         document.getElementById('passwordInput').focus();
     }
 
-    function logout() {
-        isAdmin = false;
-        document.getElementById('roleBadge').textContent = '👁️ Viewer';
-        document.getElementById('roleBadge').className = 'viewer-badge';
-        document.getElementById('loginBtn').style.display = 'inline-block';
-        document.getElementById('logoutBtn').style.display = 'none';
-        clearSession();
-        removeSessionFromCloud();
-        enableEditing(false);
-        showToast('👁️ Viewer mode activated');
-        renderSessions();
+    function closeLoginModal() {
+        document.getElementById('loginModal').style.display = 'none';
     }
 
     function enableEditing(enable) {
         const els = document.querySelectorAll('.btn, .pos-item, input, select');
         els.forEach(el => {
-            if (enable) {
-                el.style.opacity = '1';
-                el.style.pointerEvents = 'auto';
-            } else {
-                el.style.opacity = '0.5';
-                el.style.pointerEvents = 'none';
-            }
-        });
-        // Always allow viewing
-        document.querySelectorAll('.tab, .bottom-nav .nav-item, .pos-item, table, .invoice-box').forEach(el => {
-            el.style.pointerEvents = 'auto';
+            el.style.opacity = enable ? '1' : '0.5';
+            el.style.pointerEvents = enable ? 'auto' : 'none';
         });
     }
 
     // ============================================================
-    // SESSION SYNC WITH CLOUD
+    // SETTINGS UI
+    // ============================================================
+    function toggleSettings() {
+        const modal = document.getElementById('settingsModal');
+        if (modal.style.display === 'flex') {
+            modal.style.display = 'none';
+        } else {
+            modal.style.display = 'flex';
+            updateSettingsUI();
+        }
+    }
+
+    function updateSettingsUI() {
+        if (isAdmin) {
+            document.getElementById('settingsStatus').textContent = 'Admin';
+            document.getElementById('settingsStatus').className = 'badge badge-success';
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('logoutSection').style.display = 'block';
+        } else {
+            document.getElementById('settingsStatus').textContent = 'Viewer';
+            document.getElementById('settingsStatus').className = 'badge badge-warning';
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('logoutSection').style.display = 'none';
+            document.getElementById('settingsPassword').value = '';
+        }
+    }
+
+    // ============================================================
+    // CHANGE PASSWORD
+    // ============================================================
+    function changePassword() {
+        if (!isAdmin) return alert('🔒 Login first!');
+        const newPass = document.getElementById('newPasswordInput').value.trim();
+        if (!newPass || newPass.length < 4) return alert('Password must be at least 4 characters!');
+        if (!confirm('Change password to "' + newPass + '"?')) return;
+        ADMIN_PASSWORD = newPass;
+        document.getElementById('newPasswordInput').value = '';
+        showToast('✅ Password changed!');
+    }
+
+    // ============================================================
+    // LANGUAGE
+    // ============================================================
+    let currentLang = 'en';
+    const langMap = {
+        en: { shop: 'Warda Marble Tabuk', cash: 'Cash', credit: 'Credit', walkin: 'Walk-in' },
+        ur: { shop: 'وردہ ماربل تبوک', cash: 'نقد', credit: 'ادھار', walkin: 'بغیر گاہک' }
+    };
+
+    function t(key) { return langMap[currentLang][key] || key; }
+
+    function toggleLang() {
+        currentLang = currentLang === 'en' ? 'ur' : 'en';
+        document.getElementById('langLabel')?.textContent = currentLang === 'en' ? 'اردو' : 'English';
+        document.getElementById('shopName').textContent = t('shop');
+        renderAll();
+        updateSettingsUI();
+    }
+
+    function settingsToggleLang() {
+        toggleLang();
+        document.getElementById('settingsLangLabel').textContent = currentLang === 'en' ? 'اردو' : 'English';
+    }
+
+    // ============================================================
+    // SESSION SYNC
     // ============================================================
     function syncSessionToCloud() {
         if (!sessionId) return;
-        const sessionsRef = database.ref('warda_sessions');
-        sessionsRef.child(sessionId).set({
+        database.ref('warda_sessions').child(sessionId).set({
             device: getDeviceInfo(),
             browser: getBrowserInfo(),
             time: new Date().toLocaleString(),
@@ -517,15 +670,12 @@
 
     function removeSessionFromCloud() {
         if (!sessionId) return;
-        const sessionsRef = database.ref('warda_sessions');
-        sessionsRef.child(sessionId).update({ active: false });
+        database.ref('warda_sessions').child(sessionId).update({ active: false });
     }
 
     function loadSessionsFromCloud() {
-        const sessionsRef = database.ref('warda_sessions');
-        sessionsRef.once('value').then(snapshot => {
-            const data = snapshot.val();
-            renderSessions(data);
+        database.ref('warda_sessions').once('value').then(snapshot => {
+            renderSessions(snapshot.val());
         });
     }
 
@@ -533,9 +683,8 @@
         const container = document.getElementById('otherSessions');
         const currentDevice = document.getElementById('currentDevice');
         
-        // Update current device info
         if (sessionId) {
-            currentDevice.textContent = `This Device (${getDeviceInfo()} - ${getBrowserInfo()})`;
+            currentDevice.textContent = `${getDeviceInfo()} (${getBrowserInfo()})`;
             document.getElementById('currentStatus').textContent = 'Active';
             document.getElementById('currentStatus').className = 'badge badge-success';
         } else {
@@ -555,7 +704,7 @@
             const session = cloudData[key];
             if (session.active && key !== sessionId) {
                 hasOthers = true;
-                const isOld = (Date.now() - (session.lastSeen || 0)) > 60000; // 1 minute
+                const isOld = (Date.now() - (session.lastSeen || 0)) > 60000;
                 html += `<div class="session-item">
                     <span><i class="fas fa-circle" style="color:${isOld ? '#f87171' : '#4ade80'};font-size:8px;"></i> 
                     ${session.device || 'Unknown'} (${session.browser || 'Browser'})</span>
@@ -567,18 +716,13 @@
             }
         });
         
-        if (!hasOthers) {
-            container.innerHTML = '<div style="color:#a0aec0;font-size:9px;padding:4px;">No other active sessions</div>';
-        } else {
-            container.innerHTML = html;
-        }
+        container.innerHTML = hasOthers ? html : '<div style="color:#a0aec0;font-size:9px;padding:4px;">No other active sessions</div>';
     }
 
     function removeSession(sessionKey) {
         if (!isAdmin) return alert('🔒 Admin only!');
         if (!confirm('Remove this session?')) return;
-        const sessionsRef = database.ref('warda_sessions');
-        sessionsRef.child(sessionKey).update({ active: false });
+        database.ref('warda_sessions').child(sessionKey).update({ active: false });
         showToast('✅ Session removed!');
         loadSessionsFromCloud();
     }
@@ -586,17 +730,16 @@
     function removeAllSessions() {
         if (!isAdmin) return alert('🔒 Admin only!');
         if (!confirm('Remove all other sessions?')) return;
-        const sessionsRef = database.ref('warda_sessions');
-        sessionsRef.once('value').then(snapshot => {
+        database.ref('warda_sessions').once('value').then(snapshot => {
             const data = snapshot.val();
             if (data) {
                 Object.keys(data).forEach(key => {
                     if (key !== sessionId) {
-                        sessionsRef.child(key).update({ active: false });
+                        database.ref('warda_sessions').child(key).update({ active: false });
                     }
                 });
             }
-            showToast('✅ All other sessions removed!');
+            showToast('✅ All others removed!');
             loadSessionsFromCloud();
         });
     }
@@ -607,7 +750,6 @@
     let db = { items: [], customers: [], sales: [], expenses: [], transactions: [], stockHistory: [] };
     let cart = [];
     let currentFilter = 'all';
-    let currentLang = 'en';
     let isSyncing = false;
 
     function loadLocal() {
@@ -621,24 +763,6 @@
     }
 
     function getToday() { return new Date().toISOString().split('T')[0]; }
-    function getMonth() { return new Date().toISOString().substring(0, 7); }
-
-    // ============================================================
-    // LANGUAGE
-    // ============================================================
-    const langMap = {
-        en: { shop: 'Warda Marble Tabuk', cash: 'Cash', credit: 'Credit', walkin: 'Walk-in' },
-        ur: { shop: 'وردہ ماربل تبوک', cash: 'نقد', credit: 'ادھار', walkin: 'بغیر گاہک' }
-    };
-
-    function t(key) { return langMap[currentLang][key] || key; }
-
-    function toggleLang() {
-        currentLang = currentLang === 'en' ? 'ur' : 'en';
-        document.getElementById('langLabel').textContent = currentLang === 'en' ? 'اردو' : 'English';
-        document.getElementById('shopName').textContent = t('shop');
-        renderAll();
-    }
 
     // ============================================================
     // SYNC
@@ -677,7 +801,7 @@
     }
 
     // ============================================================
-    // ITEMS - Full CRUD (Only Admin)
+    // ITEMS
     // ============================================================
     function addItem() {
         if (!isAdmin) return alert('🔒 Admin only! Login first.');
@@ -1169,15 +1293,14 @@
         saveLocal();
     }
 
-    // Check if session exists
+    // Check session
     const savedSession = loadSession();
     if (savedSession && savedSession.active) {
         isAdmin = true;
         document.getElementById('roleBadge').textContent = '👑 Admin';
         document.getElementById('roleBadge').className = 'admin-badge';
-        document.getElementById('loginBtn').style.display = 'none';
-        document.getElementById('logoutBtn').style.display = 'inline-block';
         enableEditing(true);
+        updateSettingsUI();
     } else {
         enableEditing(false);
     }
@@ -1187,15 +1310,12 @@
     setInterval(() => { 
         if (navigator.onLine) {
             syncFromCloud();
-            if (isAdmin && sessionId) {
-                syncSessionToCloud();
-            }
+            if (isAdmin && sessionId) syncSessionToCloud();
         } else {
             updateStatus('offline');
         }
     }, 30000);
 
-    // Load sessions periodically
     setInterval(() => {
         if (document.getElementById('section-sessions').classList.contains('active')) {
             loadSessionsFromCloud();
