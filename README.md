@@ -1,1404 +1,747 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Warda Marble - Pro</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Warda Marble - Professional System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
-        *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
-        html,body{height:100%;overflow:hidden;background:#eef2f7}
-        body{padding:4px;padding-bottom:56px}
-        .app-container{max-width:100%;height:100%;margin:0 auto;background:white;border-radius:12px;overflow:hidden;padding:4px;display:flex;flex-direction:column;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
-        .header{background:linear-gradient(135deg,#0f1a2e,#1a2a4a);color:white;padding:5px 10px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;min-height:32px}
-        .header h1{font-size:12px;font-weight:700}
-        .header-controls{display:flex;gap:3px;align-items:center}
-        .header-controls button{background:rgba(255,255,255,0.1);border:none;color:white;padding:2px 7px;border-radius:12px;cursor:pointer;font-size:7px;font-weight:600;transition:0.2s}
-        .header-controls button:hover{background:rgba(255,255,255,0.2)}
-        .settings-btn{background:rgba(255,255,255,0.08);padding:2px 8px;border-radius:50%;font-size:12px}
-        .settings-btn:hover{transform:rotate(90deg)}
-        .admin-badge{background:#d4a017;color:white;padding:1px 6px;border-radius:8px;font-size:6px;font-weight:600}
-        .viewer-badge{background:#6b7a8a;color:white;padding:1px 6px;border-radius:8px;font-size:6px;font-weight:600}
-        .tabs{display:flex;gap:2px;margin:2px 0;flex-shrink:0;background:#f0f4f8;padding:2px;border-radius:6px;flex-wrap:wrap}
-        .tab{flex:1;padding:3px 2px;text-align:center;border-radius:5px;font-weight:600;font-size:6px;cursor:pointer;transition:0.2s;min-width:28px;color:#6b7a8a;background:transparent}
-        .tab i{display:block;font-size:11px;margin-bottom:1px}
-        .tab.active{background:#0f1a2e;color:white}
-        .section{display:none;flex:1;overflow:hidden;padding-top:2px}
-        .section.active{display:flex;flex-direction:column}
-        .card{background:white;border-radius:6px;padding:3px 4px;margin-bottom:2px;border:1px solid #e8ecf0;flex-shrink:0}
-        .card-title{font-size:8px;font-weight:700;color:#0f1a2e;display:flex;align-items:center;gap:3px;border-bottom:1px solid #eef2f6;padding-bottom:2px;margin-bottom:2px}
-        .pos-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:2px;max-height:80px;overflow-y:auto;padding:2px 0}
-        .pos-item{background:#f7f9fb;border:1px solid #e2e6ea;border-radius:4px;padding:3px 2px;text-align:center;cursor:pointer;transition:0.15s;font-size:7px}
-        .pos-item:active{transform:scale(0.92);background:#edf1f5}
-        .pos-item .name{font-weight:600;color:#1a2a3a;font-size:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .pos-item .price{color:#0f1a2e;font-weight:700;font-size:8px}
-        .pos-item .stock{font-size:5px;color:#8a9aaa}
-        .pos-item .size{font-size:5px;color:#6b7a8a}
-        .pos-item.out-of-stock{opacity:0.4;pointer-events:none}
-        .cart-area{flex:1;display:flex;flex-direction:column;min-height:0}
-        .cart-items{flex:1;overflow-y:auto;padding:2px 0;max-height:60px}
-        .cart-item{display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid #eef2f6;font-size:7px;align-items:center}
-        .cart-item .qty-control{display:flex;gap:2px;align-items:center}
-        .cart-item .qty-control button{background:#e8ecf0;border:none;border-radius:50%;width:16px;height:16px;font-weight:700;cursor:pointer;font-size:8px}
-        .cart-item .qty-control button:active{transform:scale(0.85)}
-        .total-bar{background:linear-gradient(135deg,#0f1a2e,#1a2a4a);color:white;padding:3px 6px;border-radius:4px;display:flex;justify-content:space-between;font-weight:700;font-size:10px;flex-shrink:0}
-        .bottom-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;flex-shrink:0;padding-top:2px}
-        .bottom-actions .btn{padding:2px;font-size:6px}
-        .btn{padding:2px 5px;border:none;border-radius:3px;font-size:7px;font-weight:600;cursor:pointer;transition:0.15s;display:flex;align-items:center;justify-content:center;gap:2px;width:100%}
-        .btn:active{transform:scale(0.92)}
-        .btn-primary{background:#0f1a2e;color:white}
-        .btn-success{background:#218838;color:white}
-        .btn-danger{background:#c0392b;color:white}
-        .btn-warning{background:#d4a017;color:white}
-        .btn-outline{background:transparent;border:1px solid #0f1a2e;color:#0f1a2e}
-        .btn-sm{padding:1px 3px;font-size:5px}
-        .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:2px}
-        .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px}
-        .form-group{margin-bottom:1px}
-        .form-group label{display:block;font-size:6px;font-weight:600;color:#2d3748;margin-bottom:1px}
-        .form-group input,.form-group select{width:100%;padding:2px 3px;border:1px solid #e2e6ea;border-radius:3px;font-size:7px;background:#f7f9fb}
-        .form-group input:focus{border-color:#0f1a2e;outline:none;background:white}
-        .table-wrap{overflow:auto;flex:1;min-height:0}
-        table{width:100%;border-collapse:collapse;font-size:6px}
-        th{background:#0f1a2e;color:white;padding:2px 2px;text-align:center;font-size:5px;position:sticky;top:0;z-index:2}
-        td{padding:2px 2px;border-bottom:1px solid #eef2f6;text-align:center;font-size:6px}
-        tr:nth-child(even){background:#f8fafc}
-        .badge{display:inline-block;padding:1px 4px;border-radius:6px;font-size:5px;font-weight:600}
-        .badge-success{background:#d4edda;color:#155724}
-        .badge-danger{background:#f8d7da;color:#721c24}
-        .badge-warning{background:#fff3cd;color:#856404}
-        .badge-info{background:#d1ecf1;color:#0c5460}
-        .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;display:flex;justify-content:space-around;padding:2px 0;box-shadow:0 -1px 8px rgba(0,0,0,0.06);border-top:1px solid #eef2f6;z-index:1000}
-        .bottom-nav .nav-item{text-align:center;font-size:5px;color:#8a9aaa;cursor:pointer;padding:2px 4px;border-radius:4px;transition:0.15s}
-        .bottom-nav .nav-item i{font-size:12px;display:block}
-        .bottom-nav .nav-item.active{color:#0f1a2e;font-weight:700}
-        .scroll-area{flex:1;overflow-y:auto;min-height:0;padding-right:2px}
-        .sync-status{font-size:5px;color:rgba(255,255,255,0.6);display:flex;align-items:center;gap:2px}
-        .dot{width:4px;height:4px;border-radius:50%;display:inline-block}
-        .dot.green{background:#4ade80}
-        .dot.red{background:#f87171}
-        .dot.yellow{background:#fbbf24;animation:blink 1s infinite}
-        @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
-        .view-only .btn,.view-only .pos-item,.view-only input,.view-only select{opacity:0.5;pointer-events:none}
-        .cat-tabs{display:flex;gap:2px;margin-bottom:2px;flex-wrap:wrap}
-        .cat-tab{padding:1px 5px;border-radius:3px;font-weight:600;font-size:5px;cursor:pointer;background:#e8ecf0;color:#6b7a8a;border:none;flex:1;transition:0.15s}
-        .cat-tab.active{color:white}
-        .cat-tab.stone-active{background:#8B7355;color:white}
-        .cat-tab.material-active{background:#2b6cb0;color:white}
-        .edit-btn{background:#e8ecf0;border:none;padding:0 3px;border-radius:2px;cursor:pointer;font-size:5px}
-        .invoice-box{background:white;border:1px solid #d4a017;border-radius:5px;padding:8px;font-size:8px;font-family:monospace;white-space:pre-wrap;max-height:160px;overflow-y:auto;box-shadow:0 1px 4px rgba(212,160,23,0.15)}
-        .invoice-box .inv-header{text-align:center;font-weight:700;font-size:11px;border-bottom:2px solid #0f1a2e;padding-bottom:4px;margin-bottom:4px}
-        .invoice-box .inv-footer{text-align:center;font-size:7px;color:#6b7a8a;border-top:1px dashed #ccc;padding-top:4px;margin-top:4px}
-        .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(3px)}
-        .modal-box{background:white;padding:12px;border-radius:10px;max-width:320px;width:92%;max-height:80vh;overflow-y:auto;box-shadow:0 16px 48px rgba(0,0,0,0.2)}
-        .modal-box h2{font-size:13px;color:#0f1a2e;margin-bottom:6px;display:flex;align-items:center;gap:5px;border-bottom:2px solid #eef2f6;padding-bottom:5px}
-        .modal-box .modal-close{float:right;background:none;border:none;font-size:14px;cursor:pointer;color:#8a9aaa}
-        .modal-box .modal-close:hover{color:#0f1a2e}
-        .modal-box .setting-item{padding:4px 0;border-bottom:1px solid #eef2f6;display:flex;justify-content:space-between;align-items:center}
-        .modal-box .setting-item:last-child{border-bottom:none}
-        .modal-box .setting-item .label{font-size:10px;font-weight:600;color:#1a2a3a}
-        .modal-box .setting-item .desc{font-size:7px;color:#8a9aaa}
-        .modal-box input[type="password"]{width:100%;padding:4px 6px;border:1.5px solid #e2e6ea;border-radius:4px;font-size:10px;margin:2px 0}
-        .modal-box input[type="password"]:focus{border-color:#0f1a2e;outline:none}
-        .modal-box .btn{width:100%;padding:4px;border:none;border-radius:4px;font-size:10px;font-weight:600;cursor:pointer;margin-top:2px}
-        .modal-box .error{color:#c0392b;font-size:8px;margin-top:2px;display:none}
-        .summary-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px}
-        .summary-box{background:#f8fafc;padding:3px;border-radius:4px;text-align:center;border:1px solid #e2e6ea}
-        .summary-box .num{font-size:11px;font-weight:700;color:#0f1a2e}
-        .summary-box .lbl{font-size:5px;color:#6b7a8a}
-        .summary-box.positive .num{color:#218838}
-        .summary-box.negative .num{color:#c0392b}
-        .summary-box.warning .num{color:#d4a017}
-        .bill-item{cursor:pointer;padding:3px;border:1px solid #e2e6ea;border-radius:4px;margin:2px 0;background:#f8fafc;font-size:7px;transition:0.15s}
-        .bill-item:hover{background:#edf1f5;border-color:#d4a017}
-        .bill-item .bill-header{display:flex;justify-content:space-between;font-weight:600}
-        .bill-item .bill-footer{font-size:5px;color:#6b7a8a;display:flex;justify-content:space-between}
-        .stock-summary{background:#f0f4f8;padding:3px;border-radius:4px;margin:2px 0;font-size:6px}
-        .stock-summary .row{display:flex;justify-content:space-between;padding:1px 0}
-        .undo-btn{background:#d4a017;color:white;border:none;padding:1px 6px;border-radius:3px;cursor:pointer;font-size:6px}
-        .undo-btn:hover{background:#b8890f}
-        @media(max-width:480px){.pos-grid{grid-template-columns:1fr 1fr 1fr}.header h1{font-size:10px}.bottom-actions{grid-template-columns:1fr 1fr}.summary-grid{grid-template-columns:1fr 1fr}}
-        @media(min-width:768px){.pos-grid{grid-template-columns:1fr 1fr 1fr 1fr 1fr}}
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif;}
+        body{background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);padding:12px;min-height:100vh;}
+        .container{max-width:1500px;margin:0 auto;background:white;border-radius:20px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,0.3);}
+        .header{background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);padding:15px 20px;text-align:center;position:relative;border-bottom:3px solid #ffd700;}
+        .header h2{color:#ffd700;font-size:26px;}
+        .header p{color:#a0c4e0;font-size:11px;margin-top:5px;}
+        .header-controls{position:absolute;top:15px;right:20px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+        .header-controls button{padding:5px 12px;background:rgba(255,255,255,0.15);color:white;border:1px solid #ffd700;border-radius:6px;cursor:pointer;font-weight:bold;font-size:11px;transition:0.3s;}
+        .header-controls button.active{background:#ffd700;color:#1a1a2e;}
+        .admin-badge{background:#ffd700;color:#1a1a2e;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:bold;}
+        .viewer-badge{background:#6b7a8a;color:white;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:bold;}
+        .tabs{display:flex;background:#1a1a2e;flex-wrap:wrap;padding:0 5px;}
+        .tab{padding:12px 22px;background:transparent;color:white;border:none;cursor:pointer;font-weight:bold;font-size:14px;transition:0.3s;border-bottom:3px solid transparent;}
+        .tab.active{background:#2c3e50;color:#ffd700;border-bottom-color:#ffd700;}
+        .tab-content{display:none;padding:20px;background:#f0f2f5;min-height:550px;}
+        .tab-content.active{display:block;}
+        .pos-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:20px;}
+        @media(max-width:900px){.pos-grid{grid-template-columns:1fr;}}
+        .panel{background:white;padding:18px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);}
+        .panel h3{margin-bottom:15px;color:#1a1a2e;border-left:4px solid #ffd700;padding-left:12px;font-size:18px;}
+        .product-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;max-height:450px;overflow-y:auto;padding-right:5px;}
+        .product-card{background:white;padding:10px;border:1px solid #e2e8f0;border-radius:10px;cursor:pointer;transition:0.2s;}
+        .product-card:hover{border-color:#ffd700;transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.1);}
+        .product-name{font-weight:bold;font-size:14px;}
+        .product-size{font-size:11px;color:#666;margin:4px 0;}
+        .product-price{color:#27ae60;font-weight:bold;font-size:12px;}
+        .group-filter{display:flex;gap:8px;margin-bottom:15px;flex-wrap:wrap;}
+        .group-btn{padding:6px 16px;background:#e2e8f0;border:none;border-radius:25px;cursor:pointer;font-weight:bold;font-size:12px;}
+        .group-btn.active{background:#ffd700;}
+        .search-box input{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:13px;margin-bottom:10px;}
+        .form-group{margin-bottom:12px;}
+        label{display:block;font-size:12px;font-weight:bold;margin-bottom:4px;color:#334155;}
+        input{width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:13px;}
+        button{background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;padding:7px 14px;border-radius:6px;cursor:pointer;margin:3px;font-size:12px;transition:0.2s;}
+        button:hover{transform:translateY(-1px);filter:brightness(1.05);}
+        .btn-success{background:#27ae60;}
+        .btn-danger{background:#e74c3c;}
+        .btn-warning{background:#f39c12;}
+        .btn-info{background:#3498db;}
+        .btn-whatsapp{background:#25d366;}
+        .mode-btns{display:flex;gap:8px;margin-bottom:15px;}
+        .mode-btn{flex:1;background:#e2e8f0;padding:8px;text-align:center;border-radius:8px;cursor:pointer;font-weight:bold;font-size:12px;}
+        .mode-btn.active{background:#ffd700;}
+        .input-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+        .input-group{flex:1;min-width:100px;}
+        .total-box{background:#1a1a2e;color:white;padding:15px;border-radius:10px;margin-top:15px;text-align:right;}
+        .total-box p{margin:5px 0;font-size:13px;}
+        table{width:100%;border-collapse:collapse;font-size:12px;}
+        th,td{padding:8px;text-align:left;border-bottom:1px solid #e2e8f0;}
+        th{background:#1a1a2e;color:#ffd700;font-weight:bold;}
+        .badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:bold;display:inline-block;}
+        .badge-paid{background:#27ae60;color:white;}
+        .badge-unpaid{background:#e74c3c;color:white;}
+        .badge-partial{background:#f39c12;color:white;}
+        .customer-card{background:white;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin-bottom:10px;transition:0.2s;}
+        .customer-card:hover{box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+        .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:1000;justify-content:center;align-items:center;}
+        .modal-content{background:white;padding:20px;border-radius:15px;max-width:650px;width:95%;max-height:85vh;overflow:auto;}
+        .toast{position:fixed;bottom:20px;right:20px;background:#1a1a2e;color:#ffd700;padding:10px 20px;border-radius:10px;z-index:1000;font-size:13px;}
+        .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;margin-bottom:20px;}
+        .stat-card{background:linear-gradient(135deg,#1a1a2e,#2c3e50);padding:15px;border-radius:12px;text-align:center;color:white;}
+        .stat-card h4{font-size:13px;margin-bottom:8px;}
+        .stat-card .value{font-size:26px;font-weight:bold;color:#ffd700;}
+        .daily-card{background:white;border-radius:10px;padding:12px;margin-bottom:10px;border-left:3px solid #ffd700;box-shadow:0 1px 3px rgba(0,0,0,0.05);}
+        .invoice-box{font-family:Arial;max-width:650px;margin:auto;border:2px solid #ffd700;border-radius:12px;background:white;overflow:hidden;}
+        .invoice-box .header{background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);color:#ffd700;padding:15px;text-align:center;border-radius:10px 10px 0 0;}
+        .invoice-box .body{padding:20px;}
+        .invoice-box table{width:100%;margin-top:10px;}
+        .invoice-box th{background:#1a1a2e;color:#ffd700;padding:8px;text-align:center;}
+        .invoice-box td{padding:8px;text-align:center;border-bottom:1px solid #ddd;}
+        .action-btns{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;justify-content:center;}
+        .balance-positive{color:#27ae60;font-weight:bold;}
+        .balance-negative{color:#e74c3c;font-weight:bold;}
+        .balance-zero{color:#ffd700;font-weight:bold;}
+        .rtl{direction:rtl;text-align:right;}
+        .rtl .total-box{text-align:left;}
+        .rtl th,.rtl td{text-align:right;}
+        .customer-summary{background:#1a1a2e;color:#ffd700;padding:12px;border-radius:10px;margin-top:15px;text-align:center;font-weight:bold;}
+        .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:15px;}
+        .summary-box{background:white;padding:12px;border-radius:10px;text-align:center;border:1px solid #e2e8f0;box-shadow:0 1px 3px rgba(0,0,0,0.05);}
+        .summary-box .num{font-size:24px;font-weight:bold;}
+        .summary-box .lbl{font-size:11px;color:#666;margin-top:4px;}
+        .summary-box.positive .num{color:#27ae60;}
+        .summary-box.negative .num{color:#e74c3c;}
+        .summary-box.warning .num{color:#f39c12;}
+        .stock-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #eee;font-size:12px;}
+        .stock-row .item{font-weight:bold;}
+        .stock-row .val{color:#1a1a2e;}
+        .login-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);display:flex;justify-content:center;align-items:center;z-index:9999;}
+        .login-box{background:white;padding:30px;border-radius:15px;max-width:380px;width:90%;text-align:center;}
+        .login-box h2{color:#1a1a2e;margin-bottom:10px;}
+        .login-box p{color:#666;margin-bottom:15px;}
+        .login-box input{width:100%;padding:12px;border:2px solid #ddd;border-radius:8px;font-size:16px;text-align:center;margin-bottom:12px;}
+        .login-box input:focus{border-color:#ffd700;outline:none;}
+        .login-box .error{color:#e74c3c;font-size:12px;margin-top:5px;display:none;}
+        .view-only .btn,.view-only .pos-item,.view-only input,.view-only select{opacity:0.5;pointer-events:none;}
+        .view-only .product-card{cursor:default;}
+        .view-only .product-card:hover{transform:none;border-color:#e2e8f0;}
+        .view-only .mode-btn{cursor:default;}
+        .view-only .mode-btn.active{background:#e2e8f0;color:#666;}
     </style>
 </head>
 <body>
-<div class="app-container">
-    <!-- Header -->
+<div class="container" id="appContainer">
     <div class="header">
-        <h1><i class="fas fa-store"></i> <span id="shopName">Warda Marble</span></h1>
+        <h2 id="companyName">🏢 WARDA MARBLE</h2>
+        <p id="companyTagline">Premium Marble Solutions | Since 2020</p>
         <div class="header-controls">
-            <span class="sync-status"><span class="dot green" id="statusDot"></span><span id="statusText">Online</span></span>
-            <span id="roleBadge" class="viewer-badge">👁️ Viewer</span>
-            <button class="settings-btn" onclick="toggleSettings()" title="Settings"><i class="fas fa-cog"></i></button>
+            <span id="roleBadge" class="admin-badge">👑 Admin</span>
+            <button onclick="toggleLang()">🌐 AR</button>
+            <button onclick="toggleCurrency()">💱 USD</button>
+            <button onclick="logout()" id="logoutBtn" style="background:#e74c3c;border-color:#e74c3c;">🚪 Logout</button>
         </div>
     </div>
-
-    <!-- Tabs -->
     <div class="tabs">
-        <div class="tab active" data-tab="pos"><i class="fas fa-shopping-cart"></i> POS</div>
-        <div class="tab" data-tab="stock"><i class="fas fa-boxes"></i> Stock</div>
-        <div class="tab" data-tab="customers"><i class="fas fa-users"></i> Cust</div>
-        <div class="tab" data-tab="summary"><i class="fas fa-chart-bar"></i> Summary</div>
-        <div class="tab" data-tab="reports"><i class="fas fa-chart-pie"></i> Report</div>
-        <div class="tab" data-tab="invoices"><i class="fas fa-file-invoice"></i> Bills</div>
+        <button class="tab active" onclick="showTab('pos')">🛒 POS</button>
+        <button class="tab" onclick="showTab('customers')">👥 Customers</button>
+        <button class="tab" onclick="showTab('inventory')">📦 Inventory</button>
+        <button class="tab" onclick="showTab('invoices')">📄 Invoices</button>
+        <button class="tab" onclick="showTab('summary')">📊 Summary</button>
+        <button class="tab" onclick="showTab('daily')">📅 Daily</button>
+        <button class="tab" onclick="showTab('monthly')">📈 Monthly</button>
+        <button class="tab" onclick="showTab('settings')">⚙️ Settings</button>
     </div>
 
-    <!-- ========== POS ========== -->
-    <div id="section-pos" class="section active">
-        <div class="card" style="flex-shrink:0;padding:3px;">
-            <div class="card-title" style="font-size:7px;margin-bottom:1px;">
-                <i class="fas fa-list"></i> Items
-                <span style="margin-right:auto;"></span>
-                <span class="badge" style="background:#8B7355;color:white;">Stone</span>
-                <span class="badge" style="background:#2b6cb0;color:white;">Material</span>
-            </div>
-            <div class="cat-tabs">
-                <button class="cat-tab stone-active active" onclick="filterCategory('stone')" id="catStone">Stone</button>
-                <button class="cat-tab material-active" onclick="filterCategory('material')" id="catMaterial">Material</button>
-                <button class="cat-tab" onclick="filterCategory('all')" id="catAll">All</button>
-            </div>
-            <div class="pos-grid" id="posGrid"></div>
-        </div>
-
-        <div class="cart-area">
-            <div class="card" style="flex:1;display:flex;flex-direction:column;padding:3px;margin-bottom:0;">
-                <div class="card-title" style="font-size:7px;margin-bottom:1px;">
-                    <i class="fas fa-shopping-cart"></i> Cart (<span id="cartCount">0</span>)
-                    <span style="margin-right:auto;"></span>
-                    <button class="btn btn-sm btn-danger" onclick="clearCart()" style="width:auto;padding:0 4px;font-size:5px;"><i class="fas fa-trash"></i></button>
+    <!-- ========== POS TAB ========== -->
+    <div id="posTab" class="tab-content active">
+        <div class="pos-grid">
+            <div class="panel">
+                <h3>📦 Products</h3>
+                <div class="group-filter">
+                    <button class="group-btn active" data-group="all" onclick="filterProducts('all')">All</button>
+                    <button class="group-btn" data-group="mwad" onclick="filterProducts('mwad')">مواد بناء</button>
+                    <button class="group-btn" data-group="mojali" onclick="filterProducts('mojali')">حجر مجلي</button>
+                    <button class="group-btn" data-group="mosnafar" onclick="filterProducts('mosnafar')">حجر مصنفر</button>
                 </div>
-                <div class="cart-items" id="cartItems"></div>
-                <div class="total-bar"><span>Total:</span><span id="cartTotal">0.00</span></div>
-                
-                <div class="bottom-actions">
-                    <select id="saleType" style="padding:2px 3px;border-radius:3px;border:1px solid #e2e6ea;font-size:6px;">
-                        <option value="cash">Cash</option>
-                        <option value="credit">Credit</option>
-                    </select>
-                    <select id="saleCustomerSelect" style="padding:2px 3px;border-radius:3px;border:1px solid #e2e6ea;font-size:6px;">
-                        <option value="">Walk-in</option>
-                    </select>
-                    <input type="number" id="salePaid" placeholder="Paid" value="0" style="padding:2px 3px;border-radius:3px;border:1px solid #e2e6ea;font-size:6px;grid-column:1/-1;">
-                    <button class="btn btn-success" onclick="completeSale()" style="grid-column:1/-1;padding:3px;font-size:7px;"><i class="fas fa-check"></i> Complete Sale</button>
+                <div class="search-box"><input type="text" id="searchProduct" placeholder="🔍 Search products..." onkeyup="displayProducts()"></div>
+                <div class="product-list" id="productList"></div>
+            </div>
+            <div class="panel">
+                <h3>🛒 Shopping Cart</h3>
+                <div class="mode-btns">
+                    <div class="mode-btn active" onclick="setMode('sqm')">📐 SQM (Marble)</div>
+                    <div class="mode-btn" onclick="setMode('manual')">📏 Manual m²</div>
+                    <div class="mode-btn" onclick="setMode('pieces')">🔧 Pieces</div>
+                </div>
+                <div class="input-row">
+                    <div class="input-group"><label>Item Name</label><input type="text" id="itemName" placeholder="Select item"></div>
+                    <div class="input-group"><label>Cost Price</label><input type="number" id="costPrice" step="0.01"></div>
+                </div>
+                <div id="sqmFields"><div class="input-row"><div class="input-group"><label>Thick(cm)</label><input type="number" id="thick" value="3"></div><div class="input-group"><label>Width(m)</label><input type="number" id="width" value="0.40" step="0.01"></div><div class="input-group"><label>Length(m)</label><input type="number" id="length" value="0.80" step="0.01"></div><div class="input-group"><label>Price/m²</label><input type="number" id="sqmPrice" step="0.01"></div></div></div>
+                <div id="manualFields" style="display:none"><div class="input-row"><div class="input-group"><label>Area(m²)</label><input type="number" id="manualArea" step="0.01"></div><div class="input-group"><label>Price/m²</label><input type="number" id="manualPrice" step="0.01"></div></div></div>
+                <div id="piecesFields" style="display:none"><div class="input-row"><div class="input-group"><label>Size</label><input type="text" id="pieceSize"></div><div class="input-group"><label>Qty</label><input type="number" id="pieceQty" value="1"></div><div class="input-group"><label>Price/pc</label><input type="number" id="piecePrice" step="0.01"></div></div></div>
+                <button onclick="addToCart()" class="btn-success" style="width:100%">➕ Add to Cart</button>
+                <div style="margin-top:12px"><label>👤 Customer Name</label><input type="text" id="customerName"></div>
+                <div><label>📞 Phone Number</label><input type="text" id="customerPhone"></div>
+                <div><label>💰 Amount Received</label><input type="number" id="amountReceived" value="0" step="0.01" oninput="updateTotals()"></div>
+                <div style="max-height:220px;overflow:auto;margin-top:10px">
+                    <table id="cartTable">
+                        <thead><tr><th>Item</th><th>Size</th><th>Qty</th><th>Price</th><th>Total</th><th></th></tr></thead>
+                        <tbody id="cartBody"></tbody>
+                    </table>
+                </div>
+                <div class="total-box">
+                    <p><strong>Subtotal:</strong> <span id="subtotal">SAR 0.00</span></p>
+                    <p><strong>Tax (<span id="taxRateDisplay">15</span>%):</strong> <span id="taxAmount">SAR 0.00</span></p>
+                    <p><strong>Total:</strong> <span id="grandTotal">SAR 0.00</span></p>
+                    <p><strong>Received:</strong> <span id="received">SAR 0.00</span></p>
+                    <p id="balanceMsg" style="font-weight:bold"></p>
+                </div>
+                <div class="action-btns">
+                    <button onclick="confirmOrder()" class="btn-success">✅ Confirm Order</button>
+                    <button onclick="clearCart()" class="btn-danger">🗑️ Clear</button>
+                    <button onclick="undoCart()" class="btn-warning">↩️ Undo</button>
+                    <button onclick="generateCartPDF()" class="btn-info">📄 PDF</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ========== STOCK ========== -->
-    <div id="section-stock" class="section">
-        <div class="scroll-area">
-            <div class="card">
-                <div class="card-title"><i class="fas fa-plus-circle"></i> Add/Edit Item</div>
-                <div class="grid-2">
-                    <div class="form-group"><label>Name</label><input type="text" id="itemName" placeholder="Item name"></div>
-                    <div class="form-group"><label>Category</label><select id="itemCategory"><option value="stone">Stone</option><option value="material">Material</option></select></div>
-                </div>
-                <div class="grid-2">
-                    <div class="form-group"><label>Unit</label><select id="itemUnit"><option value="m²">m²</option><option value="running_ft">Running ft</option><option value="pcs">Pieces</option></select></div>
-                    <div class="form-group"><label>Size</label><input type="text" id="itemSize" placeholder="e.g. 3*7"></div>
-                </div>
-                <div class="grid-2">
-                    <div class="form-group"><label>Sell Price</label><input type="number" id="itemSellPrice" placeholder="Sell"></div>
-                    <div class="form-group"><label>Purchase Price</label><input type="number" id="itemPurchasePrice" placeholder="Cost"></div>
-                </div>
-                <div class="form-group"><label>Stock</label><input type="number" id="itemStock" placeholder="Qty"></div>
-                <div class="grid-3">
-                    <button class="btn btn-primary" onclick="addItem()"><i class="fas fa-save"></i> Add</button>
-                    <button class="btn btn-warning" onclick="updateItem()"><i class="fas fa-edit"></i> Update</button>
-                    <button class="btn btn-danger" onclick="deleteItem()"><i class="fas fa-trash"></i> Delete</button>
-                </div>
-                <input type="hidden" id="editItemId" value="">
-            </div>
+    <!-- ========== CUSTOMERS TAB ========== -->
+    <div id="customersTab" class="tab-content">
+        <div class="panel">
+            <h3>👥 Customer Accounts</h3>
+            <div class="search-box"><input type="text" id="customerSearch" placeholder="🔍 Search..." onkeyup="displayCustomers()"></div>
+            <div id="customerList" style="max-height:450px;overflow-y:auto;"></div>
+            <div id="customerTotalBox" class="customer-summary"></div>
+        </div>
+    </div>
 
-            <div class="card">
-                <div class="card-title"><i class="fas fa-list"></i> Stock List</div>
-                <div class="table-wrap" style="max-height:90px;">
-                    <table><thead><tr><th>Name</th><th>Size</th><th>Stock</th><th>Price</th><th>Action</th></tr></thead>
-                    <tbody id="stockListBody"></tbody></table>
-                </div>
+    <!-- ========== INVENTORY TAB ========== -->
+    <div id="inventoryTab" class="tab-content">
+        <div class="panel">
+            <h3>📦 Inventory Management</h3>
+            <div class="group-filter">
+                <button class="group-btn active" onclick="filterInventory('all')">All</button>
+                <button class="group-btn" onclick="filterInventory('mwad')">مواد بناء</button>
+                <button class="group-btn" onclick="filterInventory('mojali')">حجر مجلي</button>
+                <button class="group-btn" onclick="filterInventory('mosnafar')">حجر مصنفر</button>
             </div>
+            <div class="search-box"><input type="text" id="inventorySearch" placeholder="🔍 Search..." onkeyup="loadInventory()"></div>
+            <button onclick="addNewProduct()" class="btn-success" style="margin-bottom:10px">➕ Add Product</button>
+            <div style="overflow-x:auto;max-height:400px;overflow-y:auto">
+                <table id="inventoryTable">
+                    <thead><tr><th>Group</th><th>Name</th><th>Size</th><th>Selling</th><th>Cost</th><th>Stock</th><th>Actions</th></tr></thead>
+                    <tbody id="inventoryBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-            <div class="card">
-                <div class="card-title"><i class="fas fa-arrow-right"></i> Stock In/Out</div>
-                <div class="grid-2">
-                    <select id="stockSelect" style="padding:2px 3px;border-radius:3px;border:1px solid #e2e6ea;"></select>
-                    <input type="number" id="stockQty" placeholder="Qty" style="padding:2px 3px;border-radius:3px;border:1px solid #e2e6ea;">
-                </div>
-                <div class="grid-2">
-                    <button class="btn btn-success" onclick="stockIn()"><i class="fas fa-plus"></i> In</button>
-                    <button class="btn btn-danger" onclick="stockOut()"><i class="fas fa-minus"></i> Out</button>
-                </div>
+    <!-- ========== INVOICES TAB ========== -->
+    <div id="invoicesTab" class="tab-content">
+        <div class="panel">
+            <h3>📄 All Invoices</h3>
+            <div class="search-box"><input type="text" id="invoiceSearch" placeholder="🔍 Search..." onkeyup="displayInvoices()"></div>
+            <div style="overflow-x:auto;max-height:450px;overflow-y:auto">
+                <table id="invoicesTable">
+                    <thead><tr><th>Invoice</th><th>Date</th><th>Customer</th><th>Total</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody id="invoicesBody"></tbody>
+                </table>
             </div>
+        </div>
+    </div>
+
+    <!-- ========== SUMMARY TAB ========== -->
+    <div id="summaryTab" class="tab-content">
+        <div class="panel">
+            <h3>📊 Daily Summary - <span id="summaryDate"></span></h3>
+            <div class="summary-grid" id="summaryGrid">
+                <div class="summary-box positive"><div class="num" id="sumTodaySale">0.00</div><div class="lbl">Today's Sale</div></div>
+                <div class="summary-box warning"><div class="num" id="sumUdharSale">0.00</div><div class="lbl">Udhar Sale</div></div>
+                <div class="summary-box negative"><div class="num" id="sumIkhrajat">0.00</div><div class="lbl">Ikhrajat</div></div>
+                <div class="summary-box positive"><div class="num" id="sumSabqaWusool">0.00</div><div class="lbl">Sabqa Wusool</div></div>
+                <div class="summary-box positive"><div class="num" id="sumAdvanceWusool">0.00</div><div class="lbl">Advance Wusool</div></div>
+                <div class="summary-box positive"><div class="num" id="sumTotalJamma">0.00</div><div class="lbl">Total Jamma</div></div>
+                <div class="summary-box" id="paymentMinusBox"><div class="num" id="sumPaymentMinus">0.00</div><div class="lbl">Payment Minus</div></div>
+            </div>
+            <div style="font-size:11px;color:#666;text-align:center;margin-bottom:10px;">Auto calculated from today's data</div>
             
-            <div class="card">
-                <div class="card-title"><i class="fas fa-clock"></i> Stock History</div>
-                <div class="table-wrap" style="max-height:60px;">
-                    <table><thead><tr><th>Date</th><th>Item</th><th>Size</th><th>Qty</th><th>Type</th></tr></thead>
-                    <tbody id="stockHistoryBody"></tbody></table>
-                </div>
+            <h3>📦 Opening / Closing Stock</h3>
+            <div id="stockSummaryDisplay" style="background:#f8fafc;padding:10px;border-radius:8px;max-height:200px;overflow-y:auto;"></div>
+            <div style="font-size:10px;color:#666;text-align:center;margin-top:5px;">Opening = Previous day closing | Closing = Opening + In - Out - Sales</div>
+            
+            <h3 style="margin-top:15px;">📅 Monthly Summary - <span id="monthlyDate"></span></h3>
+            <div style="overflow-x:auto;max-height:200px;overflow-y:auto">
+                <table id="monthlySummaryTable">
+                    <thead><tr><th>Date</th><th>Sale</th><th>Udhar</th><th>Ikhrajat</th><th>Jamma</th></tr></thead>
+                    <tbody id="monthlySummaryBody"></tbody>
+                </table>
             </div>
         </div>
     </div>
 
-    <!-- ========== CUSTOMERS ========== -->
-    <div id="section-customers" class="section">
-        <div class="scroll-area">
-            <div class="card">
-                <div class="card-title"><i class="fas fa-user-plus"></i> Add Customer</div>
-                <div class="grid-2">
-                    <div class="form-group"><input type="text" id="custName" placeholder="Name"></div>
-                    <div class="form-group"><input type="text" id="custPhone" placeholder="Phone"></div>
-                </div>
-                <button class="btn btn-primary" onclick="addCustomer()"><i class="fas fa-user-plus"></i> Add</button>
+    <!-- ========== DAILY REPORT TAB ========== -->
+    <div id="dailyTab" class="tab-content">
+        <div class="panel">
+            <h3>📅 Daily Sales Report</h3>
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
+                <label style="margin:0">Select Date:</label>
+                <input type="date" id="dailyDate" style="width:200px" onchange="loadDailyReport()">
+                <button onclick="loadDailyReport()" class="btn-info">Load</button>
             </div>
-
-            <div class="card">
-                <div class="card-title"><i class="fas fa-users"></i> Customers</div>
-                <div class="table-wrap" style="max-height:90px;">
-                    <table><thead><tr><th>Name</th><th>Phone</th><th>Balance</th><th>Bills</th></tr></thead>
-                    <tbody id="customerListBody"></tbody></table>
-                </div>
+            <div class="stats-grid">
+                <div class="stat-card"><h4>Today's Sales</h4><div class="value" id="dailyTotalSales">SAR 0</div></div>
+                <div class="stat-card"><h4>Today's Profit</h4><div class="value" id="dailyTotalProfit">SAR 0</div></div>
+                <div class="stat-card"><h4>Today's Orders</h4><div class="value" id="dailyTotalOrders">0</div></div>
             </div>
+            <div id="dailyList" style="max-height:350px;overflow-y:auto;"></div>
+        </div>
+    </div>
 
-            <div class="card">
-                <div class="card-title"><i class="fas fa-hand-holding-usd"></i> Receive Payment</div>
-                <div class="grid-2">
-                    <select id="receiveSelect" style="padding:2px 3px;border-radius:3px;border:1px solid #e2e6ea;"></select>
-                    <input type="number" id="receiveAmount" placeholder="Amount" style="padding:2px 3px;border-radius:3px;border:1px solid #e2e6ea;">
-                </div>
-                <button class="btn btn-success" onclick="receivePayment()"><i class="fas fa-money-bill-wave"></i> Receive</button>
+    <!-- ========== MONTHLY REPORT TAB ========== -->
+    <div id="monthlyTab" class="tab-content">
+        <div class="panel">
+            <h3>📊 Monthly Transactions</h3>
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
+                <label style="margin:0">Select Month:</label>
+                <input type="month" id="monthPicker" style="width:200px" onchange="loadMonthlyReport()">
+                <button onclick="loadMonthlyReport()" class="btn-info">Load</button>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card"><h4>Total Sales</h4><div class="value" id="monthlyTotalSales">SAR 0</div></div>
+                <div class="stat-card"><h4>Total Profit</h4><div class="value" id="monthlyTotalProfit">SAR 0</div></div>
+                <div class="stat-card"><h4>Total Orders</h4><div class="value" id="monthlyTotalOrders">0</div></div>
+                <div class="stat-card"><h4>Avg Order</h4><div class="value" id="monthlyAvgOrder">SAR 0</div></div>
+            </div>
+            <div style="overflow-x:auto;max-height:350px;overflow-y:auto">
+                <table id="monthlyTable">
+                    <thead><tr><th>Date</th><th>Invoice</th><th>Customer</th><th>Phone</th><th>Items</th><th>Total</th><th>Profit</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody id="monthlyBody"></tbody>
+                </table>
             </div>
         </div>
     </div>
 
-    <!-- ========== SUMMARY ========== -->
-    <div id="section-summary" class="section">
-        <div class="scroll-area">
-            <div class="card">
-                <div class="card-title"><i class="fas fa-chart-bar"></i> Daily Summary - <span id="summaryDate"></span></div>
-                <div class="summary-grid" id="summaryGrid">
-                    <div class="summary-box positive"><div class="num" id="sumTodaySale">0.00</div><div class="lbl">Today's Sale</div></div>
-                    <div class="summary-box warning"><div class="num" id="sumUdharSale">0.00</div><div class="lbl">Udhar Sale</div></div>
-                    <div class="summary-box negative"><div class="num" id="sumIkhrajat">0.00</div><div class="lbl">Ikhrajat</div></div>
-                    <div class="summary-box positive"><div class="num" id="sumSabqaWusool">0.00</div><div class="lbl">Sabqa Wusool</div></div>
-                    <div class="summary-box positive"><div class="num" id="sumAdvanceWusool">0.00</div><div class="lbl">Advance Wusool</div></div>
-                    <div class="summary-box positive"><div class="num" id="sumTotalJamma">0.00</div><div class="lbl">Total Jamma</div></div>
-                    <div class="summary-box" id="paymentMinusBox"><div class="num" id="sumPaymentMinus">0.00</div><div class="lbl">Payment Minus</div></div>
+    <!-- ========== SETTINGS TAB ========== -->
+    <div id="settingsTab" class="tab-content">
+        <div class="panel">
+            <h3>⚙️ System Settings</h3>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
+                <div>
+                    <h4>🏢 Company Info</h4>
+                    <div class="form-group"><label>Company Name</label><input type="text" id="companyNameSetting"></div>
+                    <div class="form-group"><label>Tagline</label><input type="text" id="companyTaglineSetting"></div>
+                    <div class="form-group"><label>Address</label><input type="text" id="companyAddressSetting"></div>
+                    <div class="form-group"><label>Phone</label><input type="text" id="companyPhoneSetting"></div>
+                    <button onclick="saveCompanySettings()" class="btn-success">💾 Save</button>
                 </div>
-                <div style="font-size:5px;color:#6b7a8a;text-align:center;padding:2px;">Auto calculated from today's data</div>
-            </div>
-
-            <div class="card">
-                <div class="card-title"><i class="fas fa-boxes"></i> Opening / Closing Stock</div>
-                <div id="stockSummaryDisplay" class="stock-summary"></div>
-                <div style="font-size:5px;color:#6b7a8a;text-align:center;padding:2px;">Opening = Previous day closing | Closing = Opening + In - Out - Sales</div>
-            </div>
-
-            <div class="card">
-                <div class="card-title"><i class="fas fa-calendar-alt"></i> Monthly Summary - <span id="monthlyDate"></span></div>
-                <div class="table-wrap" style="max-height:100px;">
-                    <table><thead><tr><th>Date</th><th>Sale</th><th>Udhar</th><th>Ikhrajat</th><th>Jamma</th></tr></thead>
-                    <tbody id="monthlySummaryBody"></tbody></table>
+                <div>
+                    <h4>💰 Tax Settings</h4>
+                    <div class="form-group"><label><input type="checkbox" id="taxEnableCheck"> Enable Tax</label></div>
+                    <div class="form-group"><label>Tax Rate (%)</label><input type="number" id="taxRateSetting" value="15" step="0.5"></div>
+                    <div class="form-group"><label>Tax Name</label><input type="text" id="taxNameSetting" value="VAT"></div>
+                    <button onclick="saveTaxSettings()" class="btn-success">💾 Save</button>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ========== REPORTS ========== -->
-    <div id="section-reports" class="section">
-        <div class="scroll-area">
-            <div class="card">
-                <div class="card-title"><i class="fas fa-calendar-day"></i> Reports</div>
-                <div class="grid-3">
-                    <button class="btn btn-primary" onclick="genReport('daily')"><i class="fas fa-eye"></i> Daily</button>
-                    <button class="btn btn-warning" onclick="genReport('weekly')"><i class="fas fa-calendar-week"></i> Weekly</button>
-                    <button class="btn btn-danger" onclick="genReport('monthly')"><i class="fas fa-calendar-alt"></i> Monthly</button>
-                </div>
-                <div style="display:flex;gap:2px;margin-top:2px;">
-                    <button class="btn btn-success" onclick="printReport()" style="flex:1;"><i class="fas fa-print"></i> Print</button>
-                    <button class="btn btn-outline" onclick="shareReport()" style="flex:1;"><i class="fab fa-whatsapp"></i> Share</button>
-                </div>
-                <div id="reportDisplay" class="invoice-box" style="margin-top:3px;"></div>
-            </div>
-
-            <div class="card">
-                <div class="card-title"><i class="fas fa-chart-line"></i> Profit / Loss</div>
-                <div id="plDisplay" style="text-align:center;padding:4px;font-size:12px;font-weight:700;"></div>
-            </div>
-
-            <div class="card">
-                <div class="card-title"><i class="fas fa-history"></i> All Transactions</div>
-                <div class="table-wrap" style="max-height:70px;">
-                    <table><thead><tr><th>Date</th><th>Desc</th><th>Amount</th></tr></thead>
-                    <tbody id="transactionsBody"></tbody></table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ========== INVOICES ========== -->
-    <div id="section-invoices" class="section">
-        <div class="scroll-area">
-            <div class="card">
-                <div class="card-title"><i class="fas fa-file-invoice"></i> All Invoices 
-                    <span style="margin-right:auto;"></span>
-                    <button class="undo-btn" onclick="undoLastDelete()"><i class="fas fa-undo"></i> Undo</button>
-                </div>
-                <div id="invoicesList"></div>
-            </div>
-            <div class="card">
-                <div class="card-title"><i class="fas fa-edit"></i> Edit Invoice</div>
-                <div class="grid-2">
-                    <div class="form-group"><label>Invoice ID</label><input type="text" id="editInvoiceId" placeholder="ID"></div>
-                    <div class="form-group"><label>Customer</label><input type="text" id="editInvoiceCustomer" placeholder="Name"></div>
-                </div>
-                <div class="grid-2">
-                    <div class="form-group"><label>Total</label><input type="number" id="editInvoiceTotal" placeholder="Total"></div>
-                    <div class="form-group"><label>Paid</label><input type="number" id="editInvoicePaid" placeholder="Paid"></div>
-                </div>
-                <div class="grid-2">
-                    <button class="btn btn-warning" onclick="updateInvoice()"><i class="fas fa-save"></i> Update</button>
-                    <button class="btn btn-danger" onclick="deleteInvoice()"><i class="fas fa-trash"></i> Delete</button>
+                <div>
+                    <h4>💾 Data Management</h4>
+                    <button onclick="backupData()" class="btn-info">📥 Backup</button>
+                    <button onclick="document.getElementById('restoreFile').click()" class="btn-warning">📤 Restore</button>
+                    <input type="file" id="restoreFile" style="display:none" onchange="restoreData(this)">
+                    <button onclick="resetAll()" class="btn-danger">⚠️ Reset All</button>
+                    <button onclick="syncToCloud()" class="btn-success" style="margin-top:5px;">☁️ Sync to Cloud</button>
+                    <button onclick="syncFromCloud()" class="btn-info" style="margin-top:5px;">☁️ Sync from Cloud</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Bottom Nav -->
-<div class="bottom-nav">
-    <div class="nav-item active" data-tab="pos"><i class="fas fa-shopping-cart"></i> POS</div>
-    <div class="nav-item" data-tab="stock"><i class="fas fa-boxes"></i> Stock</div>
-    <div class="nav-item" data-tab="customers"><i class="fas fa-users"></i> Cust</div>
-    <div class="nav-item" data-tab="summary"><i class="fas fa-chart-bar"></i> Summary</div>
-    <div class="nav-item" data-tab="reports"><i class="fas fa-chart-pie"></i> Report</div>
-    <div class="nav-item" data-tab="invoices"><i class="fas fa-file-invoice"></i> Bills</div>
-</div>
+<!-- ========== MODALS ========== -->
+<div id="invoiceModal" class="modal"><div class="modal-content"><div id="invoiceDetails"></div><div style="text-align:center;margin-top:20px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px"><button onclick="closeModal()">Close</button><button onclick="printInvoice()">🖨️ Print</button><button onclick="downloadPDF()" class="btn-info">📄 PDF</button><button onclick="shareInvoiceImage()" class="btn-whatsapp">📷 Share</button><button onclick="sendWhatsApp()" class="btn-success">📱 WhatsApp</button></div></div></div>
+<div id="paymentModal" class="modal"><div class="modal-content"><h3>💰 Receive Payment</h3><input type="number" id="paymentAmount" step="0.01" placeholder="Enter amount"><br><br><input type="text" id="paymentNotes" placeholder="Notes"><br><br><button onclick="confirmPayment()" class="btn-success">Confirm</button><button onclick="closePaymentModal()" class="btn-danger">Cancel</button></div></div>
+<div id="editModal" class="modal"><div class="modal-content"><h3>✏️ Edit Invoice</h3><div class="form-group"><label>Customer Name</label><input type="text" id="editCustomer"></div><div class="form-group"><label>Phone</label><input type="text" id="editPhone"></div><div class="form-group"><label>Discount %</label><input type="number" id="editDiscount" step="1"></div><button onclick="saveEdit()" class="btn-success">Save</button><button onclick="closeEditModal()" class="btn-danger">Cancel</button></div></div>
+<div id="pdfTemplate" style="position:fixed;top:-9999px;left:-9999px;"></div>
 
-<!-- ========== SETTINGS MODAL ========== -->
-<div id="settingsModal" class="modal-overlay" style="display:none;">
-    <div class="modal-box">
-        <h2><i class="fas fa-cog"></i> Settings <button class="modal-close" onclick="toggleSettings()">&times;</button></h2>
-        <div class="setting-item">
-            <div><div class="label"><i class="fas fa-user-shield"></i> Admin Access</div><div class="desc">Login to manage system</div></div>
-            <span id="settingsStatus" class="badge badge-warning">Viewer</span>
-        </div>
-        <div id="loginSection">
-            <input type="password" id="settingsPassword" placeholder="Enter password..." onkeydown="if(event.key==='Enter') settingsLogin()">
-            <button class="btn btn-success" onclick="settingsLogin()"><i class="fas fa-sign-in-alt"></i> Login</button>
-            <div id="settingsError" class="error">❌ Wrong password!</div>
-        </div>
-        <div id="logoutSection" style="display:none;">
-            <button class="btn btn-danger" onclick="settingsLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
-        </div>
-        <div class="setting-item" style="margin-top:4px;">
-            <div><div class="label"><i class="fas fa-language"></i> Language</div><div class="desc">Switch between English / Urdu</div></div>
-            <button class="btn btn-outline" onclick="settingsToggleLang()" style="width:auto;padding:2px 8px;font-size:8px;"><span id="settingsLangLabel">اردو</span></button>
-        </div>
-        <div class="setting-item">
-            <div><div class="label"><i class="fas fa-key"></i> Change Password</div><div class="desc">Set new admin password</div></div>
-            <div><input type="password" id="newPasswordInput" placeholder="New password..." style="width:100px;padding:2px 4px;border:1px solid #e2e6ea;border-radius:3px;font-size:7px;">
-            <button class="btn btn-warning" onclick="changePassword()" style="width:auto;padding:2px 6px;font-size:7px;margin-top:1px;">Change</button></div>
-        </div>
-        <div style="text-align:center;font-size:6px;color:#8a9aaa;margin-top:6px;padding-top:4px;border-top:1px solid #eef2f6;">Warda Marble Pro v5.0</div>
+<!-- ========== LOGIN OVERLAY ========== -->
+<div id="loginOverlay" class="login-overlay">
+    <div class="login-box">
+        <h2>🔐 Admin Login</h2>
+        <p>Enter password to manage system</p>
+        <input type="password" id="loginPassword" placeholder="Enter password..." onkeydown="if(event.key==='Enter') checkLogin()">
+        <button onclick="checkLogin()" class="btn-success" style="width:100%;padding:12px;">🔓 Login</button>
+        <div id="loginError" class="error">❌ Wrong password! Try again.</div>
+        <div style="margin-top:10px;font-size:11px;color:#999;">Default: <strong>Hamdani5</strong></div>
     </div>
 </div>
 
 <script>
-    // ============================================================
-    // FIREBASE
-    // ============================================================
-    const firebaseConfig = {
-        apiKey: "AIzaSyBacJhHOK-xZ9TgQfbN8swRNYIhmsIh0nk",
-        authDomain: "warda-marble.firebaseapp.com",
-        databaseURL: "https://warda-marble-default-rtdb.firebaseio.com",
-        projectId: "warda-marble",
-        storageBucket: "warda-marble.firebasestorage.app",
-        messagingSenderId: "696018619200",
-        appId: "1:696018619200:web:a4239b1f35ea7a98ad08a5"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
+// ==================== FIREBASE CONFIG ====================
+const firebaseConfig = {
+    apiKey: "AIzaSyBacJhHOK-xZ9TgQfbN8swRNYIhmsIh0nk",
+    authDomain: "warda-marble.firebaseapp.com",
+    databaseURL: "https://warda-marble-default-rtdb.firebaseio.com",
+    projectId: "warda-marble",
+    storageBucket: "warda-marble.firebasestorage.app",
+    messagingSenderId: "696018619200",
+    appId: "1:696018619200:web:a4239b1f35ea7a98ad08a5"
+};
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
 
-    // ============================================================
-    // PASSWORD SYSTEM
-    // ============================================================
-    let ADMIN_PASSWORD = "Hamdani5";
-    let isAdmin = false;
-    let sessionId = null;
-    let lastDeletedInvoice = null;
+// ==================== LOGIN SYSTEM ====================
+const ADMIN_PASSWORD = "Hamdani5";
+let isAdmin = false;
 
-    function getDeviceInfo() {
-        const ua = navigator.userAgent;
-        if (/Android/i.test(ua)) return 'Android';
-        if (/iPhone|iPad|iPod/i.test(ua)) return 'iOS';
-        if (/Windows/i.test(ua)) return 'Windows';
-        if (/Macintosh/i.test(ua)) return 'Mac';
-        return 'Device';
-    }
-
-    function getBrowserInfo() {
-        const ua = navigator.userAgent;
-        if (/Chrome/i.test(ua) && !/Edge/i.test(ua)) return 'Chrome';
-        if (/Firefox/i.test(ua)) return 'Firefox';
-        if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) return 'Safari';
-        if (/Edge/i.test(ua)) return 'Edge';
-        return 'Browser';
-    }
-
-    function getSessionKey() { return 'warda_session_' + window.location.hostname; }
-
-    function saveSession() {
-        const session = { id: sessionId || 'session_' + Date.now(), device: getDeviceInfo(), browser: getBrowserInfo(), time: new Date().toLocaleString(), active: true, lastSeen: Date.now() };
-        sessionId = session.id;
-        localStorage.setItem(getSessionKey(), JSON.stringify(session));
-        if (sessionId) database.ref('warda_sessions').child(sessionId).set(session);
-    }
-
-    function loadSession() {
-        const data = localStorage.getItem(getSessionKey());
-        if (data) {
-            try { const s = JSON.parse(data); if (s.active) { sessionId = s.id; return s; } } catch(e) {}
-        }
-        return null;
-    }
-
-    function clearSession() {
-        localStorage.removeItem(getSessionKey());
-        if (sessionId) database.ref('warda_sessions').child(sessionId).update({ active: false });
-    }
-
-    function settingsLogin() {
-        const input = document.getElementById('settingsPassword').value;
-        const error = document.getElementById('settingsError');
-        if (input === ADMIN_PASSWORD) {
-            isAdmin = true;
-            if (!sessionId) sessionId = 'session_' + Date.now();
-            saveSession();
-            document.getElementById('roleBadge').textContent = '👑 Admin';
-            document.getElementById('roleBadge').className = 'admin-badge';
-            document.getElementById('settingsStatus').textContent = 'Admin';
-            document.getElementById('settingsStatus').className = 'badge badge-success';
-            document.getElementById('loginSection').style.display = 'none';
-            document.getElementById('logoutSection').style.display = 'block';
-            document.getElementById('settingsPassword').value = '';
-            enableEditing(true);
-            showToast('✅ Admin mode activated!');
-            renderAll();
-        } else {
-            error.style.display = 'block';
-            setTimeout(() => error.style.display = 'none', 3000);
-        }
-    }
-
-    function logout() {
-        isAdmin = false;
-        clearSession();
-        document.getElementById('roleBadge').textContent = '👁️ Viewer';
-        document.getElementById('roleBadge').className = 'viewer-badge';
-        document.getElementById('settingsStatus').textContent = 'Viewer';
-        document.getElementById('settingsStatus').className = 'badge badge-warning';
-        document.getElementById('loginSection').style.display = 'block';
-        document.getElementById('logoutSection').style.display = 'none';
-        enableEditing(false);
-        showToast('👁️ Viewer mode activated');
-        renderAll();
-    }
-
-    function settingsLogout() { logout(); document.getElementById('settingsModal').style.display = 'none'; }
-    function toggleSettings() {
-        const modal = document.getElementById('settingsModal');
-        modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
-        if (modal.style.display === 'flex') updateSettingsUI();
-    }
-    function updateSettingsUI() {
-        if (isAdmin) {
-            document.getElementById('settingsStatus').textContent = 'Admin';
-            document.getElementById('settingsStatus').className = 'badge badge-success';
-            document.getElementById('loginSection').style.display = 'none';
-            document.getElementById('logoutSection').style.display = 'block';
-        } else {
-            document.getElementById('settingsStatus').textContent = 'Viewer';
-            document.getElementById('settingsStatus').className = 'badge badge-warning';
-            document.getElementById('loginSection').style.display = 'block';
-            document.getElementById('logoutSection').style.display = 'none';
-            document.getElementById('settingsPassword').value = '';
-        }
-    }
-
-    function changePassword() {
-        if (!isAdmin) return alert('🔒 Login first!');
-        const newPass = document.getElementById('newPasswordInput').value.trim();
-        if (!newPass || newPass.length < 4) return alert('Password must be at least 4 characters!');
-        if (!confirm('Change password to "' + newPass + '"?')) return;
-        ADMIN_PASSWORD = newPass;
-        document.getElementById('newPasswordInput').value = '';
-        showToast('✅ Password changed!');
-    }
-
-    function enableEditing(enable) {
-        document.querySelectorAll('.btn, .pos-item, input, select').forEach(el => {
-            el.style.opacity = enable ? '1' : '0.5';
-            el.style.pointerEvents = enable ? 'auto' : 'none';
-        });
-    }
-
-    // ============================================================
-    // LANGUAGE
-    // ============================================================
-    let currentLang = 'en';
-    const langMap = {
-        en: { shop: 'Warda Marble', cash: 'Cash', credit: 'Credit', walkin: 'Walk-in' },
-        ur: { shop: 'وردہ ماربل', cash: 'نقد', credit: 'ادھار', walkin: 'بغیر گاہک' }
-    };
-    function t(key) { return langMap[currentLang][key] || key; }
-    function toggleLang() {
-        currentLang = currentLang === 'en' ? 'ur' : 'en';
-        document.getElementById('shopName').textContent = t('shop');
-        renderAll();
-    }
-    function settingsToggleLang() { toggleLang(); document.getElementById('settingsLangLabel').textContent = currentLang === 'en' ? 'اردو' : 'English'; }
-
-    // ============================================================
-    // DATABASE
-    // ============================================================
-    let db = { items: [], customers: [], sales: [], expenses: [], transactions: [], stockHistory: [], dailyStock: [] };
-    let cart = [];
-    let currentFilter = 'all';
-    let isSyncing = false;
-
-    function loadLocal() {
-        const data = localStorage.getItem('warda_data');
-        if (data) { const p = JSON.parse(data); db = p; }
-        if (!db.stockHistory) db.stockHistory = [];
-        if (!db.expenses) db.expenses = [];
-        if (!db.dailyStock) db.dailyStock = [];
-    }
-    loadLocal();
-
-    function saveLocal() {
-        localStorage.setItem('warda_data', JSON.stringify(db));
-    }
-
-    function getToday() { return new Date().toISOString().split('T')[0]; }
-    function getMonth() { return new Date().toISOString().substring(0, 7); }
-
-    // ============================================================
-    // SYNC
-    // ============================================================
-    function updateStatus(s) {
-        const d = document.getElementById('statusDot'), t = document.getElementById('statusText');
-        if (s === 'online') { d.className = 'dot green'; t.textContent = 'Online'; }
-        else if (s === 'offline') { d.className = 'dot red'; t.textContent = 'Offline'; }
-        else { d.className = 'dot yellow'; t.textContent = 'Syncing...'; }
-    }
-
-    function syncToCloud() {
-        if (isSyncing) return;
-        isSyncing = true; updateStatus('syncing');
-        database.ref('warda_data').set({ ...db, updated: Date.now() }).then(() => {
-            updateStatus('online'); isSyncing = false; showToast('✅ Synced!');
-        }).catch(() => { updateStatus('offline'); isSyncing = false; showToast('❌ Sync failed!'); });
-    }
-
-    function syncFromCloud() {
-        if (isSyncing) return;
-        isSyncing = true; updateStatus('syncing');
-        database.ref('warda_data').once('value').then(s => {
-            const data = s.val();
-            if (data) { db = data; if (!db.stockHistory) db.stockHistory = []; if (!db.expenses) db.expenses = []; if (!db.dailyStock) db.dailyStock = []; saveLocal(); renderAll(); showToast('✅ Synced!'); }
-            updateStatus('online'); isSyncing = false;
-        }).catch(() => { updateStatus('offline'); isSyncing = false; showToast('❌ Sync failed!'); });
-    }
-
-    function showToast(msg) {
-        const t = document.createElement('div');
-        t.style.cssText = 'position:fixed;bottom:58px;left:50%;transform:translateX(-50%);background:#0f1a2e;color:white;padding:3px 10px;border-radius:4px;font-size:8px;z-index:9999;max-width:90%;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,0.15)';
-        t.textContent = msg;
-        document.body.appendChild(t);
-        setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 1400);
-    }
-
-    // ============================================================
-    // ITEMS
-    // ============================================================
-    function addItem() {
-        if (!isAdmin) return alert('🔒 Admin only! Login first.');
-        const name = document.getElementById('itemName').value.trim();
-        if (!name) return alert('Enter name!');
-        const item = {
-            id: Date.now(),
-            name,
-            category: document.getElementById('itemCategory').value,
-            unit: document.getElementById('itemUnit').value,
-            size: document.getElementById('itemSize').value.trim(),
-            sellPrice: parseFloat(document.getElementById('itemSellPrice').value) || 0,
-            purchasePrice: parseFloat(document.getElementById('itemPurchasePrice').value) || 0,
-            stock: parseFloat(document.getElementById('itemStock').value) || 0,
-            minStock: 5
-        };
-        db.items.push(item);
-        saveLocal(); syncToCloud(); renderAll();
-        clearItemForm();
-        showToast('✅ Item added!');
-    }
-
-    function updateItem() {
-        if (!isAdmin) return alert('🔒 Admin only! Login first.');
-        const id = parseInt(document.getElementById('editItemId').value);
-        if (!id) return alert('Select an item first!');
-        const item = db.items.find(i => i.id === id);
-        if (!item) return;
-        item.name = document.getElementById('itemName').value.trim() || item.name;
-        item.category = document.getElementById('itemCategory').value;
-        item.unit = document.getElementById('itemUnit').value;
-        item.size = document.getElementById('itemSize').value.trim();
-        item.sellPrice = parseFloat(document.getElementById('itemSellPrice').value) || 0;
-        item.purchasePrice = parseFloat(document.getElementById('itemPurchasePrice').value) || 0;
-        item.stock = parseFloat(document.getElementById('itemStock').value) || 0;
-        saveLocal(); syncToCloud(); renderAll();
-        clearItemForm();
-        showToast('✅ Item updated!');
-    }
-
-    function deleteItem() {
-        if (!isAdmin) return alert('🔒 Admin only! Login first.');
-        const id = parseInt(document.getElementById('editItemId').value);
-        if (!id) return alert('Select an item first!');
-        if (!confirm('Delete this item?')) return;
-        db.items = db.items.filter(i => i.id !== id);
-        saveLocal(); syncToCloud(); renderAll();
-        clearItemForm();
-        showToast('✅ Item deleted!');
-    }
-
-    function selectItem(id) {
-        if (!isAdmin) return alert('🔒 Admin only! Login first.');
-        const item = db.items.find(i => i.id === id);
-        if (!item) return;
-        document.getElementById('editItemId').value = id;
-        document.getElementById('itemName').value = item.name;
-        document.getElementById('itemCategory').value = item.category;
-        document.getElementById('itemUnit').value = item.unit;
-        document.getElementById('itemSize').value = item.size || '';
-        document.getElementById('itemSellPrice').value = item.sellPrice;
-        document.getElementById('itemPurchasePrice').value = item.purchasePrice;
-        document.getElementById('itemStock').value = item.stock;
-    }
-
-    function clearItemForm() {
-        document.getElementById('editItemId').value = '';
-        document.getElementById('itemName').value = '';
-        document.getElementById('itemSize').value = '';
-        document.getElementById('itemSellPrice').value = '';
-        document.getElementById('itemPurchasePrice').value = '';
-        document.getElementById('itemStock').value = '';
-    }
-
-    function stockIn() {
-        if (!isAdmin) return alert('🔒 Admin only! Login first.');
-        const id = parseInt(document.getElementById('stockSelect').value);
-        const qty = parseFloat(document.getElementById('stockQty').value);
-        if (!id || !qty || qty <= 0) return alert('Select item and qty!');
-        const item = db.items.find(i => i.id === id);
-        if (!item) return;
-        item.stock += qty;
-        db.stockHistory.push({ date: getToday(), item: item.name, size: item.size || '-', qty: qty, type: 'In' });
-        db.transactions.push({ id: Date.now(), type: 'stock_in', desc: `${item.name} +${qty}`, amount: qty * item.purchasePrice, date: getToday() });
-        saveLocal(); syncToCloud(); renderAll();
-        document.getElementById('stockQty').value = '';
-        showToast(`✅ ${qty} added!`);
-    }
-
-    function stockOut() {
-        if (!isAdmin) return alert('🔒 Admin only! Login first.');
-        const id = parseInt(document.getElementById('stockSelect').value);
-        const qty = parseFloat(document.getElementById('stockQty').value);
-        if (!id || !qty || qty <= 0) return alert('Select item and qty!');
-        const item = db.items.find(i => i.id === id);
-        if (!item) return;
-        if (item.stock < qty) return alert('Not enough stock!');
-        item.stock -= qty;
-        db.stockHistory.push({ date: getToday(), item: item.name, size: item.size || '-', qty: qty, type: 'Out' });
-        db.transactions.push({ id: Date.now(), type: 'stock_out', desc: `${item.name} -${qty}`, amount: qty * item.sellPrice, date: getToday() });
-        saveLocal(); syncToCloud(); renderAll();
-        document.getElementById('stockQty').value = '';
-        showToast(`✅ ${qty} removed!`);
-    }
-
-    function renderStockList() {
-        const tbody = document.getElementById('stockListBody');
-        if (!db.items.length) { tbody.innerHTML = '<tr><td colspan="5">No items</td></tr>'; return; }
-        let html = '';
-        db.items.forEach(item => {
-            const warn = item.stock < item.minStock ? '⚠️' : '';
-            html += `<tr><td>${item.name}</td><td>${item.size || '-'}</td><td>${item.stock} ${warn}</td><td>${item.sellPrice}</td><td><button class="edit-btn" onclick="selectItem(${item.id})">✏️</button></td></tr>`;
-        });
-        tbody.innerHTML = html;
-
-        const sel = document.getElementById('stockSelect');
-        sel.innerHTML = '';
-        db.items.forEach(i => { const o = document.createElement('option'); o.value = i.id; o.textContent = `${i.name} (${i.stock})`; sel.appendChild(o); });
-
-        const htbody = document.getElementById('stockHistoryBody');
-        if (!db.stockHistory.length) { htbody.innerHTML = '<tr><td colspan="5">No history</td></tr>'; return; }
-        let hhtml = '';
-        db.stockHistory.slice(-20).reverse().forEach(h => {
-            hhtml += `<tr><td>${h.date}</td><td>${h.item}</td><td>${h.size}</td><td>${h.qty}</td><td class="${h.type === 'In' ? 'badge-success' : 'badge-danger'}">${h.type}</td></tr>`;
-        });
-        htbody.innerHTML = hhtml;
-    }
-
-    // ============================================================
-    // POS - PRANA SYSTEM JESA
-    // ============================================================
-    function filterCategory(cat) {
-        currentFilter = cat;
-        document.querySelectorAll('.cat-tab').forEach(el => el.classList.remove('active', 'stone-active', 'material-active'));
-        if (cat === 'stone') document.getElementById('catStone').classList.add('active', 'stone-active');
-        else if (cat === 'material') document.getElementById('catMaterial').classList.add('active', 'material-active');
-        else document.getElementById('catAll').classList.add('active');
-        renderPOS();
-    }
-
-    function renderPOS() {
-        const grid = document.getElementById('posGrid');
-        let items = db.items;
-        if (currentFilter !== 'all') items = items.filter(i => i.category === currentFilter);
-        if (!items.length) { grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#8a9aaa;padding:4px;font-size:6px;">No items</div>'; return; }
-        let html = '';
-        items.forEach(item => {
-            const out = item.stock <= 0 ? 'out-of-stock' : '';
-            html += `<div class="pos-item ${out}" onclick="${out ? '' : `addToCart(${item.id})`}" style="${out ? 'opacity:0.4;pointer-events:none;' : ''}">
-                <div class="name">${item.name}</div>
-                <div class="size">${item.size || ''}</div>
-                <div class="price">${item.sellPrice}</div>
-                <div class="stock">${item.stock} ${item.unit}</div>
-            </div>`;
-        });
-        grid.innerHTML = html;
-    }
-
-    // ============================================================
-    // CART - PRANA SYSTEM JESA
-    // ============================================================
-    function addToCart(id) {
-        const item = db.items.find(i => i.id === id);
-        if (!item || item.stock <= 0) return alert('Out of stock!');
-        const existing = cart.find(c => c.id === id);
-        if (existing) {
-            if (existing.qty >= item.stock) return alert('Not enough stock!');
-            existing.qty++;
-        } else {
-            cart.push({ 
-                id: item.id, 
-                name: item.name, 
-                size: item.size || '',
-                price: item.sellPrice, 
-                qty: 1, 
-                unit: item.unit, 
-                category: item.category, 
-                purchasePrice: item.purchasePrice || 0 
-            });
-        }
-        renderCart();
-    }
-
-    function removeFromCart(id) {
-        cart = cart.filter(c => c.id !== id);
-        renderCart();
-    }
-
-    function updateQty(id, delta) {
-        const item = cart.find(c => c.id === id);
-        if (!item) return;
-        const stockItem = db.items.find(i => i.id === id);
-        if (delta > 0 && item.qty >= stockItem.stock) return alert('Not enough stock!');
-        item.qty += delta;
-        if (item.qty <= 0) cart = cart.filter(c => c.id !== id);
-        renderCart();
-    }
-
-    function clearCart() {
-        if (!cart.length) return;
-        if (!confirm('Clear cart?')) return;
-        cart = [];
-        renderCart();
-    }
-
-    function renderCart() {
-        const container = document.getElementById('cartItems');
-        if (!cart.length) {
-            container.innerHTML = '<div style="text-align:center;color:#8a9aaa;padding:4px;font-size:6px;">Cart empty</div>';
-            document.getElementById('cartTotal').textContent = '0.00';
-            document.getElementById('cartCount').textContent = '0';
-            return;
-        }
-        let html = '', total = 0;
-        cart.forEach(c => {
-            total += c.qty * c.price;
-            const qtyDisplay = c.category === 'stone' ? c.qty.toFixed(2) + ' m²' : c.qty + ' pcs';
-            html += `<div class="cart-item">
-                <span><strong>${c.name}</strong> ${c.size} (${qtyDisplay})</span>
-                <div class="qty-control">
-                    <button onclick="updateQty(${c.id}, -1)">−</button>
-                    <span style="min-width:12px;text-align:center;">${c.qty}</span>
-                    <button onclick="updateQty(${c.id}, 1)">+</button>
-                    <button onclick="removeFromCart(${c.id})" style="background:#f8d7da;border:none;border-radius:50%;width:16px;height:16px;cursor:pointer;font-size:6px;color:#721c24;">✕</button>
-                </div>
-            </div>`;
-        });
-        container.innerHTML = html;
-        document.getElementById('cartTotal').textContent = total.toFixed(2);
-        document.getElementById('cartCount').textContent = cart.length;
-    }
-
-    // ============================================================
-    // COMPLETE SALE
-    // ============================================================
-    function completeSale() {
-        if (!isAdmin) return alert('🔒 Admin only! Login first.');
-        if (!cart.length) return alert('Cart empty!');
-        
-        const type = document.getElementById('saleType').value;
-        const customerId = document.getElementById('saleCustomerSelect').value;
-        const paid = parseFloat(document.getElementById('salePaid').value) || 0;
-        let total = 0, stoneTotal = 0, materialTotal = 0, items = [];
-        let valid = true;
-        cart.forEach(c => {
-            const item = db.items.find(i => i.id === c.id);
-            if (!item || item.stock < c.qty) { alert(`${c.name} not enough stock!`); valid = false; return; }
-            const subtotal = c.qty * c.price;
-            total += subtotal;
-            if (item.category === 'stone') stoneTotal += subtotal;
-            else materialTotal += subtotal;
-            items.push({ id: c.id, name: c.name, size: c.size || '', qty: c.qty, price: c.price, unit: c.unit, category: c.category, purchasePrice: c.purchasePrice });
-            item.stock -= c.qty;
-        });
-        if (!valid) return;
-        const remaining = total - paid;
-        const sale = { id: Date.now(), items, total, paid, remaining, type, customerId: customerId || null, date: getToday(), stoneTotal, materialTotal };
-        db.sales.push(sale);
-        if (customerId && type === 'credit') {
-            const cust = db.customers.find(c => c.id == customerId);
-            if (cust) cust.balance += remaining;
-        }
-        let cost = 0;
-        items.forEach(i => cost += i.qty * (i.purchasePrice || 0));
-        const profit = total - cost;
-        db.transactions.push({ id: Date.now(), type: 'sale', desc: `${items.length} items (${type})`, amount: total, profit: profit, date: getToday() });
-        cart = [];
-        saveLocal(); syncToCloud(); renderAll();
-        document.getElementById('salePaid').value = '0';
-        showToast(`✅ Sale: ${total.toFixed(2)} | Profit: ${profit.toFixed(2)}`);
-    }
-
-    // ============================================================
-    // CUSTOMERS
-    // ============================================================
-    function addCustomer() {
-        if (!isAdmin) return alert('🔒 Admin only! Login first.');
-        const name = document.getElementById('custName').value.trim();
-        if (!name) return alert('Enter name!');
-        db.customers.push({ id: Date.now(), name, phone: document.getElementById('custPhone').value, balance: 0 });
-        saveLocal(); syncToCloud(); renderAll();
-        document.getElementById('custName').value = ''; document.getElementById('custPhone').value = '';
-        showToast('✅ Customer added!');
-    }
-
-    function receivePayment() {
-        if (!isAdmin) return alert('🔒 Admin only! Login first.');
-        const id = document.getElementById('receiveSelect').value;
-        const amount = parseFloat(document.getElementById('receiveAmount').value);
-        if (!id || !amount || amount <= 0) return alert('Select customer and amount!');
-        const cust = db.customers.find(c => c.id == id);
-        if (!cust || cust.balance < amount) return alert(`Balance: ${cust.balance}`);
-        cust.balance -= amount;
-        db.transactions.push({ id: Date.now(), type: 'receive', desc: `Received from ${cust.name}`, amount, date: getToday() });
-        saveLocal(); syncToCloud(); renderAll();
-        document.getElementById('receiveAmount').value = '';
-        showToast(`✅ Received ${amount}!`);
-    }
-
-    function renderCustomers() {
-        const tbody = document.getElementById('customerListBody');
-        if (!db.customers.length) { tbody.innerHTML = '<tr><td colspan="4">No customers</td></tr>'; } else {
-            let html = '';
-            db.customers.forEach(c => {
-                const billCount = db.sales.filter(s => s.customerId == c.id).length;
-                html += `<tr><td>${c.name}</td><td>${c.phone || '-'}</td><td>${c.balance}</td>
-                <td><button class="btn-sm btn-primary" onclick="viewCustomerBills(${c.id})" style="padding:0 4px;font-size:5px;">📄</button></td></tr>`;
-            });
-            tbody.innerHTML = html;
-        }
-        const sel = document.getElementById('saleCustomerSelect'), rsel = document.getElementById('receiveSelect');
-        [sel, rsel].forEach(s => {
-            if (!s) return;
-            const val = s.value;
-            s.innerHTML = '<option value="">Walk-in</option>';
-            db.customers.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = `${c.name} (${c.balance})`; s.appendChild(o); });
-            if (val) s.value = val;
-        });
-    }
-
-    // ============================================================
-    // OPENING / CLOSING STOCK
-    // ============================================================
-    function calculateStockSummary() {
-        const today = getToday();
-        const container = document.getElementById('stockSummaryDisplay');
-        
-        const prevDate = new Date();
-        prevDate.setDate(prevDate.getDate() - 1);
-        const prevDateStr = prevDate.toISOString().split('T')[0];
-        
-        const prevStock = db.dailyStock.find(d => d.date === prevDateStr);
-        
-        let html = '<div class="row"><strong>Item</strong><strong>Opening</strong><strong>In</strong><strong>Out</strong><strong>Sold</strong><strong>Closing</strong></div>';
-        
-        db.items.forEach(item => {
-            let opening = 0;
-            if (prevStock && prevStock.items) {
-                const found = prevStock.items.find(i => i.id === item.id);
-                opening = found ? found.closing : 0;
-            } else {
-                opening = item.stock;
-            }
-            
-            const todayIn = db.stockHistory.filter(h => h.date === today && h.item === item.name && h.type === 'In')
-                .reduce((sum, h) => sum + h.qty, 0);
-            const todayOut = db.stockHistory.filter(h => h.date === today && h.item === item.name && h.type === 'Out')
-                .reduce((sum, h) => sum + h.qty, 0);
-            
-            const todaySales = db.sales.filter(s => s.date === today);
-            let sold = 0;
-            todaySales.forEach(s => {
-                s.items.forEach(i => {
-                    if (i.id === item.id) sold += i.qty;
-                });
-            });
-            
-            const closing = opening + todayIn - todayOut - sold;
-            
-            // Save daily stock
-            let dailyStock = db.dailyStock.find(d => d.date === today);
-            if (!dailyStock) {
-                dailyStock = { date: today, items: [] };
-                db.dailyStock.push(dailyStock);
-            }
-            const existing = dailyStock.items.find(i => i.id === item.id);
-            if (existing) {
-                existing.opening = opening;
-                existing.closing = closing;
-            } else {
-                dailyStock.items.push({ id: item.id, name: item.name, opening: opening, closing: closing });
-            }
-            
-            html += `<div class="row">
-                <span>${item.name} ${item.size || ''}</span>
-                <span>${opening.toFixed(2)}</span>
-                <span style="color:#218838;">${todayIn.toFixed(2)}</span>
-                <span style="color:#c0392b;">${todayOut.toFixed(2)}</span>
-                <span style="color:#d4a017;">${sold.toFixed(2)}</span>
-                <span style="font-weight:700;">${closing.toFixed(2)}</span>
-            </div>`;
-        });
-        
-        container.innerHTML = html;
-        saveLocal();
-    }
-
-    // ============================================================
-    // SUMMARY
-    // ============================================================
-    function updateSummary() {
-        const today = getToday();
-        document.getElementById('summaryDate').textContent = today;
-        document.getElementById('monthlyDate').textContent = getMonth();
-        
-        const todaySales = db.sales.filter(s => s.date === today);
-        const todayCash = todaySales.filter(s => s.type === 'cash').reduce((sum, s) => sum + s.total, 0);
-        const todayUdhar = todaySales.filter(s => s.type === 'credit').reduce((sum, s) => sum + s.total, 0);
-        const todayIkhrajat = db.expenses.filter(e => e.date === today).reduce((sum, e) => sum + e.amount, 0);
-        
-        const prevSales = db.sales.filter(s => s.date < today);
-        const sabqaWusool = prevSales.reduce((sum, s) => sum + s.paid, 0);
-        const advanceWusool = todaySales.reduce((sum, s) => sum + s.paid, 0);
-        const totalJamma = todayCash + sabqaWusool + advanceWusool;
-        const paymentMinus = totalJamma < todayIkhrajat ? todayIkhrajat - totalJamma : 0;
-        
-        document.getElementById('sumTodaySale').textContent = (todayCash + todayUdhar).toFixed(2);
-        document.getElementById('sumUdharSale').textContent = todayUdhar.toFixed(2);
-        document.getElementById('sumIkhrajat').textContent = todayIkhrajat.toFixed(2);
-        document.getElementById('sumSabqaWusool').textContent = sabqaWusool.toFixed(2);
-        document.getElementById('sumAdvanceWusool').textContent = advanceWusool.toFixed(2);
-        document.getElementById('sumTotalJamma').textContent = totalJamma.toFixed(2);
-        document.getElementById('sumPaymentMinus').textContent = paymentMinus.toFixed(2);
-        
-        const pmBox = document.getElementById('paymentMinusBox');
-        pmBox.className = 'summary-box ' + (paymentMinus > 0 ? 'negative' : 'positive');
-        
-        calculateStockSummary();
-        
-        const month = getMonth();
-        const monthSales = db.sales.filter(s => s.date.startsWith(month));
-        const monthData = {};
-        monthSales.forEach(s => {
-            if (!monthData[s.date]) monthData[s.date] = { sale: 0, udhar: 0, ikhrajat: 0 };
-            if (s.type === 'cash') monthData[s.date].sale += s.total;
-            else monthData[s.date].udhar += s.total;
-        });
-        db.expenses.filter(e => e.date.startsWith(month)).forEach(e => {
-            if (!monthData[e.date]) monthData[e.date] = { sale: 0, udhar: 0, ikhrajat: 0 };
-            monthData[e.date].ikhrajat += e.amount;
-        });
-        
-        let mhtml = '';
-        Object.keys(monthData).sort().forEach(d => {
-            const data = monthData[d];
-            const total = data.sale + data.udhar;
-            mhtml += `<tr><td>${d}</td><td>${total.toFixed(2)}</td><td>${data.udhar.toFixed(2)}</td><td>${data.ikhrajat.toFixed(2)}</td><td>${(total - data.ikhrajat).toFixed(2)}</td></tr>`;
-        });
-        document.getElementById('monthlySummaryBody').innerHTML = mhtml || '<tr><td colspan="5">No data</td></tr>';
-    }
-
-    // ============================================================
-    // INVOICES - PRANA SYSTEM JESA
-    // ============================================================
-    function viewCustomerBills(customerId) {
-        const cust = db.customers.find(c => c.id === customerId);
-        if (!cust) return;
-        const bills = db.sales.filter(s => s.customerId == customerId);
-        if (!bills.length) { alert(`No bills for ${cust.name}`); return; }
-        let msg = `📋 BILLS FOR ${cust.name}\n━━━━━━━━━━━━━━━━━━━\n`;
-        bills.forEach((b, i) => {
-            msg += `#${i+1} | ${b.date} | ${b.total.toFixed(2)}\n`;
-            b.items.forEach(item => {
-                const qtyDisplay = item.category === 'stone' ? item.qty.toFixed(2) + 'm²' : item.qty + 'pcs';
-                msg += `   ${item.name} ${qtyDisplay} = ${(item.qty * item.price).toFixed(2)}\n`;
-            });
-            msg += `─────────────────────────\n`;
-        });
-        alert(msg);
-        renderInvoices();
-    }
-
-    function renderInvoices() {
-        const container = document.getElementById('invoicesList');
-        if (!db.sales.length) { container.innerHTML = '<div style="color:#8a9aaa;font-size:7px;padding:3px;">No invoices</div>'; return; }
-        let html = '';
-        const sorted = [...db.sales].reverse();
-        sorted.slice(0, 20).forEach(s => {
-            const cust = db.customers.find(c => c.id == s.customerId);
-            const custName = cust ? cust.name : 'Walk-in';
-            html += `<div class="bill-item" onclick="viewInvoice(${s.id})">
-                <div class="bill-header">
-                    <span><strong>#${s.id}</strong> ${custName}</span>
-                    <span>${s.date} | ${s.total.toFixed(2)}</span>
-                </div>
-                <div class="bill-footer">
-                    <span>${s.items.length} items | ${s.type}</span>
-                    <span>Paid: ${s.paid.toFixed(2)}</span>
-                </div>
-            </div>`;
-        });
-        container.innerHTML = html;
-    }
-
-    function viewInvoice(saleId) {
-        const sale = db.sales.find(s => s.id === saleId);
-        if (!sale) return alert('Invoice not found!');
-        const cust = db.customers.find(c => c.id == sale.customerId);
-        const custName = cust ? cust.name : 'Walk-in';
-        let invoice = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-        invoice += `  🏪 WARDA MARBLE\n`;
-        invoice += `  📍 INVOICE #${sale.id}\n`;
-        invoice += `  📅 ${sale.date}\n`;
-        invoice += `  👤 ${custName}\n`;
-        invoice += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-        invoice += `  ITEM          QTY  PRICE  TOTAL\n`;
-        sale.items.forEach(i => {
-            const name = i.name + (i.size ? ' ' + i.size : '');
-            const qtyDisplay = i.category === 'stone' ? i.qty.toFixed(2) + 'm²' : i.qty + 'pcs';
-            invoice += `  ${name.padEnd(12)} ${qtyDisplay.padStart(6)}  ${i.price.toString().padStart(5)}  ${(i.qty*i.price).toFixed(2).padStart(6)}\n`;
-        });
-        invoice += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-        invoice += `  TOTAL: ${sale.total.toFixed(2)}\n`;
-        invoice += `  PAID: ${sale.paid.toFixed(2)}\n`;
-        invoice += `  REMAINING: ${sale.remaining.toFixed(2)}\n`;
-        invoice += `  TYPE: ${sale.type.toUpperCase()}\n`;
-        invoice += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-        invoice += `  📱 Thank you! Visit again.\n`;
-        invoice += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-        
-        document.getElementById('reportDisplay').innerHTML = `<pre style="font-family:monospace;font-size:8px;margin:0;white-space:pre-wrap;line-height:1.3;">${invoice}</pre>`;
-        
-        document.getElementById('editInvoiceId').value = sale.id;
-        document.getElementById('editInvoiceCustomer').value = custName;
-        document.getElementById('editInvoiceTotal').value = sale.total;
-        document.getElementById('editInvoicePaid').value = sale.paid;
-        
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelector('.tab[data-tab="reports"]').classList.add('active');
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.getElementById('section-reports').classList.add('active');
-    }
-
-    function updateInvoice() {
-        if (!isAdmin) return alert('🔒 Admin only! Login first.');
-        const id = parseInt(document.getElementById('editInvoiceId').value);
-        if (!id) return alert('Enter Invoice ID!');
-        const sale = db.sales.find(s => s.id === id);
-        if (!sale) return alert('Invoice not found!');
-        const newTotal = parseFloat(document.getElementById('editInvoiceTotal').value);
-        const newPaid = parseFloat(document.getElementById('editInvoicePaid').value);
-        if (!newTotal || newTotal <= 0) return alert('Enter valid total!');
-        sale.total = newTotal;
-        sale.paid = newPaid || 0;
-        sale.remaining = newTotal - sale.paid;
-        if (sale.customerId) {
-            const cust = db.customers.find(c => c.id == sale.customerId);
-            if (cust) {
-                const allSales = db.sales.filter(s => s.customerId == sale.customerId);
-                let totalBalance = 0;
-                allSales.forEach(s => { totalBalance += s.remaining; });
-                cust.balance = totalBalance;
-            }
-        }
-        saveLocal(); syncToCloud(); renderAll();
-        showToast('✅ Invoice updated!');
-    }
-
-    function deleteInvoice() {
-        if (!isAdmin) return alert('🔒 Admin only! Login first.');
-        const id = parseInt(document.getElementById('editInvoiceId').value);
-        if (!id) return alert('Enter Invoice ID!');
-        if (!confirm('Delete this invoice?')) return;
-        const sale = db.sales.find(s => s.id === id);
-        if (!sale) return alert('Invoice not found!');
-        
-        lastDeletedInvoice = {
-            sale: JSON.parse(JSON.stringify(sale)),
-            index: db.sales.findIndex(s => s.id === id)
-        };
-        
-        sale.items.forEach(item => {
-            const dbItem = db.items.find(i => i.id === item.id);
-            if (dbItem) dbItem.stock += item.qty;
-        });
-        db.sales = db.sales.filter(s => s.id !== id);
-        if (sale.customerId) {
-            const cust = db.customers.find(c => c.id == sale.customerId);
-            if (cust) {
-                const allSales = db.sales.filter(s => s.customerId == sale.customerId);
-                let totalBalance = 0;
-                allSales.forEach(s => { totalBalance += s.remaining; });
-                cust.balance = totalBalance;
-            }
-        }
-        saveLocal(); syncToCloud(); renderAll();
-        document.getElementById('editInvoiceId').value = '';
-        document.getElementById('editInvoiceCustomer').value = '';
-        document.getElementById('editInvoiceTotal').value = '';
-        document.getElementById('editInvoicePaid').value = '';
-        showToast('✅ Invoice deleted! (Use Undo to restore)');
-    }
-
-    function undoLastDelete() {
-        if (!lastDeletedInvoice) return alert('Nothing to undo!');
-        if (!confirm('Restore deleted invoice?')) return;
-        const { sale } = lastDeletedInvoice;
-        db.sales.push(sale);
-        sale.items.forEach(item => {
-            const dbItem = db.items.find(i => i.id === item.id);
-            if (dbItem) dbItem.stock -= item.qty;
-        });
-        if (sale.customerId) {
-            const cust = db.customers.find(c => c.id == sale.customerId);
-            if (cust) {
-                const allSales = db.sales.filter(s => s.customerId == sale.customerId);
-                let totalBalance = 0;
-                allSales.forEach(s => { totalBalance += s.remaining; });
-                cust.balance = totalBalance;
-            }
-        }
-        lastDeletedInvoice = null;
-        saveLocal(); syncToCloud(); renderAll();
-        showToast('✅ Invoice restored!');
-    }
-
-    // ============================================================
-    // REPORTS
-    // ============================================================
-    function genReport(type) {
-        const today = getToday();
-        let sales = [];
-        if (type === 'daily') { sales = db.sales.filter(s => s.date === today); }
-        else if (type === 'weekly') {
-            const d = new Date(); d.setDate(d.getDate() - 7);
-            sales = db.sales.filter(s => s.date >= d.toISOString().split('T')[0]);
-        } else {
-            const d = new Date(); d.setMonth(d.getMonth() - 1);
-            sales = db.sales.filter(s => s.date >= d.toISOString().split('T')[0]);
-        }
-        const totalSales = sales.reduce((s, i) => s + i.total, 0);
-        let stone = 0, material = 0, stoneCost = 0, materialCost = 0;
-        sales.forEach(s => {
-            s.items.forEach(i => {
-                if (i.category === 'stone') { stone += i.qty * i.price; stoneCost += i.qty * (i.purchasePrice || 0); }
-                else { material += i.qty * i.price; materialCost += i.qty * (i.purchasePrice || 0); }
-            });
-        });
-        const profit = (stone + material) - (stoneCost + materialCost);
-        
-        let report = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-        report += `  🏪 WARDA MARBLE\n`;
-        report += `  📍 ${type.toUpperCase()} REPORT\n`;
-        report += `  📅 ${today}\n`;
-        report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-        report += `  💰 Total Sales    : ${totalSales.toFixed(2)}\n`;
-        report += `  🪨 Stone Sales    : ${stone.toFixed(2)}\n`;
-        report += `  🧱 Material Sales : ${material.toFixed(2)}\n`;
-        report += `  📈 Profit/Loss    : ${profit >= 0 ? '✅ ' + profit.toFixed(2) : '❌ ' + Math.abs(profit).toFixed(2)}\n`;
-        report += `  📦 Total Orders   : ${sales.length}\n`;
-        report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-        if (sales.length > 0) {
-            report += `  📋 ORDER DETAILS\n`;
-            report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-            sales.slice(0, 10).forEach((s, idx) => {
-                const cust = db.customers.find(c => c.id == s.customerId);
-                report += `  #${idx+1} | ${s.date} | ${cust ? cust.name : 'Walk-in'} | ${s.total.toFixed(2)}\n`;
-                s.items.forEach(i => {
-                    const qtyDisplay = i.category === 'stone' ? i.qty.toFixed(2) + 'm²' : i.qty + 'pcs';
-                    report += `     ${i.name}${i.size ? ' '+i.size : ''} ${qtyDisplay} = ${(i.qty * i.price).toFixed(2)}\n`;
-                });
-                report += `  ─────────────────────────────\n`;
-            });
-            if (sales.length > 10) report += `  ... and ${sales.length - 10} more\n`;
-        }
-        report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-        report += `  📱 Thank you! Visit again.\n`;
-        report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-        
-        document.getElementById('reportDisplay').innerHTML = `<pre style="font-family:monospace;font-size:7px;margin:0;white-space:pre-wrap;line-height:1.3;">${report}</pre>`;
-        document.getElementById('plDisplay').innerHTML = `
-            <div style="padding:4px;background:${profit>=0?'#d4edda':'#f8d7da'};border-radius:4px;">
-                <div style="font-size:14px;font-weight:700;color:${profit>=0?'#155724':'#721c24'};">${profit >= 0 ? '✅ Profit: ' + profit.toFixed(2) : '❌ Loss: ' + Math.abs(profit).toFixed(2)}</div>
-                <div style="font-size:6px;color:#6c757d;">Stone: ${(stone - stoneCost).toFixed(2)} | Material: ${(material - materialCost).toFixed(2)}</div>
-            </div>
-        `;
-        renderTransactions();
-        renderInvoices();
-        return report;
-    }
-
-    function renderTransactions() {
-        const tbody = document.getElementById('transactionsBody');
-        if (!db.transactions.length) { tbody.innerHTML = '<tr><td colspan="3">No transactions</td></tr>'; return; }
-        let html = '';
-        const sorted = [...db.transactions].reverse().slice(0, 25);
-        sorted.forEach(t => {
-            const color = t.type === 'expense' ? '#c0392b' : '#218838';
-            html += `<tr><td>${t.date}</td><td>${t.desc}</td><td style="color:${color};font-weight:600;">${t.amount}</td></tr>`;
-        });
-        tbody.innerHTML = html;
-    }
-
-    // ============================================================
-    // PRINT & SHARE
-    // ============================================================
-    function printReport() {
-        const content = document.querySelector('#reportDisplay pre');
-        if (!content) return alert('Generate report first!');
-        const w = window.open('', '', 'width=600,height=500');
-        w.document.write(`<style>body{font-family:monospace;padding:20px;font-size:14px;background:white;}</style>`);
-        w.document.write(content.textContent);
-        w.document.close();
-        w.print();
-    }
-
-    function shareReport() {
-        const content = document.querySelector('#reportDisplay pre');
-        if (!content) return alert('Generate report first!');
-        const phone = '923001234567';
-        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(content.textContent)}`, '_blank');
-    }
-
-    // ============================================================
-    // RENDER ALL
-    // ============================================================
-    function renderAll() {
-        renderPOS();
-        renderCart();
-        renderStockList();
-        renderCustomers();
-        renderTransactions();
-        renderInvoices();
-        updateSummary();
-        const active = document.querySelector('.section.active');
-        if (active && active.id === 'section-reports') genReport('daily');
-        if (active && active.id === 'section-summary') updateSummary();
-        if (active && active.id === 'section-invoices') renderInvoices();
-    }
-
-    // ============================================================
-    // NAVIGATION
-    // ============================================================
-    document.querySelectorAll('.tab, .bottom-nav .nav-item').forEach(el => {
-        el.addEventListener('click', function() {
-            const id = this.dataset.tab;
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelector(`.tab[data-tab="${id}"]`)?.classList.add('active');
-            document.querySelectorAll('.bottom-nav .nav-item').forEach(n => n.classList.remove('active'));
-            document.querySelector(`.bottom-nav .nav-item[data-tab="${id}"]`)?.classList.add('active');
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById('section-' + id).classList.add('active');
-            if (id === 'pos') { renderPOS(); renderCart(); }
-            if (id === 'stock') renderStockList();
-            if (id === 'customers') renderCustomers();
-            if (id === 'summary') updateSummary();
-            if (id === 'reports') genReport('daily');
-            if (id === 'invoices') renderInvoices();
-        });
-    });
-
-    // ============================================================
-    // INIT
-    // ============================================================
-    if (!db.items.length) {
-        db.items = [
-            { id: 1, name: 'زاویہ', category: 'material', unit: 'pcs', size: '4*4*3mm', sellPrice: 0, purchasePrice: 0, stock: 9200, minStock: 100 },
-            { id: 2, name: 'زاویہ', category: 'material', unit: 'pcs', size: '4*4*2mm', sellPrice: 0, purchasePrice: 0, stock: 6600, minStock: 100 },
-            { id: 3, name: 'ابیض مجلی', category: 'stone', unit: 'm²', size: '3*7', sellPrice: 65, purchasePrice: 50, stock: 50, minStock: 10 },
-            { id: 4, name: 'ابیض مجلی', category: 'stone', unit: 'm²', size: '3*10', sellPrice: 65, purchasePrice: 50, stock: 50, minStock: 10 },
-            { id: 5, name: 'ابیض مجلی', category: 'stone', unit: 'm²', size: '3*15', sellPrice: 65, purchasePrice: 50, stock: 50, minStock: 10 }
-        ];
-        saveLocal();
-    }
-
-    const savedSession = loadSession();
-    if (savedSession && savedSession.active) {
+function checkLogin() {
+    const input = document.getElementById('loginPassword').value;
+    const error = document.getElementById('loginError');
+    if (input === ADMIN_PASSWORD) {
         isAdmin = true;
+        document.getElementById('loginOverlay').style.display = 'none';
         document.getElementById('roleBadge').textContent = '👑 Admin';
         document.getElementById('roleBadge').className = 'admin-badge';
-        enableEditing(true);
-        updateSettingsUI();
+        document.getElementById('logoutBtn').style.display = 'inline-block';
+        document.getElementById('appContainer').classList.remove('view-only');
+        showToast('✅ Admin mode activated!');
+    } else {
+        error.style.display = 'block';
+        setTimeout(() => error.style.display = 'none', 3000);
     }
+}
 
-    renderAll();
-    syncFromCloud();
-    setInterval(() => { 
-        if (navigator.onLine) {
-            syncFromCloud();
-            if (isAdmin && sessionId) saveSession();
+function logout() {
+    isAdmin = false;
+    document.getElementById('loginOverlay').style.display = 'flex';
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('roleBadge').textContent = '👁️ Viewer';
+    document.getElementById('roleBadge').className = 'viewer-badge';
+    document.getElementById('logoutBtn').style.display = 'none';
+    document.getElementById('appContainer').classList.add('view-only');
+    showToast('👁️ Viewer mode activated');
+}
+
+// ==================== DATA ==================
+let products = [], orders = [], customers = [], cart = [], cartHistory = [];
+let currentLang = 'en', currentCurrency = 'SAR', currentMode = 'sqm';
+let currentGroup = 'all', currentInvGroup = 'all';
+let taxEnabled = true, taxRate = 15, taxName = "VAT";
+let company = { name: "WARDA MARBLE", tagline: "Premium Marble Solutions | Since 2020", address: "Tabuk, Saudi Arabia", phone: "+966 59 807 4287" };
+let currentInvoiceNo = null, currentPayInvoice = null, currentEditInvoice = null;
+
+// ==================== BUILD PRODUCTS ==================
+function buildProducts() {
+    let prods = []; let id = 1;
+    let mwad = [
+        ["زاویہ اپ ڈاون","4*4*3mm",9200],["زاویہ اپ ڈاون","4*4*2mm",6600],["زاویہ اپ ڈاون","4*3*3mm",4300],["زاویہ اپ ڈاون","4*3*2mm",2500],
+        ["زاویہ اپ ڈاون","4*5*3mm",1200],["زاویہ اپ ڈاون","4*6*3mm",850],["زاویہ اپ ڈاون","4*8*3mm",420],["زاویہ اپ ڈاون","4*10*3mm",400],
+        ["مسمار مغلوب","10*40",4800],["مسمار مغلوب","10*50",4800],["مسمار مغلوب","10*60",3500],["مسمار مغلوب","10*80",1500],["مسمار مغلوب","10*100",1440],
+        ["براغی سقف","10*72",2200],["براغی سقف","10*92",2100],["براغی سقف","10*112",1920],["براغی سقف","10*115",2200],["براغی سقف","10*202",1040],
+        ["جولی ابو جمل","Standard",5],["جولی گلیڈتیر","Standard",0],["دسک حجر احمر","7 بوسہ",0],["دسک حجر احمر","4.50 بوسہ",7],
+        ["دسک جرانیت","7 بوسہ",3],["دسک بوش","9 بوسہ",20],["ریشہ ہلتی","20cm",0],["ریشہ ہلتی","15cm",24],["ریشہ ہلتی","10cm",1],
+        ["ریشہ دریل","4mm",12],["ریشہ دریل","6mm",10],["ریشہ دریل","10mm",16],["گمتا چوڑی","Standard",7],["گمتا سادہ","Standard",7],["بکرا","Standard",1]
+    ];
+    mwad.forEach(m => { prods.push({ id: id++, name: m[0], size: m[1], group: 'mwad', selling: 0, cost: 0, stock: m[2], type: 'pieces' }); });
+    
+    let mojaliSizes = ["3*7","3*10","3*15","3*18","3*20","3*25","3*27","3*30","3*32","3*35","3*37","3*40","3*50","3*60"];
+    mojaliSizes.forEach(s => { prods.push({ id: id++, name: "ابیض مجلی مبروم", size: s, group: 'mojali', selling: 65, cost: 50, stock: 50, type: 'sqm' }); });
+    mojaliSizes.forEach(s => { prods.push({ id: id++, name: "ابیض مجلی سادہ", size: s, group: 'mojali', selling: 60, cost: 45, stock: 50, type: 'sqm' }); });
+    let mojaliSpecial = [["(A) ابیض مجلی فرزا","3*40*80",75],["(C) ابیض مجلی فرزا","3*40*60",75],["ابیض مجلی مشطوف","3*30",70],["ابیض بشارتہ فرزا","3*40*80",85],["MNHOOD ABIAZ","3*20*1.20",65]];
+    mojaliSpecial.forEach(m => { prods.push({ id: id++, name: m[0], size: m[1], group: 'mojali', selling: m[2], cost: m[2]-12, stock: 50, type: 'sqm' }); });
+    
+    let mosnafarSizes = ["3*7","3*10","3*15","3*18","3*20","3*25","3*27","3*30","3*32","3*35","3*37","3*40","3*50","3*60","4*7","5*7"];
+    mosnafarSizes.forEach(s => { prods.push({ id: id++, name: "ابیض مصنفر مبروم", size: s, group: 'mosnafar', selling: 55, cost: 42, stock: 50, type: 'sqm' }); });
+    mosnafarSizes.forEach(s => { prods.push({ id: id++, name: "ابیض مصنفر سادہ", size: s, group: 'mosnafar', selling: 50, cost: 38, stock: 50, type: 'sqm' }); });
+    let mosnafarSpecial = [["ابیض مصنفر فرزا","3*40*80",65],["پیانو ابیض مصنفر","3*20*50",55]];
+    mosnafarSpecial.forEach(m => { prods.push({ id: id++, name: m[0], size: m[1], group: 'mosnafar', selling: m[2], cost: m[2]-10, stock: 50, type: 'sqm' }); });
+    return prods;
+}
+
+// ==================== HELPERS ==================
+function formatNumber(n) { let v = n.toFixed(2); if(currentLang === 'ar') return v.replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]); return v; }
+function formatCurrency(amt) { let r = currentCurrency === 'SAR' ? 1 : 0.27; let s = currentCurrency === 'SAR' ? 'SAR ' : '$ '; return s + formatNumber(amt * r); }
+function showToast(msg) { let t = document.createElement('div'); t.className='toast'; t.innerText=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),2500); }
+function saveData() { localStorage.setItem('products', JSON.stringify(products)); localStorage.setItem('orders', JSON.stringify(orders)); localStorage.setItem('customers', JSON.stringify(customers)); localStorage.setItem('taxEnabled', taxEnabled); localStorage.setItem('taxRate', taxRate); localStorage.setItem('taxName', taxName); localStorage.setItem('company', JSON.stringify(company)); }
+function loadData() { let p = localStorage.getItem('products'); products = (p && JSON.parse(p).length) ? JSON.parse(p) : buildProducts(); let o = localStorage.getItem('orders'); if(o) orders = JSON.parse(o); let c = localStorage.getItem('customers'); if(c) customers = JSON.parse(c); let te = localStorage.getItem('taxEnabled'); if(te !== null) taxEnabled = te === 'true'; let tr = localStorage.getItem('taxRate'); if(tr) taxRate = parseFloat(tr); let tn = localStorage.getItem('taxName'); if(tn) taxName = tn; let comp = localStorage.getItem('company'); if(comp) company = JSON.parse(comp); }
+
+function toggleLang() { currentLang = currentLang === 'en' ? 'ar' : 'en'; if(currentLang==='ar') document.body.classList.add('rtl'); else document.body.classList.remove('rtl'); displayProducts(); displayCustomers(); displayInvoices(); loadInventory(); loadMonthlyReport(); loadDailyReport(); updateCartDisplay(); showToast(currentLang==='ar'?'العربية':'English'); }
+function toggleCurrency() { currentCurrency = currentCurrency === 'SAR' ? 'USD' : 'SAR'; displayProducts(); displayCustomers(); displayInvoices(); loadInventory(); loadMonthlyReport(); loadDailyReport(); updateCartDisplay(); showToast(currentCurrency); }
+function setMode(mode) { currentMode = mode; document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active')); document.querySelectorAll('.mode-btn')[mode==='sqm'?0:mode==='manual'?1:2].classList.add('active'); document.getElementById('sqmFields').style.display = mode==='sqm'?'block':'none'; document.getElementById('manualFields').style.display = mode==='manual'?'block':'none'; document.getElementById('piecesFields').style.display = mode==='pieces'?'block':'none'; }
+function showTab(tab) { document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active')); document.getElementById(tab+'Tab').classList.add('active'); document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); event.target.classList.add('active'); if(tab==='inventory') loadInventory(); if(tab==='invoices') displayInvoices(); if(tab==='customers') displayCustomers(); if(tab==='daily') loadDailyReport(); if(tab==='monthly') loadMonthlyReport(); if(tab==='summary') updateSummary(); }
+
+// ==================== PRODUCTS ==================
+function displayProducts() {
+    let search = document.getElementById('searchProduct').value.toLowerCase();
+    let filtered = products.filter(p => (currentGroup==='all' || p.group===currentGroup) && (p.name.toLowerCase().includes(search) || p.size.toLowerCase().includes(search)));
+    let c = document.getElementById('productList'); c.innerHTML='';
+    filtered.forEach(p => { let d = document.createElement('div'); d.className='product-card'; d.innerHTML=`<div class="product-name">${p.name}</div><div class="product-size">${p.size}</div><div class="product-price">${p.selling>0?formatCurrency(p.selling):'Set Price'}${p.type==='sqm'?'/m²':'/pc'}</div><div>Stock: ${p.stock}</div>`; d.onclick=()=>{ if(!isAdmin) return showToast('🔒 Login first!'); document.getElementById('itemName').value=p.name; document.getElementById('costPrice').value=p.cost; if(p.type==='sqm'){ setMode('sqm'); document.getElementById('sqmPrice').value=p.selling; }else{ setMode('pieces'); document.getElementById('pieceSize').value=p.size; document.getElementById('piecePrice').value=p.selling; } showToast(p.name+' loaded'); }; c.appendChild(d); });
+}
+function filterProducts(g) { currentGroup=g; document.querySelectorAll('#productFilter .group-btn').forEach(b=>b.classList.remove('active')); event.target.classList.add('active'); displayProducts(); }
+function filterInventory(g) { currentInvGroup=g; document.querySelectorAll('#inventoryFilter .group-btn').forEach(b=>b.classList.remove('active')); event.target.classList.add('active'); loadInventory(); }
+function loadInventory() {
+    let search = document.getElementById('inventorySearch').value.toLowerCase();
+    let filtered = products.filter(p => (currentInvGroup==='all' || p.group===currentInvGroup) && (p.name.toLowerCase().includes(search) || p.size.toLowerCase().includes(search)));
+    let tb = document.getElementById('inventoryBody'); tb.innerHTML='';
+    filtered.forEach(p => { let r = tb.insertRow(); r.insertCell(0).innerHTML = p.group==='mwad'?'Materials':(p.group==='mojali'?'Polished':'Honed'); r.insertCell(1).innerHTML = p.name; r.insertCell(2).innerHTML = p.size; r.insertCell(3).innerHTML = `<span style="cursor:pointer;color:#3b82f6" onclick="editProduct(${p.id},'selling')">✏️ ${formatCurrency(p.selling)}</span>`; r.insertCell(4).innerHTML = `<span style="cursor:pointer;color:#8b5cf6" onclick="editProduct(${p.id},'cost')">✏️ ${formatCurrency(p.cost)}</span>`; r.insertCell(5).innerHTML = `<span style="cursor:pointer;color:#10b981" onclick="editProduct(${p.id},'stock')">✏️ ${p.stock}</span>`; let c = r.insertCell(6); let d = document.createElement('button'); d.innerHTML='Delete'; d.style.background='#e74c3c'; d.style.padding='3px 8px'; d.onclick=()=>{ if(!isAdmin) return showToast('🔒 Login first!'); if(confirm('Delete?')){ products=products.filter(x=>x.id!==p.id); saveData(); loadInventory(); displayProducts(); showToast('Deleted'); } }; c.appendChild(d); });
+}
+function editProduct(id,field) { if(!isAdmin) return showToast('🔒 Login first!'); let p=products.find(x=>x.id===id); if(p){ let v=prompt(`Edit ${field}:`,p[field]); if(v!==null && !isNaN(parseFloat(v))){ p[field]=parseFloat(v); saveData(); loadInventory(); displayProducts(); showToast('Updated'); } } }
+function addNewProduct() { if(!isAdmin) return showToast('🔒 Login first!'); let type = confirm('Marble (SQM) - OK, Fitting (Pieces) - Cancel') ? 'sqm' : 'pieces'; let g = prompt('Group: 1-Materials, 2-Polished, 3-Honed'); let gn = 'mwad'; if(g === '2') gn = 'mojali'; else if(g === '3') gn = 'mosnafar'; let name = prompt('Product name:'); if(!name) return; let id = Math.max(...products.map(p=>p.id),0)+1; let np = { id, name, size: prompt('Size:'), group: gn, selling: parseFloat(prompt('Selling Price:')), cost: parseFloat(prompt('Cost Price:'))||0, stock: parseInt(prompt('Stock:'))||50, type }; if(type === 'sqm') np.thickness = 3; products.push(np); saveData(); displayProducts(); loadInventory(); showToast('Product added'); }
+
+// ==================== CART ==================
+function addToCart() { if(!isAdmin) return showToast('🔒 Login first!'); let name = document.getElementById('itemName').value; if(!name){ showToast('Select item first'); return; }
+    cartHistory.push(JSON.parse(JSON.stringify(cart)));
+    let cost = parseFloat(document.getElementById('costPrice').value)||0;
+    if(currentMode==='sqm'){
+        let t=parseFloat(document.getElementById('thick').value)||3, w=parseFloat(document.getElementById('width').value)||0.40, l=parseFloat(document.getElementById('length').value)||0.80, p=parseFloat(document.getElementById('sqmPrice').value);
+        if(!p){ showToast('Enter price'); return; }
+        let area=w*l; cart.push({ id:Date.now(), name, size:`${t}cm x ${w.toFixed(2)}m x ${l.toFixed(2)}m`, qty:area.toFixed(2)+' m²', price:p, cost:cost||p*0.7, total:area*p });
+    }else if(currentMode==='manual'){
+        let area=parseFloat(document.getElementById('manualArea').value), p=parseFloat(document.getElementById('manualPrice').value);
+        if(!area || !p){ showToast('Enter area and price'); return; }
+        cart.push({ id:Date.now(), name, size:'Manual', qty:area.toFixed(2)+' m²', price:p, cost:cost||p*0.7, total:area*p });
+    }else{
+        let size=document.getElementById('pieceSize').value, qty=parseFloat(document.getElementById('pieceQty').value), p=parseFloat(document.getElementById('piecePrice').value);
+        if(!p){ showToast('Enter price'); return; }
+        cart.push({ id:Date.now(), name, size:size, qty:qty+' pcs', price:p, cost:cost||p*0.6, total:qty*p });
+    }
+    updateCartDisplay(); showToast('Added to cart');
+    if(currentMode==='sqm') document.getElementById('sqmPrice').value='';
+    else if(currentMode==='manual'){ document.getElementById('manualArea').value=''; document.getElementById('manualPrice').value=''; }
+    else{ document.getElementById('piecePrice').value=''; document.getElementById('pieceQty').value=1; }
+}
+function updateCartDisplay() {
+    let tb = document.getElementById('cartBody'); tb.innerHTML=''; let sub=0;
+    cart.forEach((item,idx)=>{ sub+=item.total; let r=tb.insertRow(); r.insertCell(0).innerHTML=item.name; r.insertCell(1).innerHTML=item.size; r.insertCell(2).innerHTML=item.qty; r.insertCell(3).innerHTML=formatCurrency(item.price); r.insertCell(4).innerHTML=formatCurrency(item.total); let btn=document.createElement('button'); btn.innerHTML='✖'; btn.style.background='#e74c3c'; btn.style.padding='2px 8px'; btn.onclick=()=>{ cart.splice(idx,1); updateCartDisplay(); }; r.insertCell(5).appendChild(btn); });
+    updateTotals(sub);
+}
+function updateTotals(sub) { if(!sub) sub=cart.reduce((s,i)=>s+i.total,0); let tax=taxEnabled?sub*taxRate/100:0; let total=sub+tax; document.getElementById('subtotal').innerHTML=formatCurrency(sub); document.getElementById('taxAmount').innerHTML=formatCurrency(tax); document.getElementById('grandTotal').innerHTML=formatCurrency(total); let rec=parseFloat(document.getElementById('amountReceived').value)||0; document.getElementById('received').innerHTML=formatCurrency(rec); let bal=total-rec; let custName = document.getElementById('customerName').value || 'Customer';
+    if(bal>0){ document.getElementById('balanceMsg').innerHTML=`<span class="balance-negative">Due from ${custName}: ${formatCurrency(bal)}</span>`; }
+    else if(bal<0){ document.getElementById('balanceMsg').innerHTML=`<span class="balance-positive">Refund to ${custName}: ${formatCurrency(Math.abs(bal))}</span>`; }
+    else{ document.getElementById('balanceMsg').innerHTML=`<span class="balance-zero">Fully Paid ✓</span>`; } }
+function clearCart() { if(confirm('Clear entire cart?')){ cartHistory.push(JSON.parse(JSON.stringify(cart))); cart=[]; updateCartDisplay(); } }
+function undoCart() { if(cartHistory.length){ cart=cartHistory.pop(); updateCartDisplay(); showToast('Undo successful'); } else showToast('Nothing to undo'); }
+function confirmOrder() { if(!isAdmin) return showToast('🔒 Login first!'); if(cart.length===0){ showToast('Cart is empty'); return; }
+    let cust=document.getElementById('customerName').value||'Walk-in Customer';
+    let phone=document.getElementById('customerPhone').value||'';
+    let rec=parseFloat(document.getElementById('amountReceived').value)||0;
+    let sub=cart.reduce((s,i)=>s+i.total,0);
+    let tax=taxEnabled?sub*taxRate/100:0;
+    let total=sub+tax;
+    let invNo='INV-'+String(orders.length+1).padStart(4,'0');
+    cart.forEach(i=>{ let p=products.find(pr=>pr.name===i.name); if(p && p.stock>0) p.stock--; });
+    let paid=Math.min(rec,total);
+    let status=paid>=total?'paid':(paid>0?'partial':'unpaid');
+    let order={ invoiceNo:invNo, date:new Date().toISOString(), customer:cust, phone:phone, items:[...cart], subtotal:sub, taxAmount:tax, total, cost:cart.reduce((s,i)=>s+i.cost,0), profit:total-cart.reduce((s,i)=>s+i.cost,0), status, paid, payments:paid>0?[{amount:paid,notes:'POS Payment',date:new Date().toISOString()}]:[] };
+    orders.push(order);
+    let custObj=customers.find(c=>c.phone===phone);
+    if(!custObj){ custObj={ name:cust, phone:phone, invoices:[] }; customers.push(custObj); }
+    custObj.invoices.push({ invoiceNo:invNo, date:order.date, amount:total, paid:paid, status:status, payments:order.payments });
+    saveData();
+    showToast('Order confirmed! '+invNo);
+    cart=[]; cartHistory=[]; updateCartDisplay(); displayProducts(); loadInventory(); displayCustomers(); displayInvoices(); loadMonthlyReport(); loadDailyReport(); updateSummary();
+    document.getElementById('customerName').value=''; document.getElementById('customerPhone').value=''; document.getElementById('amountReceived').value=0;
+}
+
+// ==================== CUSTOMERS ==================
+function displayCustomers() {
+    let search=document.getElementById('customerSearch').value.toLowerCase();
+    let filtered=customers.filter(c=>c.name.toLowerCase().includes(search)||(c.phone && c.phone.includes(search)));
+    let container=document.getElementById('customerList'); container.innerHTML='';
+    let totalDueAll=0, totalPaidAll=0;
+    filtered.forEach(c=>{ let due=c.invoices.reduce((s,i)=>s+(i.amount-i.paid),0); let paidAmt=c.invoices.reduce((s,i)=>s+i.paid,0); totalDueAll+=due; totalPaidAll+=paidAmt; let div=document.createElement('div'); div.className='customer-card'; div.innerHTML=`<div style="display:flex;justify-content:space-between;flex-wrap:wrap;margin-bottom:8px"><div><strong>${c.name}</strong> ${c.phone?`📞 ${c.phone}`:''}</div><div><span class="badge ${due>0?'badge-unpaid':'badge-paid'}">${due>0?'Due: '+formatCurrency(due):'Settled'}</span></div></div>`; c.invoices.forEach(i=>{ let invDue = i.amount - i.paid; div.innerHTML+=`<div style="font-size:11px;border-top:1px solid #eee;padding:6px 0"><div style="display:flex;justify-content:space-between;flex-wrap:wrap"><div><strong>${i.invoiceNo}</strong> | ${new Date(i.date).toLocaleDateString()}</div><div>Total: ${formatCurrency(i.amount)} | Paid: ${formatCurrency(i.paid)} | ${invDue>0?'Due: '+formatCurrency(invDue):'Settled'}</div></div><div class="action-btns" style="margin-top:5px"><button onclick="openPayment('${i.invoiceNo}')" class="btn-success" style="padding:2px 10px">Pay</button><button onclick="viewInvoice('${i.invoiceNo}')" class="btn-info" style="padding:2px 10px">View</button><button onclick="editInvoice('${i.invoiceNo}')" class="btn-warning" style="padding:2px 10px">Edit</button><button onclick="deleteInvoice('${i.invoiceNo}')" class="btn-danger" style="padding:2px 10px">Del</button><button onclick="shareInvoiceFromInv('${i.invoiceNo}')" class="btn-whatsapp" style="padding:2px 10px">Share</button></div></div>`; }); container.appendChild(div); });
+    document.getElementById('customerTotalBox').innerHTML = `<strong>Overall Summary</strong><br>Total Receivable: ${formatCurrency(totalDueAll)}<br>Total Received: ${formatCurrency(totalPaidAll)}<br>Net Balance: ${formatCurrency(totalDueAll)}`;
+}
+
+// ==================== INVOICES ==================
+function displayInvoices() {
+    let search=document.getElementById('invoiceSearch').value.toLowerCase();
+    let filtered=orders.filter(o=>o.invoiceNo.toLowerCase().includes(search)||o.customer.toLowerCase().includes(search)).reverse();
+    let tb=document.getElementById('invoicesBody'); tb.innerHTML='';
+    filtered.forEach(o=>{ let r=tb.insertRow(); r.insertCell(0).innerHTML=o.invoiceNo; r.insertCell(1).innerHTML=new Date(o.date).toLocaleDateString(); r.insertCell(2).innerHTML=o.customer; r.insertCell(3).innerHTML=formatCurrency(o.total); r.insertCell(4).innerHTML=`<span class="badge badge-${o.status}">${o.status}</span>`; let c=r.insertCell(5); c.innerHTML=`<div class="action-btns"><button onclick="viewInvoice('${o.invoiceNo}')" class="btn-info" style="padding:2px 8px">View</button><button onclick="editInvoice('${o.invoiceNo}')" class="btn-warning" style="padding:2px 8px">Edit</button><button onclick="openPayment('${o.invoiceNo}')" class="btn-success" style="padding:2px 8px">Pay</button><button onclick="deleteInvoice('${o.invoiceNo}')" class="btn-danger" style="padding:2px 8px">Del</button><button onclick="shareInvoiceFromInv('${o.invoiceNo}')" class="btn-whatsapp" style="padding:2px 8px">Share</button></div>`; });
+}
+function openPayment(invNo) { if(!isAdmin) return showToast('🔒 Login first!'); currentPayInvoice=invNo; document.getElementById('paymentModal').style.display='flex'; document.getElementById('paymentAmount').value=''; document.getElementById('paymentNotes').value=''; }
+function closePaymentModal() { document.getElementById('paymentModal').style.display='none'; }
+function confirmPayment() { if(!isAdmin) return showToast('🔒 Login first!'); let amt=parseFloat(document.getElementById('paymentAmount').value); let notes=document.getElementById('paymentNotes').value||'Payment'; if(isNaN(amt)||amt<=0){ showToast('Enter valid amount'); return; } let order=orders.find(o=>o.invoiceNo===currentPayInvoice); if(order){ if(!order.payments) order.payments=[]; order.payments.push({amount:amt,notes:notes,date:new Date().toISOString()}); order.paid=(order.paid||0)+amt; order.status=order.paid>=order.total?'paid':(order.paid>0?'partial':'unpaid'); let cust=customers.find(c=>c.phone===order.phone); if(cust){ let inv=cust.invoices.find(i=>i.invoiceNo===currentPayInvoice); if(inv){ inv.paid=order.paid; inv.status=order.status; inv.payments=order.payments; } } saveData(); displayCustomers(); displayInvoices(); loadMonthlyReport(); loadDailyReport(); updateSummary(); showToast(`Received ${formatCurrency(amt)} - ${notes}`); } closePaymentModal(); }
+function editInvoice(invNo) { if(!isAdmin) return showToast('🔒 Login first!'); let o=orders.find(x=>x.invoiceNo===invNo); if(o){ currentEditInvoice=invNo; document.getElementById('editCustomer').value=o.customer; document.getElementById('editPhone').value=o.phone||''; document.getElementById('editDiscount').value=0; document.getElementById('editModal').style.display='flex'; } }
+function saveEdit() { if(!isAdmin) return showToast('🔒 Login first!'); let o=orders.find(x=>x.invoiceNo===currentEditInvoice); if(o){ let newCust=document.getElementById('editCustomer').value; if(newCust) o.customer=newCust; let newPhone=document.getElementById('editPhone').value; if(newPhone) o.phone=newPhone; let disc=parseFloat(document.getElementById('editDiscount').value)||0; if(disc>0){ let newTotal=o.subtotal-(o.subtotal*disc/100); o.taxAmount=taxEnabled?newTotal*taxRate/100:0; o.total=newTotal+o.taxAmount; o.profit=o.total-o.cost; } saveData(); displayCustomers(); displayInvoices(); loadMonthlyReport(); updateSummary(); showToast('Invoice updated'); } closeEditModal(); }
+function closeEditModal() { document.getElementById('editModal').style.display='none'; }
+function deleteInvoice(invNo) { if(!isAdmin) return showToast('🔒 Login first!'); if(confirm('Delete this invoice permanently?')){ orders=orders.filter(o=>o.invoiceNo!==invNo); customers.forEach(c=>{ c.invoices=c.invoices.filter(i=>i.invoiceNo!==invNo); }); customers=customers.filter(c=>c.invoices.length>0); saveData(); displayCustomers(); displayInvoices(); loadMonthlyReport(); loadDailyReport(); updateSummary(); showToast('Invoice deleted'); } }
+
+// ==================== SUMMARY ==================
+function updateSummary() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('summaryDate').textContent = today;
+    document.getElementById('monthlyDate').textContent = today.substring(0,7);
+    
+    const todaySales = orders.filter(o => o.date.substring(0,10) === today);
+    const todayCash = todaySales.filter(o => o.status === 'paid' || o.paid >= o.total).reduce((s,o) => s + o.total, 0);
+    const todayUdhar = todaySales.filter(o => o.status === 'unpaid' || o.status === 'partial').reduce((s,o) => s + (o.total - (o.paid||0)), 0);
+    const todayIkhrajat = 0; // Will be added later
+    
+    // Sabqa Wusool (previous days' received)
+    const prevSales = orders.filter(o => o.date.substring(0,10) < today);
+    const sabqaWusool = prevSales.reduce((s,o) => s + (o.paid||0), 0);
+    
+    // Advance Wusool (today's received)
+    const advanceWusool = todaySales.reduce((s,o) => s + (o.paid||0), 0);
+    
+    const totalJamma = todayCash + sabqaWusool + advanceWusool;
+    const paymentMinus = totalJamma < todayIkhrajat ? todayIkhrajat - totalJamma : 0;
+    
+    document.getElementById('sumTodaySale').textContent = formatCurrency(todayCash + todayUdhar);
+    document.getElementById('sumUdharSale').textContent = formatCurrency(todayUdhar);
+    document.getElementById('sumIkhrajat').textContent = formatCurrency(todayIkhrajat);
+    document.getElementById('sumSabqaWusool').textContent = formatCurrency(sabqaWusool);
+    document.getElementById('sumAdvanceWusool').textContent = formatCurrency(advanceWusool);
+    document.getElementById('sumTotalJamma').textContent = formatCurrency(totalJamma);
+    document.getElementById('sumPaymentMinus').textContent = formatCurrency(paymentMinus);
+    
+    const pmBox = document.getElementById('paymentMinusBox');
+    pmBox.className = 'summary-box ' + (paymentMinus > 0 ? 'negative' : 'positive');
+    
+    // Opening/Closing Stock
+    calculateStockSummary();
+    
+    // Monthly Summary
+    const month = today.substring(0,7);
+    const monthSales = orders.filter(o => o.date.substring(0,7) === month);
+    const monthData = {};
+    monthSales.forEach(o => {
+        if (!monthData[o.date.substring(0,10)]) monthData[o.date.substring(0,10)] = { sale: 0, udhar: 0, ikhrajat: 0 };
+        if (o.status === 'paid' || o.paid >= o.total) monthData[o.date.substring(0,10)].sale += o.total;
+        else monthData[o.date.substring(0,10)].udhar += (o.total - (o.paid||0));
+    });
+    let mhtml = '';
+    Object.keys(monthData).sort().forEach(d => {
+        const data = monthData[d];
+        const total = data.sale + data.udhar;
+        mhtml += `<tr><td>${d}</td><td>${formatCurrency(data.sale)}</td><td>${formatCurrency(data.udhar)}</td><td>${formatCurrency(data.ikhrajat)}</td><td>${formatCurrency(total)}</td></tr>`;
+    });
+    document.getElementById('monthlySummaryBody').innerHTML = mhtml || '<tr><td colspan="5">No data</td></tr>';
+}
+
+function calculateStockSummary() {
+    const today = new Date().toISOString().split('T')[0];
+    const container = document.getElementById('stockSummaryDisplay');
+    let html = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr;font-weight:bold;border-bottom:2px solid #ccc;padding:4px 0;"><span>Item</span><span>Opening</span><span>In</span><span>Out</span><span>Sold</span><span>Closing</span></div>';
+    
+    products.forEach(item => {
+        const todayIn = orders.filter(o => o.date.substring(0,10) === today).reduce((s,o) => {
+            let total = 0;
+            o.items.forEach(i => { if(i.name === item.name) total += parseFloat(i.qty) || 0; });
+            return s + total;
+        }, 0);
+        const opening = item.stock + todayIn; // Simplified
+        const closing = item.stock;
+        html += `<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr;padding:3px 0;border-bottom:1px solid #eee;font-size:11px;">
+            <span>${item.name}</span>
+            <span>${opening}</span>
+            <span style="color:#27ae60;">0</span>
+            <span style="color:#e74c3c;">0</span>
+            <span style="color:#f39c12;">${todayIn}</span>
+            <span style="font-weight:bold;">${closing}</span>
+        </div>`;
+    });
+    container.innerHTML = html;
+}
+
+// ==================== REPORTS ==================
+function loadDailyReport() {
+    let date = document.getElementById('dailyDate').value;
+    if(!date){ let d = new Date(); date = d.toISOString().slice(0,10); document.getElementById('dailyDate').value = date; }
+    let dayOrders = orders.filter(o => o.date.slice(0,10) === date);
+    let total = dayOrders.reduce((s,o) => s + o.total, 0);
+    let profit = dayOrders.reduce((s,o) => s + o.profit, 0);
+    document.getElementById('dailyTotalSales').innerHTML = formatCurrency(total);
+    document.getElementById('dailyTotalProfit').innerHTML = formatCurrency(profit);
+    document.getElementById('dailyTotalOrders').innerHTML = dayOrders.length;
+    let container = document.getElementById('dailyList'); container.innerHTML = '';
+    if(dayOrders.length === 0){ container.innerHTML = '<div style="text-align:center;padding:30px;color:#666;">No orders found</div>'; return; }
+    dayOrders.forEach(o => { let div = document.createElement('div'); div.className = 'daily-card'; div.innerHTML = `<div style="display:flex;justify-content:space-between;flex-wrap:wrap"><div><strong>${o.invoiceNo}</strong><br><small>${new Date(o.date).toLocaleTimeString()}</small></div><div><strong>${formatCurrency(o.total)}</strong><br>Paid: ${formatCurrency(o.paid||0)}</div></div><div>Customer: ${o.customer}</div><div class="action-btns" style="margin-top:6px"><button onclick="viewInvoice('${o.invoiceNo}')" class="btn-info" style="padding:2px 8px">View</button><button onclick="openPayment('${o.invoiceNo}')" class="btn-success" style="padding:2px 8px">Pay</button><button onclick="shareInvoiceFromInv('${o.invoiceNo}')" class="btn-whatsapp" style="padding:2px 8px">Share</button></div>`; container.appendChild(div); });
+}
+function loadMonthlyReport() {
+    let m = document.getElementById('monthPicker').value;
+    if(!m){ let d = new Date(); m = d.toISOString().slice(0,7); document.getElementById('monthPicker').value = m; }
+    let filtered = orders.filter(o => o.date.substring(0,7) === m);
+    let totalSales = filtered.reduce((s,o) => s + o.total, 0);
+    let totalProfit = filtered.reduce((s,o) => s + o.profit, 0);
+    let totalOrders = filtered.length;
+    let avgOrder = totalOrders > 0 ? totalSales / totalOrders : 0;
+    document.getElementById('monthlyTotalSales').innerHTML = formatCurrency(totalSales);
+    document.getElementById('monthlyTotalProfit').innerHTML = formatCurrency(totalProfit);
+    document.getElementById('monthlyTotalOrders').innerHTML = totalOrders;
+    document.getElementById('monthlyAvgOrder').innerHTML = formatCurrency(avgOrder);
+    let tb = document.getElementById('monthlyBody'); tb.innerHTML = '';
+    if(filtered.length === 0){ tb.innerHTML = '<tr><td colspan="9" style="text-align:center">No orders found</td></tr>'; return; }
+    filtered.forEach(o => { let r = tb.insertRow(); r.insertCell(0).innerHTML = new Date(o.date).toLocaleDateString(); r.insertCell(1).innerHTML = o.invoiceNo; r.insertCell(2).innerHTML = o.customer; r.insertCell(3).innerHTML = o.phone || '-'; r.insertCell(4).innerHTML = o.items.length; r.insertCell(5).innerHTML = formatCurrency(o.total); r.insertCell(6).innerHTML = formatCurrency(o.profit); r.insertCell(7).innerHTML = `<span class="badge badge-${o.status}">${o.status}</span>`; let c = r.insertCell(8); c.innerHTML = `<div class="action-btns"><button onclick="viewInvoice('${o.invoiceNo}')" class="btn-info" style="padding:2px 8px">View</button><button onclick="editInvoice('${o.invoiceNo}')" class="btn-warning" style="padding:2px 8px">Edit</button><button onclick="openPayment('${o.invoiceNo}')" class="btn-success" style="padding:2px 8px">Pay</button><button onclick="shareInvoiceFromInv('${o.invoiceNo}')" class="btn-whatsapp" style="padding:2px 8px">Share</button></div>`; });
+}
+
+// ==================== INVOICE VIEW & SHARE ==================
+function viewInvoice(invNo) {
+    let o=orders.find(x=>x.invoiceNo===invNo); if(!o) return;
+    let items='<table style="width:100%"><thead><tr><th>Item</th><th>Size</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead><tbody>';
+    o.items.forEach(i=>{ items+=`<tr><td style="padding:6px">${i.name}</td><td style="padding:6px">${i.size}</td><td style="padding:6px">${i.qty}</td><td style="padding:6px">${formatCurrency(i.price)}</td><td style="padding:6px">${formatCurrency(i.total)}</td></tr>`; });
+    items+='</tbody></table>';
+    let rem=o.total-(o.paid||0);
+    let html=`<div id="invoicePrint" class="invoice-box"><div class="header"><h2>🏢 ${company.name}</h2><p>${company.tagline}</p><p>${company.address} | ${company.phone}</p></div><div class="body"><div style="margin-bottom:15px"><strong>Invoice:</strong> ${o.invoiceNo}<br><strong>Date:</strong> ${new Date(o.date).toLocaleString()}<br><strong>Customer:</strong> ${o.customer}<br><strong>Phone:</strong> ${o.phone}</div>${items}<div style="text-align:right;margin-top:15px"><h3>Total: ${formatCurrency(o.total)}</h3><p>Paid: ${formatCurrency(o.paid||0)}</p><p><strong>${rem>0?`Due from ${o.customer}: ${formatCurrency(rem)}`: (rem<0?`Refund to ${o.customer}: ${formatCurrency(Math.abs(rem))}`:'Fully Paid ✓')}</strong></p></div></div></div>`;
+    if(currentLang==='ar'){ html=html.replace('Item','المنتج').replace('Size','المقاس').replace('Qty','الكمية').replace('Price','السعر').replace('Total','الإجمالي').replace('Invoice','الفاتورة').replace('Date','التاريخ').replace('Customer','العميل').replace('Phone','الجوال'); }
+    document.getElementById('invoiceDetails').innerHTML=html;
+    document.getElementById('invoiceModal').style.display='flex';
+    currentInvoiceNo=invNo;
+}
+async function downloadPDF() { if(!currentInvoiceNo) return; let o=orders.find(x=>x.invoiceNo===currentInvoiceNo); if(!o) return; let items=''; o.items.forEach(i=>{ items+=`<tr><td style="padding:5px">${i.name}</td><td style="padding:5px">${i.size}</td><td style="padding:5px">${i.qty}</td><td style="padding:5px">${formatCurrency(i.price)}</td><td style="padding:5px">${formatCurrency(i.total)}</td></tr>`; }); let html=`<div style="font-family:Arial;max-width:600px;margin:auto;border:2px solid #ffd700;border-radius:10px"><div style="background:linear-gradient(135deg,#0f2027,#203a43);color:#ffd700;padding:15px;text-align:center"><h2>🏢 ${company.name}</h2><p>${company.tagline}</p></div><div style="padding:15px"><div><strong>Invoice:</strong> ${o.invoiceNo}<br><strong>Date:</strong> ${new Date(o.date).toLocaleString()}<br><strong>Customer:</strong> ${o.customer}</div><table style="width:100%;margin-top:10px"><thead><tr style="background:#1a1a2e;color:#ffd700"><th>Item</th><th>Size</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead><tbody>${items}</tbody></table><div style="text-align:right;margin-top:10px"><h3>Total: ${formatCurrency(o.total)}</h3></div></div></div>`;
+    let tpl=document.getElementById('pdfTemplate'); tpl.innerHTML=html;
+    try{ let canvas=await html2canvas(tpl,{scale:2}); let img=canvas.toDataURL('image/png'); let {jsPDF}=window.jspdf; let doc=new jsPDF('p','mm','a4'); doc.addImage(img,'PNG',10,0,190,(canvas.height*190)/canvas.width); doc.save(`${company.name}_${o.invoiceNo}.pdf`); showToast('PDF Downloaded'); }catch(e){ showToast('Error generating PDF'); } }
+async function shareInvoiceImage() { let el=document.getElementById('invoicePrint'); if(!el) return; let canvas=await html2canvas(el,{scale:2}); let img=canvas.toDataURL('image/png'); let w=window.open('','_blank'); w.document.write(`<html><body style="margin:0"><img src="${img}" style="max-width:100%"></body></html>`); w.document.close(); showToast('Image ready - share from new tab'); }
+async function shareInvoiceFromInv(invNo) { let o=orders.find(x=>x.invoiceNo===invNo); if(!o) return; let items=''; o.items.forEach(i=>{ items+=`<tr><td style="padding:3px">${i.name}</td><td style="padding:3px">${i.size}</td><td style="padding:3px">${i.qty}</td><td style="padding:3px">${formatCurrency(i.price)}</td><td style="padding:3px">${formatCurrency(i.total)}</td></tr>`; }); let div=document.createElement('div'); div.style.cssText='font-family:Arial;background:white;padding:10px;border:2px solid #ffd700;border-radius:10px;max-width:500px'; div.innerHTML=`<div style="background:#1a1a2e;color:#ffd700;padding:8px;text-align:center"><strong>🏢 ${company.name}</strong></div><div style="padding:8px"><strong>Invoice:</strong> ${o.invoiceNo}<br><strong>Date:</strong> ${new Date(o.date).toLocaleString()}<br><strong>Customer:</strong> ${o.customer}</div><table style="width:100%"><thead><tr style="background:#ffd700"><th>Item</th><th>Size</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead><tbody>${items}</tbody></table><div style="text-align:right;margin-top:8px"><strong>Total: ${formatCurrency(o.total)}</strong><br>Paid: ${formatCurrency(o.paid||0)}<br>Balance: ${formatCurrency(o.total-(o.paid||0))}</div>`;
+    document.body.appendChild(div); let canvas=await html2canvas(div,{scale:2}); let img=canvas.toDataURL('image/png'); document.body.removeChild(div); let w=window.open('','_blank'); w.document.write(`<html><body style="margin:0"><img src="${img}" style="max-width:100%"></body></html>`); w.document.close(); showToast('Image ready'); }
+function sendWhatsApp() { let o=orders.find(x=>x.invoiceNo===currentInvoiceNo); if(!o || !o.phone){ showToast('No phone number'); return; } let p=o.phone.replace(/\D/g,''); if(p.startsWith('05')) p='966'+p.substring(1); let msg=`${company.name} Invoice ${o.invoiceNo}%0ATotal: ${formatCurrency(o.total)}%0APaid: ${formatCurrency(o.paid||0)}%0ABalance: ${formatCurrency(o.total-(o.paid||0))}%0A${company.tagline}`; window.open(`https://wa.me/${p}?text=${msg}`); }
+function printInvoice() { let w=window.open('','_blank'); w.document.write(`<html><head><title>Invoice</title><style>body{padding:20px} table{width:100%} th,td{padding:8px;border-bottom:1px solid #ddd} th{background:#1a1a2e;color:#ffd700}</style></head><body>${document.getElementById('invoiceDetails').innerHTML}</body></html>`); w.document.close(); w.print(); }
+function closeModal() { document.getElementById('invoiceModal').style.display='none'; }
+async function generateCartPDF() { if(cart.length===0){ showToast('Cart empty'); return; } let cust=document.getElementById('customerName').value; let sub=cart.reduce((s,i)=>s+i.total,0); let tax=taxEnabled?sub*taxRate/100:0; let total=sub+tax; let items=''; cart.forEach(i=>{ items+=`<tr><td style="padding:5px">${i.name}</td><td style="padding:5px">${i.size}</td><td style="padding:5px">${i.qty}</td><td style="padding:5px">${formatCurrency(i.price)}</td><td style="padding:5px">${formatCurrency(i.total)}</td></tr>`; }); let html=`<div style="font-family:Arial;max-width:600px;margin:auto;border:2px solid #ffd700;border-radius:10px"><div style="background:#1a1a2e;color:#ffd700;padding:12px;text-align:center"><h2>🏢 ${company.name} - Cart Preview</h2></div><div style="padding:15px"><p><strong>Customer:</strong> ${cust}</p><table style="width:100%"><thead><tr style="background:#ffd700"><th>Item</th><th>Size</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead><tbody>${items}</tbody></table><div style="text-align:right;margin-top:10px"><h3>Total: ${formatCurrency(total)}</h3></div></div></div>`;
+    let tpl=document.getElementById('pdfTemplate'); tpl.innerHTML=html;
+    try{ let canvas=await html2canvas(tpl,{scale:2}); let img=canvas.toDataURL('image/png'); let {jsPDF}=window.jspdf; let doc=new jsPDF('p','mm','a4'); doc.addImage(img,'PNG',10,0,190,(canvas.height*190)/canvas.width); doc.save(`${company.name}_Cart.pdf`); showToast('PDF Downloaded'); }catch(e){ showToast('Error'); } }
+
+// ==================== SETTINGS ==================
+function saveCompanySettings() { company.name=document.getElementById('companyNameSetting').value; company.tagline=document.getElementById('companyTaglineSetting').value; company.address=document.getElementById('companyAddressSetting').value; company.phone=document.getElementById('companyPhoneSetting').value; saveData(); document.getElementById('companyName').innerHTML=`🏢 ${company.name}`; document.getElementById('companyTagline').innerHTML=company.tagline; showToast('Company settings saved'); }
+function saveTaxSettings() { taxEnabled=document.getElementById('taxEnableCheck').checked; taxRate=parseFloat(document.getElementById('taxRateSetting').value); taxName=document.getElementById('taxNameSetting').value; saveData(); document.getElementById('taxRateDisplay').innerHTML=taxRate; updateCartDisplay(); showToast('Tax settings saved'); }
+function backupData() { let data={products,orders,customers,taxEnabled,taxRate,taxName,company}; let a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(data)],{type:'application/json'})); a.download=`backup_${new Date().toISOString().slice(0,19)}.json`; a.click(); showToast('Backup created'); }
+function restoreData(file) { let r=new FileReader(); r.onload=e=>{ try{ let d=JSON.parse(e.target.result); if(d.products) products=d.products; if(d.orders) orders=d.orders; if(d.customers) customers=d.customers; if(d.taxEnabled!==undefined) taxEnabled=d.taxEnabled; if(d.taxRate) taxRate=d.taxRate; if(d.taxName) taxName=d.taxName; if(d.company) company=d.company; saveData(); location.reload(); } catch(err){ showToast('Invalid backup file'); } }; r.readAsText(file.files[0]); }
+function resetAll() { if(prompt('Type CONFIRM to delete ALL data:')==='CONFIRM'){ localStorage.clear(); location.reload(); } }
+
+// ==================== FIREBASE SYNC ==================
+function syncToCloud() {
+    const data = { products, orders, customers, taxEnabled, taxRate, taxName, company };
+    database.ref('warda_data').set(data).then(() => {
+        showToast('✅ Synced to cloud!');
+    }).catch(err => {
+        showToast('❌ Sync failed!');
+        console.error(err);
+    });
+}
+function syncFromCloud() {
+    database.ref('warda_data').once('value').then(snapshot => {
+        const data = snapshot.val();
+        if (data) {
+            if (data.products) products = data.products;
+            if (data.orders) orders = data.orders;
+            if (data.customers) customers = data.customers;
+            if (data.taxEnabled !== undefined) taxEnabled = data.taxEnabled;
+            if (data.taxRate) taxRate = data.taxRate;
+            if (data.taxName) taxName = data.taxName;
+            if (data.company) company = data.company;
+            saveData();
+            location.reload();
+            showToast('✅ Synced from cloud!');
         } else {
-            updateStatus('offline');
+            showToast('❌ No data in cloud');
         }
-    }, 30000);
+    }).catch(err => {
+        showToast('❌ Sync failed!');
+        console.error(err);
+    });
+}
 
-    console.log('🚀 Warda Marble Pro Ready! Items:', db.items.length);
+// ==================== INIT ==================
+loadData(); displayProducts(); loadInventory(); updateCartDisplay(); displayCustomers(); displayInvoices(); loadMonthlyReport(); loadDailyReport(); updateSummary();
+document.getElementById('monthPicker').value=new Date().toISOString().slice(0,7);
+document.getElementById('dailyDate').value=new Date().toISOString().slice(0,10);
+document.getElementById('companyNameSetting').value=company.name;
+document.getElementById('companyTaglineSetting').value=company.tagline;
+document.getElementById('companyAddressSetting').value=company.address;
+document.getElementById('companyPhoneSetting').value=company.phone;
+document.getElementById('taxEnableCheck').checked=taxEnabled;
+document.getElementById('taxRateSetting').value=taxRate;
+document.getElementById('taxNameSetting').value=taxName;
+document.getElementById('taxRateDisplay').innerHTML=taxRate;
+
+// Show login on load
+document.getElementById('loginOverlay').style.display = 'flex';
+document.getElementById('appContainer').classList.add('view-only');
+
+window.openPayment=openPayment; window.viewInvoice=viewInvoice; window.deleteInvoice=deleteInvoice; window.editInvoice=editInvoice; window.shareInvoiceFromInv=shareInvoiceFromInv;
 </script>
 </body>
 </html>
