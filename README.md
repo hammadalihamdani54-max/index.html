@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -56,7 +55,6 @@
         .btn-sm{padding:1px 3px;font-size:5px}
         .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:2px}
         .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px}
-        .grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:2px}
         .form-group{margin-bottom:1px}
         .form-group label{display:block;font-size:6px;font-weight:600;color:#2d3748;margin-bottom:1px}
         .form-group input,.form-group select{width:100%;padding:2px 3px;border:1px solid #e2e6ea;border-radius:3px;font-size:7px;background:#f7f9fb}
@@ -112,20 +110,16 @@
         .summary-box.positive .num{color:#218838}
         .summary-box.negative .num{color:#c0392b}
         .summary-box.warning .num{color:#d4a017}
-        .pos-inputs{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:2px;padding:2px 0}
-        .pos-inputs input{width:100%;padding:2px 3px;border:1px solid #e2e6ea;border-radius:3px;font-size:7px;background:#f7f9fb;text-align:center}
-        .pos-inputs input:focus{border-color:#0f1a2e;outline:none;background:white}
-        .pos-inputs .label{font-size:5px;color:#6b7a8a;text-align:center}
         .bill-item{cursor:pointer;padding:3px;border:1px solid #e2e6ea;border-radius:4px;margin:2px 0;background:#f8fafc;font-size:7px;transition:0.15s}
         .bill-item:hover{background:#edf1f5;border-color:#d4a017}
         .bill-item .bill-header{display:flex;justify-content:space-between;font-weight:600}
         .bill-item .bill-footer{font-size:5px;color:#6b7a8a;display:flex;justify-content:space-between}
         .stock-summary{background:#f0f4f8;padding:3px;border-radius:4px;margin:2px 0;font-size:6px}
         .stock-summary .row{display:flex;justify-content:space-between;padding:1px 0}
-        @media(max-width:480px){.pos-grid{grid-template-columns:1fr 1fr 1fr}.header h1{font-size:10px}.bottom-actions{grid-template-columns:1fr 1fr}.summary-grid{grid-template-columns:1fr 1fr}}
-        @media(min-width:768px){.pos-grid{grid-template-columns:1fr 1fr 1fr 1fr 1fr}}
         .undo-btn{background:#d4a017;color:white;border:none;padding:1px 6px;border-radius:3px;cursor:pointer;font-size:6px}
         .undo-btn:hover{background:#b8890f}
+        @media(max-width:480px){.pos-grid{grid-template-columns:1fr 1fr 1fr}.header h1{font-size:10px}.bottom-actions{grid-template-columns:1fr 1fr}.summary-grid{grid-template-columns:1fr 1fr}}
+        @media(min-width:768px){.pos-grid{grid-template-columns:1fr 1fr 1fr 1fr 1fr}}
     </style>
 </head>
 <body>
@@ -176,14 +170,6 @@
                 </div>
                 <div class="cart-items" id="cartItems"></div>
                 <div class="total-bar"><span>Total:</span><span id="cartTotal">0.00</span></div>
-                
-                <!-- POS Input Boxes -->
-                <div class="pos-inputs" id="posInputs">
-                    <div><div class="label">Length</div><input type="number" id="posLength" placeholder="L" value="0" step="0.01"></div>
-                    <div><div class="label">Width</div><input type="number" id="posWidth" placeholder="W" value="0" step="0.01"></div>
-                    <div><div class="label">SQM</div><input type="number" id="posSqm" placeholder="m²" value="0" step="0.01" readonly style="background:#edf2f7;"></div>
-                    <div><div class="label">Pieces</div><input type="number" id="posPieces" placeholder="Pcs" value="0" step="1"></div>
-                </div>
                 
                 <div class="bottom-actions">
                     <select id="saleType" style="padding:2px 3px;border-radius:3px;border:1px solid #e2e6ea;font-size:6px;">
@@ -304,7 +290,6 @@
                 <div style="font-size:5px;color:#6b7a8a;text-align:center;padding:2px;">Auto calculated from today's data</div>
             </div>
 
-            <!-- ========== OPENING/CLOSING STOCK ========== -->
             <div class="card">
                 <div class="card-title"><i class="fas fa-boxes"></i> Opening / Closing Stock</div>
                 <div id="stockSummaryDisplay" class="stock-summary"></div>
@@ -583,7 +568,6 @@
     let cart = [];
     let currentFilter = 'all';
     let isSyncing = false;
-    let selectedItemId = null;
 
     function loadLocal() {
         const data = localStorage.getItem('warda_data');
@@ -636,20 +620,6 @@
         document.body.appendChild(t);
         setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 1400);
     }
-
-    // ============================================================
-    // POS INPUTS - Auto Calculate SQM
-    // ============================================================
-    function calculateSQM() {
-        const length = parseFloat(document.getElementById('posLength').value) || 0;
-        const width = parseFloat(document.getElementById('posWidth').value) || 0;
-        const sqm = (length * width) / 10.764;
-        document.getElementById('posSqm').value = sqm.toFixed(2);
-        return sqm;
-    }
-
-    document.getElementById('posLength').addEventListener('input', calculateSQM);
-    document.getElementById('posWidth').addEventListener('input', calculateSQM);
 
     // ============================================================
     // ITEMS
@@ -782,7 +752,7 @@
     }
 
     // ============================================================
-    // POS
+    // POS - PRANA SYSTEM JESA
     // ============================================================
     function filterCategory(cat) {
         currentFilter = cat;
@@ -801,7 +771,7 @@
         let html = '';
         items.forEach(item => {
             const out = item.stock <= 0 ? 'out-of-stock' : '';
-            html += `<div class="pos-item ${out}" onclick="${out ? '' : `selectPOSItem(${item.id})`}" style="${out ? 'opacity:0.4;pointer-events:none;' : ''}">
+            html += `<div class="pos-item ${out}" onclick="${out ? '' : `addToCart(${item.id})`}" style="${out ? 'opacity:0.4;pointer-events:none;' : ''}">
                 <div class="name">${item.name}</div>
                 <div class="size">${item.size || ''}</div>
                 <div class="price">${item.sellPrice}</div>
@@ -811,79 +781,29 @@
         grid.innerHTML = html;
     }
 
-    function selectPOSItem(id) {
+    // ============================================================
+    // CART - PRANA SYSTEM JESA
+    // ============================================================
+    function addToCart(id) {
         const item = db.items.find(i => i.id === id);
-        if (!item) return;
-        selectedItemId = id;
-        document.getElementById('posLength').value = '0';
-        document.getElementById('posWidth').value = '0';
-        document.getElementById('posSqm').value = '0';
-        document.getElementById('posPieces').value = '0';
-        showToast(`✅ ${item.name} selected! Enter quantity`);
-    }
-
-    // ============================================================
-    // CART
-    // ============================================================
-    function addToCartFromInputs() {
-        if (!selectedItemId) return alert('Select an item first!');
-        const item = db.items.find(i => i.id === selectedItemId);
-        if (!item) return;
-        if (item.stock <= 0) return alert('Out of stock!');
-        
-        let qty = 0;
-        let sqm = 0;
-        let pieces = parseFloat(document.getElementById('posPieces').value) || 0;
-        let length = parseFloat(document.getElementById('posLength').value) || 0;
-        let width = parseFloat(document.getElementById('posWidth').value) || 0;
-        let inputSqm = parseFloat(document.getElementById('posSqm').value) || 0;
-        
-        if (item.category === 'stone') {
-            if (length > 0 && width > 0) {
-                sqm = (length * width) / 10.764;
-            } else if (inputSqm > 0) {
-                sqm = inputSqm;
-            } else if (pieces > 0 && length > 0 && width > 0) {
-                sqm = ((length * width) / 10.764) * pieces;
-            } else if (pieces > 0) {
-                qty = pieces;
-            } else {
-                return alert('Enter Length, Width, SQM or Pieces!');
-            }
-            if (sqm > 0) qty = sqm;
-        } else {
-            qty = pieces;
-            if (qty <= 0) return alert('Enter Pieces!');
-        }
-        
-        if (qty <= 0) return alert('Invalid quantity!');
-        if (item.stock < qty) return alert(`Not enough stock! Available: ${item.stock}`);
-        
-        const existing = cart.find(c => c.id === item.id);
+        if (!item || item.stock <= 0) return alert('Out of stock!');
+        const existing = cart.find(c => c.id === id);
         if (existing) {
-            existing.qty += qty;
+            if (existing.qty >= item.stock) return alert('Not enough stock!');
+            existing.qty++;
         } else {
-            cart.push({
-                id: item.id,
-                name: item.name,
+            cart.push({ 
+                id: item.id, 
+                name: item.name, 
                 size: item.size || '',
-                price: item.sellPrice,
-                qty: qty,
-                unit: item.unit,
-                category: item.category,
-                purchasePrice: item.purchasePrice || 0,
-                sqm: sqm,
-                pieces: pieces,
-                length: length,
-                width: width
+                price: item.sellPrice, 
+                qty: 1, 
+                unit: item.unit, 
+                category: item.category, 
+                purchasePrice: item.purchasePrice || 0 
             });
         }
         renderCart();
-        document.getElementById('posLength').value = '0';
-        document.getElementById('posWidth').value = '0';
-        document.getElementById('posSqm').value = '0';
-        document.getElementById('posPieces').value = '0';
-        showToast(`✅ Added to cart!`);
     }
 
     function removeFromCart(id) {
@@ -924,7 +844,7 @@
                 <span><strong>${c.name}</strong> ${c.size} (${qtyDisplay})</span>
                 <div class="qty-control">
                     <button onclick="updateQty(${c.id}, -1)">−</button>
-                    <span style="min-width:12px;text-align:center;">${c.category === 'stone' ? c.qty.toFixed(1) : c.qty}</span>
+                    <span style="min-width:12px;text-align:center;">${c.qty}</span>
                     <button onclick="updateQty(${c.id}, 1)">+</button>
                     <button onclick="removeFromCart(${c.id})" style="background:#f8d7da;border:none;border-radius:50%;width:16px;height:16px;cursor:pointer;font-size:6px;color:#721c24;">✕</button>
                 </div>
@@ -940,15 +860,6 @@
     // ============================================================
     function completeSale() {
         if (!isAdmin) return alert('🔒 Admin only! Login first.');
-        
-        const length = parseFloat(document.getElementById('posLength').value) || 0;
-        const width = parseFloat(document.getElementById('posWidth').value) || 0;
-        const sqm = parseFloat(document.getElementById('posSqm').value) || 0;
-        const pieces = parseFloat(document.getElementById('posPieces').value) || 0;
-        if (length > 0 || width > 0 || sqm > 0 || pieces > 0) {
-            addToCartFromInputs();
-        }
-        
         if (!cart.length) return alert('Cart empty!');
         
         const type = document.getElementById('saleType').value;
@@ -963,7 +874,7 @@
             total += subtotal;
             if (item.category === 'stone') stoneTotal += subtotal;
             else materialTotal += subtotal;
-            items.push({ id: c.id, name: c.name, size: c.size || '', qty: c.qty, price: c.price, unit: c.unit, category: c.category, purchasePrice: c.purchasePrice, sqm: c.sqm || 0, pieces: c.pieces || 0 });
+            items.push({ id: c.id, name: c.name, size: c.size || '', qty: c.qty, price: c.price, unit: c.unit, category: c.category, purchasePrice: c.purchasePrice });
             item.stock -= c.qty;
         });
         if (!valid) return;
@@ -981,10 +892,6 @@
         cart = [];
         saveLocal(); syncToCloud(); renderAll();
         document.getElementById('salePaid').value = '0';
-        document.getElementById('posLength').value = '0';
-        document.getElementById('posWidth').value = '0';
-        document.getElementById('posSqm').value = '0';
-        document.getElementById('posPieces').value = '0';
         showToast(`✅ Sale: ${total.toFixed(2)} | Profit: ${profit.toFixed(2)}`);
     }
 
@@ -995,7 +902,7 @@
         if (!isAdmin) return alert('🔒 Admin only! Login first.');
         const name = document.getElementById('custName').value.trim();
         if (!name) return alert('Enter name!');
-        db.customers.push({ id: Date.now(), name, phone: document.getElementById('custPhone').value, balance: 0, advance: 0 });
+        db.customers.push({ id: Date.now(), name, phone: document.getElementById('custPhone').value, balance: 0 });
         saveLocal(); syncToCloud(); renderAll();
         document.getElementById('custName').value = ''; document.getElementById('custPhone').value = '';
         showToast('✅ Customer added!');
@@ -1043,35 +950,28 @@
         const today = getToday();
         const container = document.getElementById('stockSummaryDisplay');
         
-        // Get previous day's closing stock
         const prevDate = new Date();
         prevDate.setDate(prevDate.getDate() - 1);
         const prevDateStr = prevDate.toISOString().split('T')[0];
         
-        // Find saved daily stock
         const prevStock = db.dailyStock.find(d => d.date === prevDateStr);
-        const todayStock = db.dailyStock.find(d => d.date === today);
         
         let html = '<div class="row"><strong>Item</strong><strong>Opening</strong><strong>In</strong><strong>Out</strong><strong>Sold</strong><strong>Closing</strong></div>';
         
         db.items.forEach(item => {
-            // Opening = previous day's closing or current stock if no history
             let opening = 0;
             if (prevStock && prevStock.items) {
                 const found = prevStock.items.find(i => i.id === item.id);
                 opening = found ? found.closing : 0;
             } else {
-                // If no history, use current stock as opening (for first day)
                 opening = item.stock;
             }
             
-            // Calculate today's in/out from stock history
             const todayIn = db.stockHistory.filter(h => h.date === today && h.item === item.name && h.type === 'In')
                 .reduce((sum, h) => sum + h.qty, 0);
             const todayOut = db.stockHistory.filter(h => h.date === today && h.item === item.name && h.type === 'Out')
                 .reduce((sum, h) => sum + h.qty, 0);
             
-            // Calculate today's sales
             const todaySales = db.sales.filter(s => s.date === today);
             let sold = 0;
             todaySales.forEach(s => {
@@ -1080,23 +980,20 @@
                 });
             });
             
-            // Closing = Opening + In - Out - Sold
             const closing = opening + todayIn - todayOut - sold;
             
             // Save daily stock
-            if (!todayStock) {
-                const newDailyStock = { date: today, items: [] };
-                db.dailyStock.push(newDailyStock);
+            let dailyStock = db.dailyStock.find(d => d.date === today);
+            if (!dailyStock) {
+                dailyStock = { date: today, items: [] };
+                db.dailyStock.push(dailyStock);
             }
-            const currentDaily = db.dailyStock.find(d => d.date === today);
-            if (currentDaily) {
-                const existing = currentDaily.items.find(i => i.id === item.id);
-                if (existing) {
-                    existing.opening = opening;
-                    existing.closing = closing;
-                } else {
-                    currentDaily.items.push({ id: item.id, name: item.name, opening: opening, closing: closing });
-                }
+            const existing = dailyStock.items.find(i => i.id === item.id);
+            if (existing) {
+                existing.opening = opening;
+                existing.closing = closing;
+            } else {
+                dailyStock.items.push({ id: item.id, name: item.name, opening: opening, closing: closing });
             }
             
             html += `<div class="row">
@@ -1143,10 +1040,8 @@
         const pmBox = document.getElementById('paymentMinusBox');
         pmBox.className = 'summary-box ' + (paymentMinus > 0 ? 'negative' : 'positive');
         
-        // Calculate stock summary
         calculateStockSummary();
         
-        // Monthly Summary
         const month = getMonth();
         const monthSales = db.sales.filter(s => s.date.startsWith(month));
         const monthData = {};
@@ -1170,7 +1065,7 @@
     }
 
     // ============================================================
-    // INVOICES
+    // INVOICES - PRANA SYSTEM JESA
     // ============================================================
     function viewCustomerBills(customerId) {
         const cust = db.customers.find(c => c.id === customerId);
