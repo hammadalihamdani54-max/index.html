@@ -411,31 +411,23 @@ let taxEnabled = true, taxRate = 15, taxName = "VAT";
 let company = { name: "WARDA MARBLE", tagline: "Premium Marble Solutions | Since 2020", address: "Tabuk, Saudi Arabia", phone: "+966 59 807 4287" };
 let currentInvoiceNo = null, currentPayInvoice = null, currentEditInvoice = null;
 
-// ==================== BUILD PRODUCTS ==================
+// ==================== BUILD PRODUCTS (ONLY 10) ==================
 function buildProducts() {
-    let prods = []; let id = 1;
-    let mwad = [
-        ["زاویہ اپ ڈاون","4*4*3mm",9200],["زاویہ اپ ڈاون","4*4*2mm",6600],["زاویہ اپ ڈاون","4*3*3mm",4300],["زاویہ اپ ڈاون","4*3*2mm",2500],
-        ["زاویہ اپ ڈاون","4*5*3mm",1200],["زاویہ اپ ڈاون","4*6*3mm",850],["زاویہ اپ ڈاون","4*8*3mm",420],["زاویہ اپ ڈاون","4*10*3mm",400],
-        ["مسمار مغلوب","10*40",4800],["مسمار مغلوب","10*50",4800],["مسمار مغلوب","10*60",3500],["مسمار مغلوب","10*80",1500],["مسمار مغلوب","10*100",1440],
-        ["براغی سقف","10*72",2200],["براغی سقف","10*92",2100],["براغی سقف","10*112",1920],["براغی سقف","10*115",2200],["براغی سقف","10*202",1040],
-        ["جولی ابو جمل","Standard",5],["جولی گلیڈتیر","Standard",0],["دسک حجر احمر","7 بوسہ",0],["دسک حجر احمر","4.50 بوسہ",7],
-        ["دسک جرانیت","7 بوسہ",3],["دسک بوش","9 بوسہ",20],["ریشہ ہلتی","20cm",0],["ریشہ ہلتی","15cm",24],["ریشہ ہلتی","10cm",1],
-        ["ریشہ دریل","4mm",12],["ریشہ دریل","6mm",10],["ریشہ دریل","10mm",16],["گمتا چوڑی","Standard",7],["گمتا سادہ","Standard",7],["بکرا","Standard",1]
-    ];
-    mwad.forEach(m => { prods.push({ id: id++, name: m[0], size: m[1], group: 'mwad', selling: 0, cost: 0, stock: m[2], type: 'pieces' }); });
+    let prods = [];
+    let id = 1;
     
-    let mojaliSizes = ["3*7","3*10","3*15","3*18","3*20","3*25","3*27","3*30","3*32","3*35","3*37","3*40","3*50","3*60"];
-    mojaliSizes.forEach(s => { prods.push({ id: id++, name: "ابیض مجلی مبروم", size: s, group: 'mojali', selling: 65, cost: 50, stock: 50, type: 'sqm' }); });
-    mojaliSizes.forEach(s => { prods.push({ id: id++, name: "ابیض مجلی سادہ", size: s, group: 'mojali', selling: 60, cost: 45, stock: 50, type: 'sqm' }); });
-    let mojaliSpecial = [["(A) ابیض مجلی فرزا","3*40*80",75],["(C) ابیض مجلی فرزا","3*40*60",75],["ابیض مجلی مشطوف","3*30",70],["ابیض بشارتہ فرزا","3*40*80",85],["MNHOOD ABIAZ","3*20*1.20",65]];
-    mojaliSpecial.forEach(m => { prods.push({ id: id++, name: m[0], size: m[1], group: 'mojali', selling: m[2], cost: m[2]-12, stock: 50, type: 'sqm' }); });
+    // Only 10 products for fast loading
+    prods.push({ id: id++, name: "زاویہ اپ ڈاون", size: "4*4*3mm", group: 'mwad', selling: 0, cost: 0, stock: 9200, type: 'pieces' });
+    prods.push({ id: id++, name: "زاویہ اپ ڈاون", size: "4*4*2mm", group: 'mwad', selling: 0, cost: 0, stock: 6600, type: 'pieces' });
+    prods.push({ id: id++, name: "زاویہ اپ ڈاون", size: "4*3*3mm", group: 'mwad', selling: 0, cost: 0, stock: 4300, type: 'pieces' });
+    prods.push({ id: id++, name: "ابیض مجلی مبروم", size: "3*7", group: 'mojali', selling: 65, cost: 50, stock: 50, type: 'sqm' });
+    prods.push({ id: id++, name: "ابیض مجلی مبروم", size: "3*10", group: 'mojali', selling: 65, cost: 50, stock: 50, type: 'sqm' });
+    prods.push({ id: id++, name: "ابیض مجلی سادہ", size: "3*7", group: 'mojali', selling: 60, cost: 45, stock: 50, type: 'sqm' });
+    prods.push({ id: id++, name: "ابیض مجلی سادہ", size: "3*10", group: 'mojali', selling: 60, cost: 45, stock: 50, type: 'sqm' });
+    prods.push({ id: id++, name: "ابیض مصنفر مبروم", size: "3*7", group: 'mosnafar', selling: 55, cost: 42, stock: 50, type: 'sqm' });
+    prods.push({ id: id++, name: "ابیض مصنفر مبروم", size: "3*10", group: 'mosnafar', selling: 55, cost: 42, stock: 50, type: 'sqm' });
+    prods.push({ id: id++, name: "ابیض مصنفر سادہ", size: "3*7", group: 'mosnafar', selling: 50, cost: 38, stock: 50, type: 'sqm' });
     
-    let mosnafarSizes = ["3*7","3*10","3*15","3*18","3*20","3*25","3*27","3*30","3*32","3*35","3*37","3*40","3*50","3*60","4*7","5*7"];
-    mosnafarSizes.forEach(s => { prods.push({ id: id++, name: "ابیض مصنفر مبروم", size: s, group: 'mosnafar', selling: 55, cost: 42, stock: 50, type: 'sqm' }); });
-    mosnafarSizes.forEach(s => { prods.push({ id: id++, name: "ابیض مصنفر سادہ", size: s, group: 'mosnafar', selling: 50, cost: 38, stock: 50, type: 'sqm' }); });
-    let mosnafarSpecial = [["ابیض مصنفر فرزا","3*40*80",65],["پیانو ابیض مصنفر","3*20*50",55]];
-    mosnafarSpecial.forEach(m => { prods.push({ id: id++, name: m[0], size: m[1], group: 'mosnafar', selling: m[2], cost: m[2]-10, stock: 50, type: 'sqm' }); });
     return prods;
 }
 
@@ -558,15 +550,11 @@ function updateSummary() {
     const todaySales = orders.filter(o => o.date.substring(0,10) === today);
     const todayCash = todaySales.filter(o => o.status === 'paid' || o.paid >= o.total).reduce((s,o) => s + o.total, 0);
     const todayUdhar = todaySales.filter(o => o.status === 'unpaid' || o.status === 'partial').reduce((s,o) => s + (o.total - (o.paid||0)), 0);
-    const todayIkhrajat = 0; // Will be added later
+    const todayIkhrajat = 0;
     
-    // Sabqa Wusool (previous days' received)
     const prevSales = orders.filter(o => o.date.substring(0,10) < today);
     const sabqaWusool = prevSales.reduce((s,o) => s + (o.paid||0), 0);
-    
-    // Advance Wusool (today's received)
     const advanceWusool = todaySales.reduce((s,o) => s + (o.paid||0), 0);
-    
     const totalJamma = todayCash + sabqaWusool + advanceWusool;
     const paymentMinus = totalJamma < todayIkhrajat ? todayIkhrajat - totalJamma : 0;
     
@@ -613,7 +601,7 @@ function calculateStockSummary() {
             o.items.forEach(i => { if(i.name === item.name) total += parseFloat(i.qty) || 0; });
             return s + total;
         }, 0);
-        const opening = item.stock + todayIn; // Simplified
+        const opening = item.stock + todayIn;
         const closing = item.stock;
         html += `<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr;padding:3px 0;border-bottom:1px solid #eee;font-size:11px;">
             <span>${item.name}</span>
@@ -745,4 +733,3 @@ window.openPayment=openPayment; window.viewInvoice=viewInvoice; window.deleteInv
 </script>
 </body>
 </html>
-
